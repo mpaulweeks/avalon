@@ -2,7 +2,7 @@
   "name": "avalon",
   "version": "1.0.0",
   "description": "simple WS app",
-  "main": "index.js",
+  "homepage": ".",
   "scripts": {
     "predeploy": "cd be && npm run build && cd ../fe && npm run build",
     "deploybe": "echo 'TBD'",
@@ -19,7 +19,6 @@
   "bugs": {
     "url": "https://github.com/mpaulweeks/avalon/issues"
   },
-  "homepage": "https://github.com/mpaulweeks/avalon#readme",
   "dependencies": {
     "gh-pages": "^2.2.0"
   }

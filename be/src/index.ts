@@ -27,6 +27,7 @@ server.on('upgrade', function upgrade(request, socket, head) {
   }
 });
 
-server.listen(8080, function() {
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, () => {
   console.log('Listening on http://localhost:8080');
 });
