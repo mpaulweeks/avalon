@@ -1,55 +1,77 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
+import { BrowserStorage, UserState } from './Storage';
+import { ViewGame } from './ViewGame';
 
 interface Props {}
 interface State {
+  storage: UserState;
+  loading: boolean;
+  tempName: string;
+  tempJoin: string;
+  name?: string;
+  gameid?: string;
 }
 
 export class ViewLobby extends React.Component<Props, State> {
   state: State = {
-    data: {
-    },
+    storage: BrowserStorage.get(),
+    loading: true,
+    tempName: '',
+    tempJoin: '',
   };
-  path() { return 'vote'; }
+
+  componentDidMount() {
+    const { storage } = this.state;
+    if (storage.game) {
+      // call api for game info
+      this.setState({ loading: true, });
+    } else {
+      this.setState({ loading: false, })
+    }
+  }
+
+  createGame() {
+
+  }
+  joinGame() {
+
+  }
 
   render() {
-    const { data } = this.state;
+    const { storage, loading, name, tempName, tempJoin, gameid } = this.state;
+
+    if (gameid) {
+      return <ViewGame gameid={gameid} />
+    }
+
+    if (loading) {
+      return <h3>loading, please wait...</h3>;
+    }
+
+    if (!name) {
+      return (
+        <div>
+          <h1>Enter your name</h1>
+          <input value={tempName} onChange={event => this.setState({tempName: event.target.value, })} />
+          <button onClick={() => this.setState({name: tempName, })}>confirm</button>
+        </div>
+      )
+    }
+
     return (
       <div>
-        <h1>Vote</h1>
-
-        {data.votes[this.id] ? (
-          <h3> you have voted </h3>
-        ) : (
-          <div>
-            <button onClick={() => this.voteSuccess()}>vote SUCCESS</button>
-            <button onClick={() => this.voteFail()}>vote FAIL</button>
-          </div>
-        )}
-
-        <hr/>
+        <h1>Find a Game</h1>
 
         <div>
-          <button onClick={() => this.voteClear()}>clear all votes</button>
-          <button onClick={() => this.toggleReveal()}>{data.showResults ? 'hide' : 'show'} votes</button>
+          <button onClick={() => this.createGame()}>create game</button>
         </div>
 
         <hr/>
 
-        <h3>results!</h3>
-
-        {data.showResults && Object.keys(data.votes).length ? (
-          <div>
-            {Object.keys(data.votes).map(key => (
-              <div key={key}>
-                {key}: {data.votes[key]}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>
-            {Object.keys(data.votes).length} votes counted
-          </p>
-        )}
+        <div>
+          <input value={tempJoin} onChange={event => this.setState({tempJoin: event.target.value, })} />
+          <button onClick={() => this.joinGame()}>join game</button>
+        </div>
       </div>
     );
   }

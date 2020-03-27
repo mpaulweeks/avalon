@@ -1,5 +1,3 @@
-import { RoleType } from "./Role";
-
 export interface StorageLayer {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
@@ -7,19 +5,25 @@ export interface StorageLayer {
 
 export interface UserState {
   id: string;
-  game: string;
-  role: RoleType;
+  game?: string;
 }
 
 export class BrowserStorage {
-  store: StorageLayer = window.localStorage;
+  static store: StorageLayer = window.localStorage;
 
-  set(data: UserState) {
+  static set(data: UserState) {
     this.store.setItem('state', JSON.stringify(data));
   }
-  get() {
+  static get() {
     const stored = this.store.getItem('state');
-    if (!stored) { return; }
+    if (!stored) {
+      const defaultState = {
+        id: '' + Math.floor(Math.random() * 1000000),
+        game: undefined,
+      };
+      this.set(defaultState);
+      return defaultState;
+    }
     return JSON.parse(stored) as UserState;
   }
 }
