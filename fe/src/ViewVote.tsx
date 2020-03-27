@@ -8,8 +8,7 @@ interface Data {
   };
 }
 interface Props {}
-interface State extends StateBase<Data> {
-}
+interface State extends StateBase<Data> {}
 
 export class ViewVote extends WebSocketView<Props, State, Data> {
   state: State = {

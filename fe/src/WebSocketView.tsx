@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserStorage } from './Storage';
 
 export interface StateBase<Data> {
   data: Data;
@@ -12,7 +13,8 @@ export const baseDomainPing = 'http' + baseDomain.slice(2);
 export abstract class WebSocketView<Props, State extends StateBase<Data>, Data> extends React.Component<Props, State> {
   abstract path(): string;
 
-  id = '' + Math.floor(Math.random() * 1000000);
+  id = BrowserStorage.get().id;
+  hasReceived = false;
 
   ws: WebSocket;
   constructor(props: Props) {
@@ -24,13 +26,16 @@ export abstract class WebSocketView<Props, State extends StateBase<Data>, Data> 
   componentDidMount() {
     this.ws.onmessage = event => {
       const data = JSON.parse(event.data) as Data;
-      this.setState({ data: data, });
+      this.onReceive(data);
     };
   }
   componentWillUnmount() {
     this.ws.close();
   }
 
+  onReceive(data: Data) {
+    this.setState({ data: data, });
+  }
   message(data: Data) {
     this.ws.send(JSON.stringify(data));
   }

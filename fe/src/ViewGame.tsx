@@ -1,6 +1,6 @@
 import React from 'react';
 import { WebSocketView, StateBase } from './WebSocketView';
-import { RoleData, RoleType } from './Role';
+import { RoleData, RoleType, Roles } from './Role';
 import { BrowserStorage } from './Storage';
 
 export interface GameData {
@@ -15,23 +15,36 @@ export interface GameData {
   };
 }
 interface Props {
-  gameid: string;
-  data: GameData,
+  isHost: boolean;
+  game: string;
 }
-interface State extends StateBase<GameData> {}
+interface State extends StateBase<GameData> {
+  firstReceive: boolean;
+}
 
 export class ViewGame extends WebSocketView<Props, State, GameData> {
+  storage = BrowserStorage.get();
   state: State = {
-    data: this.props.data,
+    firstReceive: false,
+    data: {
+      id: this.props.game,
+      host: BrowserStorage.get().id,
+      roles: [],
+      players: {
+        [BrowserStorage.get().id]: {
+          name: BrowserStorage.get().name || '???',
+          role: Roles.BasicBlue,
+        },
+      },
+    },
   };
   path() { return 'game'; }
 
-  componentDidMount() {
-    super.componentDidMount();
-    BrowserStorage.set({
-      ...BrowserStorage.get(),
-      game: this.props.gameid,
-    });
+  // todo how to coordinate state when joining game?
+  onReceive(data: GameData) {
+    if (this.props.isHost) {
+
+    }
   }
 
   render() {
