@@ -7,6 +7,20 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+nav ul {
+  list-style-type: none;
+  margin: 1em;
+  margin-left: 0;
+  padding: 0;
+  display: flex;
+}
+nav ul li {
+  margin: 0 1em;
+}
+nav ul li:first-child {
+  margin-left: 0;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

@@ -45,8 +45,10 @@ export class ViewVote extends WebSocketView<Props, State, Data> {
     const { data } = this.state;
     return (
       <div>
+        <h1>Vote</h1>
+
         {data.votes[this.id] ? (
-          <h1> you have voted </h1>
+          <h3> you have voted </h3>
         ) : (
           <div>
             <button onClick={() => this.voteSuccess()}>vote SUCCESS</button>
@@ -54,7 +56,7 @@ export class ViewVote extends WebSocketView<Props, State, Data> {
           </div>
         )}
 
-        <h1>results!</h1>
+        <h3>results!</h3>
         <div>
           <button onClick={() => this.voteClear()}>clear all votes</button>
           <button onClick={() => this.toggleReveal()}>{data.showResults ? 'hide' : 'show'} votes</button>

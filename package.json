@@ -4,7 +4,7 @@
   "description": "simple WS app",
   "main": "index.js",
   "scripts": {
-    "build": "cd be && npm run build && cd ../fe && npm run build",
+    "predeploy": "cd be && npm run build && cd ../fe && npm run build",
     "deploybe": "echo 'TBD'",
     "deployfe": "gh-pages -d fe/build",
     "deploy": "npm run deploybe && npm run deployfe",

@@ -1,11 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { App } from './App';
-import { ViewVote } from './ViewVote';
+import { ViewHub } from './ViewHub';
 
 ReactDOM.render(
-  // <App />,
-  < ViewVote />,
+  <ViewHub/ >,
   document.getElementById('root')
 );
