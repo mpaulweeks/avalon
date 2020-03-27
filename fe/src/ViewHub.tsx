@@ -7,10 +7,7 @@ import {
 } from "react-router-dom";
 import { ViewDebug } from "./ViewDebug";
 import { ViewVote } from "./ViewVote";
-
-function Home() {
-  return <h1>Avalon Online(alpha)</h1>;
-}
+import { ViewLobby } from "./ViewLobby";
 
 export class ViewHub extends React.Component {
   componentDidMount() {
@@ -23,7 +20,7 @@ export class ViewHub extends React.Component {
           <nav>
             <ul>
               <li>
-                <Link to="/">Home</Link>
+                <Link to="/">Game</Link>
               </li>
               <li>
                 <Link to="/vote">Vote</Link>
@@ -37,14 +34,14 @@ export class ViewHub extends React.Component {
           {/* A <Switch> looks through its children <Route>s and
               renders the first one that matches the current URL. */}
           <Switch>
-            <Route path="/debug">
-              <ViewDebug />
-            </Route>
             <Route path="/vote">
               <ViewVote />
             </Route>
+            <Route path="/debug">
+              <ViewDebug />
+            </Route>
             <Route path="/">
-              <Home />
+              <ViewLobby />
             </Route>
           </Switch>
         </div>

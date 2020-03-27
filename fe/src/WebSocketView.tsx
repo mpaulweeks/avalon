@@ -28,11 +28,15 @@ export abstract class WebSocketView<Props, State extends StateBase<Data>, Data> 
       const data = JSON.parse(event.data) as Data;
       this.onReceive(data);
     };
+    this.ws.onopen = () => this.onOpen();
   }
   componentWillUnmount() {
     this.ws.close();
   }
 
+  onOpen() {
+    // default to nothing
+  }
   onReceive(data: Data) {
     this.setState({ data: data, });
   }

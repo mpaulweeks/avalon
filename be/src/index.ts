@@ -1,10 +1,11 @@
 'use strict';
 
+import * as express from 'express';
 import * as http from 'http';
 import * as url from 'url';
-import * as express from 'express';
-import { ServerMemory } from './ServerMemory';
 import { ServerBase } from './ServerBase';
+import { ServerGame } from './ServerGame';
+import { ServerMemory } from './ServerMemory';
 import { ServerVote } from './ServerVote';
 
 const PORT = process.env.PORT || 8080;
@@ -12,6 +13,7 @@ const app = express();
 const server = http.createServer(app);
 const websockets: ServerBase<any>[] = [
   new ServerMemory(),
+  new ServerGame(),
   new ServerVote(),
 ];
 

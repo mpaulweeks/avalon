@@ -1,10 +1,11 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import { BrowserStorage, UserState, randomId } from './Storage';
 import { ViewGame } from './ViewGame';
 
-interface Props {}
+interface Props { }
 interface State {
   storage: UserState;
+  isHost: boolean;
   tempName: string;
   tempJoin: string;
 }
@@ -12,10 +13,19 @@ interface State {
 export class ViewLobby extends React.Component<Props, State> {
   state: State = {
     storage: BrowserStorage.get(),
+    isHost: false,
     tempName: '',
     tempJoin: '',
   };
 
+  reset() {
+    BrowserStorage.set({
+      ...BrowserStorage.get(),
+      name: undefined,
+      game: undefined,
+    });
+    this.setState({ storage: BrowserStorage.get(), });
+  }
   setName() {
     BrowserStorage.set({
       ...BrowserStorage.get(),
@@ -28,7 +38,10 @@ export class ViewLobby extends React.Component<Props, State> {
       ...BrowserStorage.get(),
       game: randomId(3),
     });
-    this.setState({ storage: BrowserStorage.get(), });
+    this.setState({
+      storage: BrowserStorage.get(),
+      isHost: true,
+    });
   }
   joinGame() {
     BrowserStorage.set({
@@ -39,17 +52,17 @@ export class ViewLobby extends React.Component<Props, State> {
   }
 
   render() {
-    const { storage, tempName, tempJoin } = this.state;
+    const { storage, isHost, tempName, tempJoin } = this.state;
 
     if (storage.game) {
-      return <ViewGame game={storage.game} />
+      return <ViewGame reset={() => this.reset()} isHost={isHost} game={storage.game} />
     }
 
     if (!storage.name) {
       return (
         <div>
           <h1>Enter your name</h1>
-          <input value={tempName} onChange={event => this.setState({tempName: event.target.value, })} />
+          <input value={tempName} onChange={event => this.setState({ tempName: event.target.value, })} />
           <button onClick={() => this.setName()}>confirm</button>
         </div>
       )
@@ -63,10 +76,10 @@ export class ViewLobby extends React.Component<Props, State> {
           <button onClick={() => this.createGame()}>create game</button>
         </div>
 
-        <hr/>
+        <hr />
 
         <div>
-          <input value={tempJoin} onChange={event => this.setState({tempJoin: event.target.value, })} />
+          <input value={tempJoin} onChange={event => this.setState({ tempJoin: event.target.value, })} />
           <button onClick={() => this.joinGame()}>join game</button>
         </div>
       </div>
