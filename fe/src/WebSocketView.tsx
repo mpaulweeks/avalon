@@ -4,9 +4,10 @@ export interface StateBase<Data> {
   data: Data;
 };
 
-export const remoteDomain = 'avalon-272401.appspot.com';
+export const remoteDomain = 'wss://avalon-272401.appspot.com';
 const useLocal = window.location.href.includes('localhost') && !window.location.href.includes('prod');
-const baseDomain = useLocal ? 'localhost:8080' : remoteDomain;
+export const baseDomain = useLocal ? 'ws://localhost:8080' : remoteDomain;
+export const baseDomainPing = 'http' + baseDomain.slice(2);
 
 export abstract class WebSocketView<Props, State extends StateBase<Data>, Data> extends React.Component<Props, State> {
   abstract path(): string;
@@ -16,7 +17,7 @@ export abstract class WebSocketView<Props, State extends StateBase<Data>, Data> 
   ws: WebSocket;
   constructor(props: Props) {
     super(props);
-    this.ws = new WebSocket(`ws://${baseDomain}/${this.path()}`);
+    this.ws = new WebSocket(`${baseDomain}/${this.path()}`);
     console.log('constructing websocket view for:', this.path());
   }
 

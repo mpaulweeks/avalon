@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { WebSocketView, StateBase, remoteDomain } from './WebSocketView';
+import { WebSocketView, StateBase, baseDomainPing } from './WebSocketView';
 
 interface Data {
   rss: string;
@@ -31,7 +31,7 @@ export class ViewDebug extends WebSocketView<Props, State, Data> {
           <a href="https://mpaulweeks.github.io/avalon/">mpaulweeks.github.io/avalon</a>
         </p>
         <p>
-          <a href={'https://' + remoteDomain}>{remoteDomain}</a>
+          <a href={baseDomainPing}>{baseDomainPing}</a>
         </p>
         {Object.keys(data).map(key => (
           <div key={key}>{key}: {data[key as StateKey]}</div>
