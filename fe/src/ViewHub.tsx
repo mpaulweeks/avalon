@@ -5,7 +5,7 @@ import {
   Route,
   Link
 } from "react-router-dom";
-import { ViewHealth } from "./ViewHealth";
+import { ViewDebug } from "./ViewDebug";
 import { ViewVote } from "./ViewVote";
 
 function Home() {
@@ -25,7 +25,7 @@ export function ViewHub() {
               <Link to="/vote">Vote</Link>
             </li>
             <li>
-              <Link to="/health">Health</Link>
+              <Link to="/debug">Debug</Link>
             </li>
           </ul>
         </nav>
@@ -33,8 +33,8 @@ export function ViewHub() {
         {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
         <Switch>
-          <Route path="/health">
-            <ViewHealth />
+          <Route path="/debug">
+            <ViewDebug />
           </Route>
           <Route path="/vote">
             <ViewVote />

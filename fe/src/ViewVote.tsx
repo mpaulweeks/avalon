@@ -56,21 +56,24 @@ export class ViewVote extends WebSocketView<Props, State, Data> {
           </div>
         )}
 
-        <h3>results!</h3>
+        <hr/>
+
         <div>
           <button onClick={() => this.voteClear()}>clear all votes</button>
           <button onClick={() => this.toggleReveal()}>{data.showResults ? 'hide' : 'show'} votes</button>
         </div>
 
-        {data.showResults ? (
+        <hr/>
+
+        <h3>results!</h3>
+
+        {data.showResults && Object.keys(data.votes).length ? (
           <div>
-            <br/>
             {Object.keys(data.votes).map(key => (
               <div key={key}>
                 {key}: {data.votes[key]}
               </div>
             ))}
-            <br/>
           </div>
         ) : (
           <p>

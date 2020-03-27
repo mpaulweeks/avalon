@@ -4,7 +4,7 @@ export interface StateBase<Data> {
   data: Data;
 };
 
-const remoteDomain = 'avalon-272401.appspot.com';
+export const remoteDomain = 'avalon-272401.appspot.com';
 const useLocal = window.location.href.includes('localhost') && !window.location.href.includes('prod');
 const baseDomain = useLocal ? 'localhost:8080' : remoteDomain;
 

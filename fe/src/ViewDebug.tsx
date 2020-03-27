@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { WebSocketView, StateBase } from './WebSocketView';
+import { WebSocketView, StateBase, remoteDomain } from './WebSocketView';
 
 interface Data {
   rss: string;
@@ -12,7 +12,7 @@ type StateKey = keyof Data;
 interface Props {}
 interface State extends StateBase<Data> {}
 
-export class ViewHealth extends WebSocketView<Props, State, Data> {
+export class ViewDebug extends WebSocketView<Props, State, Data> {
   state = {
     data: {
       rss: '?',
@@ -27,6 +27,12 @@ export class ViewHealth extends WebSocketView<Props, State, Data> {
     return (
       <div>
         <h1>Debugging Health Info</h1>
+        <p>
+          <a href="https://mpaulweeks.github.io/avalon/">mpaulweeks.github.io/avalon</a>
+        </p>
+        <p>
+          <a href={'https://' + remoteDomain}>{remoteDomain}</a>
+        </p>
         {Object.keys(data).map(key => (
           <div key={key}>{key}: {data[key as StateKey]}</div>
         ))}
