@@ -5,7 +5,7 @@
   "homepage": ".",
   "scripts": {
     "predeploy": "cd be && npm run build && cd ../fe && npm run build",
-    "deploybe": "echo 'TBD'",
+    "deploybe": "cd be && npm run deploy",
     "deployfe": "gh-pages -d fe/build",
     "deploy": "npm run deploybe && npm run deployfe",
     "test": "echo \"Error: no test specified\" && exit 1"

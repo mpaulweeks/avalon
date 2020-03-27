@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "echo 'TBD'",
+    "deploy": "gcloud app deploy",
     "start": "ts-node src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
