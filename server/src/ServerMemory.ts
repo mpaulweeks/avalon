@@ -1,18 +1,18 @@
 import * as WebSocket from 'ws';
-import { wsBase } from './wsBase';
+import { ServerBase } from './ServerBase';
 
 declare var process: {
   env: { [key: string]: string; },
   memoryUsage(): any,
 };
 
-export class wsMemory extends wsBase {
+export class ServerMemory extends ServerBase<{}> {
   path = 'memory';
   id: NodeJS.Timeout;
 
   connection(ws: WebSocket) {
-    this.id = setInterval(function() {
-      ws.send(JSON.stringify(process.memoryUsage()), function() {
+    this.id = setInterval(() => {
+      ws.send(JSON.stringify(process.memoryUsage()), () => {
         //
         // Ignore errors.
         //

@@ -2,12 +2,14 @@
 
 import * as http from 'http';
 import * as url from 'url';
-import { wsMemory } from './wsMemory';
-import { wsBase } from './wsBase';
+import { ServerMemory } from './ServerMemory';
+import { ServerBase } from './ServerBase';
+import { ServerVote } from './ServerVote';
 
 const server = http.createServer();
-const websockets: wsBase[] = [
-  new wsMemory(),
+const websockets: ServerBase<any>[] = [
+  new ServerMemory(),
+  new ServerVote(),
 ];
 
 server.on('upgrade', function upgrade(request, socket, head) {

@@ -2,31 +2,36 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import { WebSocketView } from './WebSocketView';
+import { WebSocketView, StateBase } from './WebSocketView';
 
-interface Props {}
-interface State {
+interface Data {
   rss: string;
   heapTotal: string;
   heapUsed: string;
   external: string;
 }
-type StateKey = keyof State;
+type StateKey = keyof Data;
+interface Props {}
+interface State extends StateBase<Data> {}
 
-export class App extends WebSocketView<Props, State> {
+export class App extends WebSocketView<Props, State, Data> {
   state = {
-    rss: '?',
-    heapTotal: '?',
-    heapUsed: '?',
-    external: '?',
+    data: {
+      rss: '?',
+      heapTotal: '?',
+      heapUsed: '?',
+      external: '?',
+    },
   };
+  path() { return 'memory'; }
   render() {
+    const { data } = this.state;
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          {Object.keys(this.state).map(key => (
-            <div key={key}>{key}: {this.state[key as StateKey]}</div>
+          {Object.keys(data).map(key => (
+            <div key={key}>{key}: {data[key as StateKey]}</div>
           ))}
         </header>
       </div>
