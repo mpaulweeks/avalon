@@ -18,14 +18,6 @@ export class ViewLobby extends React.Component<Props, State> {
     tempJoin: '',
   };
 
-  reset() {
-    BrowserStorage.set({
-      ...BrowserStorage.get(),
-      name: undefined,
-      game: undefined,
-    });
-    this.setState({ storage: BrowserStorage.get(), });
-  }
   setName() {
     BrowserStorage.set({
       ...BrowserStorage.get(),
@@ -55,7 +47,7 @@ export class ViewLobby extends React.Component<Props, State> {
     const { storage, isHost, tempName, tempJoin } = this.state;
 
     if (storage.game) {
-      return <ViewGame reset={() => this.reset()} isHost={isHost} game={storage.game} />
+      return <ViewGame isHost={isHost} game={storage.game} />
     }
 
     if (!storage.name) {

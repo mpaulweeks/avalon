@@ -1,27 +1,38 @@
 import * as WebSocket from 'ws';
 
 export abstract class ServerBase<T> {
-  path: string;
   server: WebSocket.Server;
 
   constructor() {
     this.server = new WebSocket.Server({ noServer: true });
-    this.server.on('connection', ws => {
-      this.connection(ws);
-      ws.on('message', data => this.message(data as any as T));
-      ws.on('close', () => this.close());
+    this.server.on('connection', client => {
+      this.connection(client);
+      client.on('message', data => this.message(client, data as any as T));
+      client.on('close', () => this.close(client));
     });
   }
 
-  connection(ws: WebSocket) {
-    console.log('ws connected');
+  abstract path(): string;
+
+  isEmpty() {
+    return this.server.clients.size === 0;
+  }
+  otherClients(client: WebSocket) {
+    return Array.from(this.server.clients).filter(c => c !== client);
+  }
+  kill() {
+    this.server.close();
   }
 
-  message(data: T) {
+  connection(client: WebSocket) {
+    console.log('client connected');
+  }
+
+  message(client: WebSocket, data: T) {
     console.log('received:', data);
   }
 
-  close() {
-    console.log('ws closed');
+  close(client: WebSocket) {
+    console.log('client closed');
   }
 }

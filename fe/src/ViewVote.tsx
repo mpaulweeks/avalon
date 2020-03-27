@@ -1,5 +1,6 @@
 import React from 'react';
 import { WebSocketView, StateBase } from './WebSocketView';
+import { BrowserStorage } from './Storage';
 
 interface Data {
   showResults: boolean;
@@ -7,8 +8,8 @@ interface Data {
     [key: string]: string,
   };
 }
-interface Props {}
-interface State extends StateBase<Data> {}
+interface Props { }
+interface State extends StateBase<Data> { }
 
 export class ViewVote extends WebSocketView<Props, State, Data> {
   state: State = {
@@ -17,7 +18,9 @@ export class ViewVote extends WebSocketView<Props, State, Data> {
       votes: {},
     },
   };
-  path() { return 'vote'; }
+  path() {
+    return `vote/${BrowserStorage.get().game || 0}`;
+  }
 
   voteSuccess() {
     const newData = { ...this.state.data, };
@@ -42,6 +45,10 @@ export class ViewVote extends WebSocketView<Props, State, Data> {
 
   render() {
     const { data } = this.state;
+
+    if (!BrowserStorage.get().game) {
+      return <h3>you must be in a game to vote</h3>;
+    }
     return (
       <div>
         <h1>Vote</h1>
@@ -49,20 +56,20 @@ export class ViewVote extends WebSocketView<Props, State, Data> {
         {data.votes[this.id] ? (
           <h3> you have voted </h3>
         ) : (
-          <div>
-            <button onClick={() => this.voteSuccess()}>vote SUCCESS</button>
-            <button onClick={() => this.voteFail()}>vote FAIL</button>
-          </div>
-        )}
+            <div>
+              <button onClick={() => this.voteSuccess()}>vote SUCCESS</button>
+              <button onClick={() => this.voteFail()}>vote FAIL</button>
+            </div>
+          )}
 
-        <hr/>
+        <hr />
 
         <div>
           <button onClick={() => this.voteClear()}>clear all votes</button>
           <button onClick={() => this.toggleReveal()}>{data.showResults ? 'hide' : 'show'} votes</button>
         </div>
 
-        <hr/>
+        <hr />
 
         <h3>results!</h3>
 
@@ -75,10 +82,10 @@ export class ViewVote extends WebSocketView<Props, State, Data> {
             ))}
           </div>
         ) : (
-          <p>
-            {Object.keys(data.votes).length} votes counted
-          </p>
-        )}
+            <p>
+              {Object.keys(data.votes).length} votes counted
+            </p>
+          )}
       </div>
     );
   }

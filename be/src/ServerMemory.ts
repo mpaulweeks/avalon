@@ -7,8 +7,13 @@ declare var process: {
 };
 
 export class ServerMemory extends ServerBase<{}> {
-  path = 'memory';
   id: NodeJS.Timeout;
+
+  path() { return 'memory'; }
+
+  isEmpty() {
+    return false;
+  }
 
   connection(ws: WebSocket) {
     this.id = setInterval(() => {
@@ -20,8 +25,10 @@ export class ServerMemory extends ServerBase<{}> {
     }, 100);
   }
 
-  close() {
-    super.close();
-    clearInterval(this.id);
+  close(client: WebSocket) {
+    super.close(client);
+    if (this.otherClients(client).length === 0) {
+      clearInterval(this.id);
+    }
   }
 }

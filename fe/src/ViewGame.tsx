@@ -9,20 +9,19 @@ interface GameData {
   roles: string[];
   players: {
     [key: string]: {
+      id: string;
       name: string;
       role?: RoleType;
     };
   };
 }
 interface Props {
-  reset(): void;
   isHost: boolean;
   game: string;
 }
 interface State extends StateBase<GameData> { }
 
 export class ViewGame extends WebSocketView<Props, State, GameData> {
-  storage = BrowserStorage.get();
   state: State = {
     data: {
       id: this.props.game,
@@ -30,32 +29,32 @@ export class ViewGame extends WebSocketView<Props, State, GameData> {
       roles: [],
       players: {
         [BrowserStorage.get().id]: {
+          id: BrowserStorage.get().id,
           name: BrowserStorage.get().name || '???',
         },
       },
     },
   };
-  path() { return 'game'; }
+  path() { return `game/${BrowserStorage.get().game || 0}`; }
 
   // overrides
   onOpen() {
-    this.message(this.state.data);
+    if (this.props.isHost) {
+      this.message(this.state.data);
+    }
   }
   onReceive(data: GameData) {
     console.log('received:', data);
     const current = this.state.data;
-    const isHost = current.host === BrowserStorage.get().id;
-    if (isHost && !data.host) {
-      // if getting first ping from new user, update data and broadcast
-      current.players = {
+    if (!current.host) {
+      // if joining a game, ensure self and broadcast
+      data.players = {
         ...current.players,
         ...data.players,
       };
-      this.setState({ data: current });
-      this.message(current);
-    } else {
-      this.setState({ data: data, });
+      this.message(data);
     }
+    this.setState({ data: data, });
   }
 
   render() {
@@ -73,12 +72,9 @@ export class ViewGame extends WebSocketView<Props, State, GameData> {
 
     return (
       <div>
-        <h1>Game State</h1>
-        <div>id: {data.id} host: {hostName}</div>
-        <div>players: {Object.values(data.players).map(o => o.name).join(', ')}</div>
-        <div>
-          <button onClick={() => this.props.reset()}>exit game</button>
-        </div>
+        <h1>Game #{data.id}</h1>
+        <div>host: {hostName}</div>
+        <div>players: {Object.values(data.players).map(o => o.id + '/' + o.name).join(', ')}</div>
 
         {me.role && (
           <div>

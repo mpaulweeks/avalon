@@ -6,31 +6,63 @@ import * as url from 'url';
 import { ServerBase } from './ServerBase';
 import { ServerGame } from './ServerGame';
 import { ServerMemory } from './ServerMemory';
-import { ServerVote } from './ServerVote';
 
 const PORT = process.env.PORT || 8080;
 const app = express();
 const server = http.createServer(app);
-const websockets: ServerBase<any>[] = [
-  new ServerMemory(),
-  new ServerGame(),
-  new ServerVote(),
-];
+const websocketsByPath: { [key: string]: ServerBase<any> } = {
+  memory: new ServerMemory(),
+};
 
 app.get('/', (request, response) => {
   response.send(`
-    <div>
+    <h1>
       Hello from avalon-be!
-    </div>
+    </h1>
     <div>
       Try going to <a href="https://mpaulweeks.github.io/avalon/">https://mpaulweeks.github.io/avalon/</a>
     </div>
+    <h3>
+      Lobbies:
+    </h3>
+    <ul>
+      ${Object.keys(websocketsByPath).map(path => `
+        <li>${websocketsByPath[path].server.clients.size} ${path}</li>
+      `).join('')}
+    </ul>
+  `)
+});
+
+app.get('/purge', (request, response) => {
+  const killed = [];
+  Object.values(websocketsByPath).forEach(server => {
+    if (server.isEmpty()) {
+      killed.push(server.path());
+      server.kill();
+      delete websocketsByPath[server.path()];
+    }
+  });
+  response.send(`
+    <h3>
+      Killed:
+    </h3>
+    <ul>
+      ${killed.map(path => `
+        <li>${path}</li>
+      `).join('')}
+    </ul>
   `)
 });
 
 server.on('upgrade', function upgrade(request, socket, head) {
   const pathname = url.parse(request.url).pathname.slice(1);
-  const match = websockets.filter(ws => ws.path === pathname)[0];
+  let match = websocketsByPath[pathname];
+
+  if (!match) {
+    console.log('creating new server:', pathname);
+    match = new ServerGame<any>(pathname);
+    websocketsByPath[pathname] = match;
+  }
 
   if (match) {
     console.log('found match:', pathname);

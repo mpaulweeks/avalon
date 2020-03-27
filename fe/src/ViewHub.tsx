@@ -8,6 +8,7 @@ import {
 import { ViewDebug } from "./ViewDebug";
 import { ViewVote } from "./ViewVote";
 import { ViewLobby } from "./ViewLobby";
+import { ViewReset } from "./ViewReset";
 
 export class ViewHub extends React.Component {
   componentDidMount() {
@@ -26,6 +27,9 @@ export class ViewHub extends React.Component {
                 <Link to="/vote">Vote</Link>
               </li>
               <li>
+                <Link to="/reset">Reset</Link>
+              </li>
+              <li>
                 <Link to="/debug">Debug</Link>
               </li>
             </ul>
@@ -36,6 +40,9 @@ export class ViewHub extends React.Component {
           <Switch>
             <Route path="/vote">
               <ViewVote />
+            </Route>
+            <Route path="/reset">
+              <ViewReset />
             </Route>
             <Route path="/debug">
               <ViewDebug />
