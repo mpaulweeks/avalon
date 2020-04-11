@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { RoleData, RoleType, RoleTypes } from './Role';
-import { GameData, shuffle } from './types';
+import { GameData, shuffle, getBoardFor } from './types';
 import { FIREBASE } from './firebase';
 import { UserState } from './Storage';
 import { HostBox } from './shared';
@@ -23,19 +23,19 @@ interface Props {
 }
 interface State {
   errorMessage?: string;
- }
+}
 
 export class ViewSetup extends React.Component<Props, State> {
   state: State = {}
 
   addRole(role: RoleType) {
-    const newRoles = [ ...this.props.data.roles ];
+    const newRoles = [...this.props.data.roles];
     newRoles.push(role);
     newRoles.sort();
     FIREBASE.updateRoles(this.props.data.id, newRoles);
   }
   removeRole(role: RoleType) {
-    const newRoles = [ ...this.props.data.roles ];
+    const newRoles = [...this.props.data.roles];
     const index = newRoles.findIndex(r => r === role);
     if (index >= 0) {
       newRoles.splice(index, 1);
@@ -55,8 +55,9 @@ export class ViewSetup extends React.Component<Props, State> {
     shuffledPlayers.forEach((id, index) => {
       players[id].role = shuffledRoles[index];
     });
+    FIREBASE.updateBoard(id, getBoardFor(roles.length));
     FIREBASE.updatePlayers(id, players);
-    FIREBASE.updateTurnOrder(id, {
+    FIREBASE.updateTurn(id, {
       current: shuffledPlayers[0],
       order: shuffledPlayers,
     });
@@ -67,17 +68,17 @@ export class ViewSetup extends React.Component<Props, State> {
       players[id].role = null; // null for Firebase
     });
     FIREBASE.updatePlayers(id, players);
-    FIREBASE.updateTurnOrder(id, null);
+    FIREBASE.updateTurn(id, null);
   }
 
   renderRoles(roles: RoleType[], canEdit: boolean) {
     return (
       <ul>
         {roles.map((role, i) => (
-        <li key={i}>
-          {canEdit && <DeleteLink onClick={() => this.removeRole(role)}>X</DeleteLink>}
-          {RoleData[role].name}
-        </li>
+          <li key={i}>
+            {canEdit && <DeleteLink onClick={() => this.removeRole(role)}>X</DeleteLink>}
+            {RoleData[role].name}
+          </li>
         ))}
       </ul>
     );
@@ -121,18 +122,18 @@ export class ViewSetup extends React.Component<Props, State> {
                 <button onClick={() => this.clear()}>CLEAR ROLES (reset game)</button>
               </div>
             ) : (
-              <div>
-                <h3>Add Roles</h3>
-                {this.renderAdd(RoleTypes.filter(r => RoleData[r].isRed))}
-                <br/>
-                {this.renderAdd(RoleTypes.filter(r => !RoleData[r].isRed))}
-                <br/>
-                <button onClick={() => this.assign()}>ASSIGN ROLES</button>
-                {errorMessage && (
-                  <ErrorMessage>{errorMessage}</ErrorMessage>
-                )}
-              </div>
-            )}
+                <div>
+                  <h3>Add Roles</h3>
+                  {this.renderAdd(RoleTypes.filter(r => RoleData[r].isRed))}
+                  <br />
+                  {this.renderAdd(RoleTypes.filter(r => !RoleData[r].isRed))}
+                  <br />
+                  <button onClick={() => this.assign()}>ASSIGN ROLES</button>
+                  {errorMessage && (
+                    <ErrorMessage>{errorMessage}</ErrorMessage>
+                  )}
+                </div>
+              )}
           </HostBox>
         )}
 

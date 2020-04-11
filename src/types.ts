@@ -97,3 +97,44 @@ export function shuffle<T>(orig: T[]): T[] {
   }
   return array;
 };
+
+export function getBoardFor(count: number) {
+  let missions = [ // === 5
+    { required: 2, neededFails: 1, result: MissionResultType.Neutral },
+    { required: 3, neededFails: 1, result: MissionResultType.Neutral },
+    { required: 2, neededFails: 1, result: MissionResultType.Neutral },
+    { required: 3, neededFails: 1, result: MissionResultType.Neutral },
+    { required: 3, neededFails: 1, result: MissionResultType.Neutral },
+  ];
+  if (count === 6) {
+    missions = [
+      { required: 2, neededFails: 1, result: MissionResultType.Neutral },
+      { required: 3, neededFails: 1, result: MissionResultType.Neutral },
+      { required: 4, neededFails: 1, result: MissionResultType.Neutral },
+      { required: 3, neededFails: 1, result: MissionResultType.Neutral },
+      { required: 4, neededFails: 1, result: MissionResultType.Neutral },
+    ];
+  }
+  if (count === 7) {
+    missions = [
+      { required: 2, neededFails: 1, result: MissionResultType.Neutral },
+      { required: 3, neededFails: 1, result: MissionResultType.Neutral },
+      { required: 3, neededFails: 1, result: MissionResultType.Neutral },
+      { required: 4, neededFails: 2, result: MissionResultType.Neutral },
+      { required: 4, neededFails: 1, result: MissionResultType.Neutral },
+    ];
+  }
+  if (count >= 8) {
+    missions = [
+      { required: 3, neededFails: 1, result: MissionResultType.Neutral },
+      { required: 4, neededFails: 1, result: MissionResultType.Neutral },
+      { required: 4, neededFails: 1, result: MissionResultType.Neutral },
+      { required: 5, neededFails: 2, result: MissionResultType.Neutral },
+      { required: 5, neededFails: 1, result: MissionResultType.Neutral },
+    ];
+  }
+  return {
+    vetos: 0,
+    missions: missions,
+  };
+}

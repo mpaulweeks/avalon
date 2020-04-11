@@ -1,7 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/database';
-import { GameData, PlayerData, VoteData, TurnData, NominationData, BoardData } from './types';
 import { RoleType } from './Role';
+import { BoardData, GameData, NominationData, PlayerData, TurnData, VoteData } from './types';
 
 const config = {
   apiKey: "AIzaSyAEz0EOh3rS5AQ1XyG4YQcHVtI9QvjbLQY",
@@ -27,7 +27,7 @@ class FirebaseSingleton implements IFirebase {
   }
 
   // debug
-  async getAllGames(){
+  async getAllGames() {
     console.log('fetching all game data');
     return new Promise<GameData[]>((resolve, reject) => {
       this.db.ref(`game`).once('value', resp => {
@@ -38,7 +38,7 @@ class FirebaseSingleton implements IFirebase {
     });
   }
   async kickPlayer(game: GameData, playerId: string) {
-    const {id, nominations, players, turn, votes} = game;
+    const { id, nominations, players, turn, votes } = game;
     nominations.roster = (nominations.roster || []).filter(pid => pid !== playerId);
     delete (nominations.tally || {})[playerId];
     delete (players || {})[playerId];
@@ -51,7 +51,7 @@ class FirebaseSingleton implements IFirebase {
     delete (votes.tally || {})[playerId];
     await this.updateNominations(id, nominations);
     await this.updatePlayers(id, players);
-    await this.updateTurnOrder(id, turn);
+    await this.updateTurn(id, turn);
     await this.updateVotes(id, votes);
   }
   deleteAllGames() {
@@ -74,14 +74,14 @@ class FirebaseSingleton implements IFirebase {
   updateRoles(gameId: string, data: RoleType[]) {
     return this.db.ref(`game/${gameId}/roles`).set(data);
   }
-  updateTurnOrder(gameId: string, data: TurnData | null) {
+  updateTurn(gameId: string, data: TurnData | null) {
     return this.db.ref(`game/${gameId}/turn`).set(data || null);
   }
   updateVotes(gameId: string, data: VoteData) {
     return this.db.ref(`game/${gameId}/votes`).set(data);
   }
 
-  async getGameData(gameId: string){
+  async getGameData(gameId: string) {
     console.log('fetching game data');
     return new Promise<GameData>((resolve, reject) => {
       this.db.ref(`game/${gameId}`).once('value', resp => {

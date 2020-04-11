@@ -18,7 +18,7 @@ export class ViewGame extends React.Component<Props, State> {
     const currentIndex = turn.order.indexOf(turn.current);
     const nextIndex = (currentIndex + 1) % turn.order.length;
     const newCurrent = turn.order[nextIndex];
-    FIREBASE.updateTurnOrder(id, {
+    FIREBASE.updateTurn(id, {
       ...turn,
       current: newCurrent,
     });
@@ -52,7 +52,7 @@ export class ViewGame extends React.Component<Props, State> {
         <h1>Game #{data.id}</h1>
         <div>i am: {me.name}</div>
         <div>host: {hostName}</div>
-        <br/>
+        <br />
         {turn && (
           <div>
             {isHost && (

@@ -1,8 +1,7 @@
 import React from 'react';
 import { BrowserStorage, UserState } from './Storage';
-import { VoteType, GameData, NominationType, shuffle } from './types';
+import { GameData, NominationType, shuffle } from './types';
 import { FIREBASE } from './firebase';
-import { RoleData, Roles } from './Role';
 import { HostBox } from './shared';
 
 interface Props {
