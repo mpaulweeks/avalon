@@ -47,11 +47,11 @@ export class CompRole extends React.Component<Props, State> {
             )}
             <div>you are: {myData.name}</div>
             <div>you see: {youSee.join(', ') || '(nobody)'}</div>
-            {data.nominations.roster.length && (
+            {data.nominations.roster.length ? 0(
               <div>
                 nomination: {data.nominations.roster.map(pid => data.players[pid].name).join(', ')}
               </div>
-            )}
+            ) : null}
           </div>
         ) : (
             <div>
