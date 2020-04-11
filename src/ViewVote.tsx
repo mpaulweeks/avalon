@@ -49,8 +49,9 @@ export class ViewVote extends React.Component<Props, State> {
       <div>
         <h1>Mission Vote</h1>
 
+        <h3> cast your mission vote </h3>
         {votes.tally[this.id] ? (
-          <h3> you have voted </h3>
+          <div> you have voted </div>
         ) : (
             <div>
               <button onClick={() => this.voteSuccess()}>vote SUCCESS</button>
@@ -58,8 +59,7 @@ export class ViewVote extends React.Component<Props, State> {
             </div>
           )}
 
-        <hr />
-
+        <br />
         <div>
           <button onClick={() => this.voteClear()}>clear all votes</button>
         </div>

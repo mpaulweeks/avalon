@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserStorage, UserState } from './Storage';
-import { GameData, NominationType, shuffle } from './types';
+import { GameData, NominationType, shuffle, MissionResultType } from './types';
 import { FIREBASE } from './firebase';
 import { HostBox } from './shared';
 
@@ -66,9 +66,15 @@ export class ViewNominate extends React.Component<Props, State> {
     const outOfRoster = Object.keys(players).filter(pid => !nominations.roster.includes(pid));
     outOfRoster.sort();
     const shuffledTally = shuffle(Object.keys(nominations.tally));
+
+    const currentMission = data.board.missions.filter(m => m.result === MissionResultType.Neutral)[0];
+    const currentNeeded = currentMission ? currentMission.required : '???';
+
     return (
       <div>
         <h1>Nominate for Mission</h1>
+
+        <div>This mission requires {currentNeeded} people.</div>
 
         <h3>Nominated:</h3>
         <div>
@@ -98,7 +104,7 @@ export class ViewNominate extends React.Component<Props, State> {
           </div>
         )}
 
-        <hr />
+        <h3>cast your vote for who goes on the mission</h3>
 
         {nominations.tally[this.id] && (
           <h3> you have voted </h3>
