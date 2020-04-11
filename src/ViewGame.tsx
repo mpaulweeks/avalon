@@ -4,17 +4,12 @@ import { BrowserStorage } from './Storage';
 import { GameData } from './types';
 
 interface Props {
+  isHost: boolean;
   data: GameData;
 }
-interface State {
-  isHost: boolean;
-}
+interface State { }
 
 export class ViewGame extends React.Component<Props, State> {
-  state: State = {
-    isHost: BrowserStorage.get().id === this.props.data.host,
-  };
-
   render() {
     const { data } = this.props;
     const host = data.host && data.players[data.host];

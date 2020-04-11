@@ -120,13 +120,14 @@ export class ViewHub extends React.Component<Props, State> {
 
   render() {
     const { view, storage, data } = this.state;
+    const isHost = !!data && BrowserStorage.get().id === data.host;
     return (
       <div>
         <nav>
           <ul>
             {data && (
               <li>
-                <span onClick={() => this.setState({ view: Views.Game })}>Game</span>
+                <span onClick={() => this.setState({ view: Views.Game })}>Game #{data.id}</span>
               </li>
             )}
             {data && (
@@ -149,10 +150,10 @@ export class ViewHub extends React.Component<Props, State> {
         </nav>
 
         {view === Views.Game && data && (
-          <ViewGame data={data} />
+          <ViewGame isHost={isHost} data={data} />
         )}
         {view === Views.Vote && data && (
-          <ViewVote data={data} />
+          <ViewVote isHost={isHost} data={data} />
         )}
         {view === Views.Lobby && !data && (
           <ViewLobby

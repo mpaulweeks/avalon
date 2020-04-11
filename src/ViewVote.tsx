@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserStorage } from './Storage';
-import { VoteType, Vote, GameData } from './types';
+import { VoteType, GameData } from './types';
 import { FIREBASE } from './firebase';
 
 interface Props {
+  isHost: boolean;
   data: GameData;
 }
 interface State { }
@@ -34,7 +35,8 @@ export class ViewVote extends React.Component<Props, State> {
   }
 
   render() {
-    const { votes } = this.props.data;
+    const { isHost, data } = this.props;
+    const { votes } = data;
     return (
       <div>
         <h1>Vote</h1>
@@ -52,18 +54,24 @@ export class ViewVote extends React.Component<Props, State> {
 
         <div>
           <button onClick={() => this.voteClear()}>clear all votes</button>
-          <button onClick={() => this.toggleReveal()}>{votes.showResults ? 'hide' : 'show'} votes</button>
         </div>
 
-        <hr />
+        {isHost && (
+          <div>
+            <hr />
+            <div>
+              admin controls: <button onClick={() => this.toggleReveal()}>{votes.showResults ? 'hide' : 'show'} votes</button>
+            </div>
+          </div>
+        )}
 
         <h3>results!</h3>
 
         {votes.showResults && Object.keys(votes.tally).length ? (
           <div>
-            {Object.keys(votes.tally).map(key => (
-              <div key={key}>
-                {key}: {votes.tally[key]}
+            {Object.values(votes.tally).map((vote, i) => (
+              <div key={i}>
+                {vote.toUpperCase()}
               </div>
             ))}
           </div>
