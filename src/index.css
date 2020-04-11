@@ -16,6 +16,8 @@ nav ul {
 }
 nav ul li {
   margin: 0 1em;
+  cursor: pointer;
+  text-decoration: underline;
 }
 nav ul li:first-child {
   margin-left: 0;

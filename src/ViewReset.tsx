@@ -8,6 +8,16 @@ interface Props {
 interface State {}
 
 export class ViewReset extends React.Component<Props, State> {
+  tryReset() {
+    const { game } = this.props.storage;
+    let confirmed = true;
+    if (game) {
+      confirmed = window.confirm("Are you sure you want to reset?\nIf you leave a game in progress, you will not be able to rejoin.");
+    }
+    if (confirmed) {
+      this.props.reset();
+    }
+  }
   render() {
     const { id, name, game } = this.props.storage;
     return (
@@ -17,7 +27,7 @@ export class ViewReset extends React.Component<Props, State> {
         <h3>name: {name}</h3>
         <h3>game: {game}</h3>
         <div>
-          <button onClick={() => this.props.reset()}>reset everything</button>
+          <button onClick={() => this.tryReset()}>reset everything</button>
         </div>
       </div>
     );

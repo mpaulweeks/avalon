@@ -4,7 +4,7 @@ import { ViewVote } from "./ViewVote";
 import { ViewLobby } from "./ViewLobby";
 import { ViewReset } from "./ViewReset";
 import { FIREBASE } from "./firebase";
-import { GameData } from "./types";
+import { GameData, isDebug } from "./types";
 import { BrowserStorage, randomId, UserState } from "./Storage";
 import { ViewGame } from "./ViewGame";
 import { ViewSetup } from "./ViewSetup";
@@ -125,9 +125,48 @@ export class ViewHub extends React.Component<Props, State> {
     });
   }
 
-  render() {
+  renderMain() {
     const { view, storage, data } = this.state;
     const isHost = !!data && BrowserStorage.get().id === data.host;
+    if (view === Views.Game && data) {
+      return <ViewGame isHost={isHost} data={data} storage={storage} />
+    }
+    if (view === Views.Setup && data) {
+      return <ViewSetup isHost={isHost} data={data} storage={storage} />
+    }
+    if (view === Views.Vote && data) {
+      return <ViewVote isHost={isHost} data={data} storage={storage} />
+    }
+
+    if (view === Views.Lobby && !data) {
+      return <ViewLobby
+        createGame={() => this.createGame()}
+        joinGame={id => this.joinGame(id)}
+      />
+    }
+
+    if (view === Views.Reset) {
+      return <ViewReset
+        storage={storage}
+        reset={() => this.reset()}
+      />
+    }
+    if (view === Views.Debug) {
+      return <ViewDebug />
+    }
+
+    return (
+      <div>
+        <h3>you have reached an invalid state :(</h3>
+        <div>view: {view}</div>
+        <div>data: {!!data}</div>
+        <h3>please try refreshing and/or reset your local state</h3>
+      </div>
+    )
+  }
+
+  render() {
+    const { storage, data } = this.state;
     return (
       <div>
         <nav>
@@ -139,12 +178,12 @@ export class ViewHub extends React.Component<Props, State> {
             )}
             {data && (
               <li>
-                <span onClick={() => this.setState({ view: Views.Setup })}>Setup</span>
+                <span onClick={() => this.setState({ view: Views.Vote })}>Vote</span>
               </li>
             )}
             {data && (
               <li>
-                <span onClick={() => this.setState({ view: Views.Vote })}>Vote</span>
+                <span onClick={() => this.setState({ view: Views.Setup })}>Setup</span>
               </li>
             )}
             {!data && (
@@ -155,9 +194,11 @@ export class ViewHub extends React.Component<Props, State> {
             <li>
               <span onClick={() => this.setState({ view: Views.Reset })}>Reset</span>
             </li>
-            <li>
-              <span onClick={() => this.setState({ view: Views.Debug })}>Debug</span>
-            </li>
+            {isDebug && (
+              <li>
+                <span onClick={() => this.setState({ view: Views.Debug })}>Debug</span>
+              </li>
+            )}
           </ul>
         </nav>
 
@@ -165,32 +206,8 @@ export class ViewHub extends React.Component<Props, State> {
           <CompRole data={data} storage={storage} />
         )}
 
-        {view === Views.Game && data && (
-          <ViewGame isHost={isHost} data={data} storage={storage} />
-        )}
-        {view === Views.Setup && data && (
-          <ViewSetup isHost={isHost} data={data} storage={storage} />
-        )}
-        {view === Views.Vote && data && (
-          <ViewVote isHost={isHost} data={data} storage={storage} />
-        )}
+        {this.renderMain()}
 
-        {view === Views.Lobby && !data && (
-          <ViewLobby
-            createGame={() => this.createGame()}
-            joinGame={id => this.joinGame(id)}
-          />
-        )}
-
-        {view === Views.Reset && (
-          <ViewReset
-            storage={storage}
-            reset={() => this.reset()}
-          />
-        )}
-        {view === Views.Debug && (
-          <ViewDebug />
-        )}
       </div>
     );
   }

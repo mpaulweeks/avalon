@@ -30,3 +30,4 @@ export interface GameData {
 }
 
 export const isDev = window.location.href.includes('localhost');
+export const isDebug = window.location.href.includes('#d');
