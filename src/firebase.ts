@@ -1,6 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/database';
-import { GameData, PlayerData, VoteData, TurnData } from './types';
+import { GameData, PlayerData, VoteData, TurnData, NominationData } from './types';
 import { RoleType } from './Role';
 
 const config = {
@@ -43,6 +43,9 @@ class FirebaseSingleton implements IFirebase {
   updateGame(data: GameData) {
     console.log('saving data:', data);
     this.db.ref(`game/${data.id}`).set(data);
+  }
+  updateNominations(gameId: string, data: NominationData) {
+    this.db.ref(`game/${gameId}/nominations`).set(data);
   }
   updatePlayers(gameId: string, data: PlayerData) {
     this.db.ref(`game/${gameId}/players`).set(data);

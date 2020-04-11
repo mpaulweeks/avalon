@@ -1,34 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { RoleData, RoleType, RoleTypes } from './Role';
-import { GameData } from './types';
+import { GameData, shuffle } from './types';
 import { FIREBASE } from './firebase';
 import { UserState } from './Storage';
-
-/**
- * Randomly shuffle an array
- * https://stackoverflow.com/a/2450976/1293256
- * @param  {Array} array The array to shuffle
- * @return {String}      The first item in the shuffled array
- */
-function shuffle<T>(orig: T[]): T[] {
-  const array = orig.concat();
-	var currentIndex = array.length;
-	var temporaryValue, randomIndex;
-
-	// While there remain elements to shuffle...
-	while (0 !== currentIndex) {
-		// Pick a remaining element...
-		randomIndex = Math.floor(Math.random() * currentIndex);
-		currentIndex -= 1;
-
-		// And swap it with the current element.
-		temporaryValue = array[currentIndex];
-		array[currentIndex] = array[randomIndex];
-		array[randomIndex] = temporaryValue;
-	}
-	return array;
-};
+import { HostBox } from './shared';
 
 const DeleteLink = styled.span`
   cursor: pointer;
@@ -139,14 +115,14 @@ export class ViewSetup extends React.Component<Props, State> {
         </div>
 
         {isHost && (
-          <div>
-            <h3>Add Roles</h3>
+          <HostBox>
             {isAssigned ? (
               <div>
                 <button onClick={() => this.clear()}>CLEAR ROLES (reset game)</button>
               </div>
             ) : (
               <div>
+                <h3>Add Roles</h3>
                 {this.renderAdd(RoleTypes.filter(r => RoleData[r].isRed))}
                 <br/>
                 {this.renderAdd(RoleTypes.filter(r => !RoleData[r].isRed))}
@@ -157,7 +133,7 @@ export class ViewSetup extends React.Component<Props, State> {
                 )}
               </div>
             )}
-          </div>
+          </HostBox>
         )}
 
         <h3>Red Roles ({redRoles.length})</h3>

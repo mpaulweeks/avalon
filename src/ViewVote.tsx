@@ -3,6 +3,7 @@ import { BrowserStorage, UserState } from './Storage';
 import { VoteType, GameData } from './types';
 import { FIREBASE } from './firebase';
 import { RoleData, Roles } from './Role';
+import { HostBox } from './shared';
 
 interface Props {
   isHost: boolean;
@@ -46,7 +47,7 @@ export class ViewVote extends React.Component<Props, State> {
     const canThrowRed = myData.isRed || !me.role;
     return (
       <div>
-        <h1>Vote</h1>
+        <h1>Mission Vote</h1>
 
         {votes.tally[this.id] ? (
           <h3> you have voted </h3>
@@ -64,12 +65,9 @@ export class ViewVote extends React.Component<Props, State> {
         </div>
 
         {isHost && (
-          <div>
-            <hr />
-            <div>
-              admin controls: <button onClick={() => this.toggleReveal()}>{votes.showResults ? 'hide' : 'show'} votes</button>
-            </div>
-          </div>
+          <HostBox>
+            <button onClick={() => this.toggleReveal()}>{votes.showResults ? 'hide' : 'show'} votes</button>
+          </HostBox>
         )}
 
         <h3>results!</h3>

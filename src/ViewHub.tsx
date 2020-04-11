@@ -9,12 +9,14 @@ import { BrowserStorage, randomId, UserState } from "./Storage";
 import { ViewGame } from "./ViewGame";
 import { ViewSetup } from "./ViewSetup";
 import { CompRole } from "./CompRole";
+import { ViewNominate } from "./ViewNominate";
 
-type ViewType = 'lobby' | 'game' | 'setup' | 'vote' | 'reset' | 'debug';
+type ViewType = 'lobby' | 'game' | 'setup' | 'nominate' | 'vote' | 'reset' | 'debug';
 const Views = {
   Lobby: 'lobby' as ViewType,
   Game: 'game' as ViewType,
   Setup: 'setup' as ViewType,
+  Nominate: 'nominate' as ViewType,
   Vote: 'vote' as ViewType,
   Reset: 'reset' as ViewType,
   Debug: 'debug' as ViewType,
@@ -54,6 +56,10 @@ export class ViewHub extends React.Component<Props, State> {
     return {
       id: game,
       host: undefined,
+      nominations: {
+        showResults: false,
+        tally: {},
+      },
       roles: [],
       players: {
         [id]: {
@@ -85,7 +91,9 @@ export class ViewHub extends React.Component<Props, State> {
       };
       FIREBASE.updatePlayers(data.id, players);
     }
-    this.setState({ view: Views.Game, });
+    // this.setState({ view: Views.Game, });
+    // todo debug
+    this.setState({ view: Views.Nominate, });
     FIREBASE.joinGame(data.id, data => this.onReceive(data));
   }
   private onReceive(data: GameData) {
@@ -94,6 +102,10 @@ export class ViewHub extends React.Component<Props, State> {
       roles: [],
       turn: null,
       ...data,
+      nominations: {
+        tally: {},
+        ...data.nominations,
+      },
       votes: {
         tally: {},
         ...data.votes,
@@ -135,6 +147,9 @@ export class ViewHub extends React.Component<Props, State> {
     }
     if (view === Views.Setup && data) {
       return <ViewSetup isHost={isHost} data={data} storage={storage} />
+    }
+    if (view === Views.Nominate && data) {
+      return <ViewNominate isHost={isHost} data={data} storage={storage} />
     }
     if (view === Views.Vote && data) {
       return <ViewVote isHost={isHost} data={data} storage={storage} />
@@ -180,7 +195,12 @@ export class ViewHub extends React.Component<Props, State> {
             )}
             {data && (
               <li>
-                <span onClick={() => this.setState({ view: Views.Vote })}>Vote</span>
+                <span onClick={() => this.setState({ view: Views.Nominate })}>Nominate</span>
+              </li>
+            )}
+            {data && (
+              <li>
+                <span onClick={() => this.setState({ view: Views.Vote })}>Mission</span>
               </li>
             )}
             {data && (

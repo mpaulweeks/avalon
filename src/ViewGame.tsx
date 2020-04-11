@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserStorage, UserState } from './Storage';
 import { GameData } from './types';
 import { FIREBASE } from './firebase';
+import { HostBox } from './shared';
 
 interface Props {
   data: GameData;
@@ -43,11 +44,11 @@ export class ViewGame extends React.Component<Props, State> {
         {turn ? (
           <div>
             {isHost && (
-              <div>
+              <HostBox>
                 <button onClick={() => this.nextTurn()}>
                   Next Turn
                 </button>
-              </div>
+              </HostBox>
             )}
           </div>
         ) : (
