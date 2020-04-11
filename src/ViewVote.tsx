@@ -1,11 +1,13 @@
 import React from 'react';
-import { BrowserStorage } from './Storage';
+import { BrowserStorage, UserState } from './Storage';
 import { VoteType, GameData } from './types';
 import { FIREBASE } from './firebase';
+import { RoleData, Roles } from './Role';
 
 interface Props {
   isHost: boolean;
   data: GameData;
+  storage: UserState;
 }
 interface State { }
 
@@ -35,8 +37,13 @@ export class ViewVote extends React.Component<Props, State> {
   }
 
   render() {
-    const { isHost, data } = this.props;
+    const { isHost, storage, data } = this.props;
     const { votes } = data;
+    const me = data.players[storage.id] || {
+      name: storage.name,
+    };
+    const myData = RoleData[me.role || Roles.BasicBlue];
+    const canThrowRed = myData.isRed || !me.role;
     return (
       <div>
         <h1>Vote</h1>
@@ -46,7 +53,7 @@ export class ViewVote extends React.Component<Props, State> {
         ) : (
             <div>
               <button onClick={() => this.voteSuccess()}>vote SUCCESS</button>
-              <button onClick={() => this.voteFail()}>vote FAIL</button>
+              {canThrowRed && <button onClick={() => this.voteFail()}>vote FAIL</button>}
             </div>
           )}
 

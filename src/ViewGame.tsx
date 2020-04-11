@@ -1,11 +1,12 @@
 import React from 'react';
 import { RoleData, Roles } from './Role';
-import { BrowserStorage } from './Storage';
+import { BrowserStorage, UserState } from './Storage';
 import { GameData } from './types';
 
 interface Props {
-  isHost: boolean;
   data: GameData;
+  isHost: boolean;
+  storage: UserState;
 }
 interface State { }
 
@@ -37,13 +38,6 @@ export class ViewGame extends React.Component<Props, State> {
           </ul>
         </div>
 
-        {me.role && (
-          <div>
-            <br />
-            <div>you are: {myData.name}</div>
-            <div>you see: {youSee.join(', ')}</div>
-          </div>
-        )}
       </div>
     );
   }

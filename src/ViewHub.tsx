@@ -8,6 +8,7 @@ import { GameData } from "./types";
 import { BrowserStorage, randomId, UserState } from "./Storage";
 import { ViewGame } from "./ViewGame";
 import { ViewSetup } from "./ViewSetup";
+import { CompRole } from "./CompRole";
 
 type ViewType = 'lobby' | 'game' | 'setup' | 'vote' | 'reset' | 'debug';
 const Views = {
@@ -156,14 +157,18 @@ export class ViewHub extends React.Component<Props, State> {
           </ul>
         </nav>
 
+        {data && (
+          <CompRole data={data} storage={storage} />
+        )}
+
         {view === Views.Game && data && (
-          <ViewGame isHost={isHost} data={data} />
+          <ViewGame isHost={isHost} data={data} storage={storage} />
         )}
         {view === Views.Setup && data && (
-          <ViewSetup isHost={isHost} data={data} />
+          <ViewSetup isHost={isHost} data={data} storage={storage} />
         )}
         {view === Views.Vote && data && (
-          <ViewVote isHost={isHost} data={data} />
+          <ViewVote isHost={isHost} data={data} storage={storage} />
         )}
 
         {view === Views.Lobby && !data && (
