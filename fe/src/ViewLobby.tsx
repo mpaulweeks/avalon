@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserStorage, UserState, randomId } from './Storage';
 import { ViewGame } from './ViewGame';
+import { hri } from 'human-readable-ids';
 
 interface Props { }
 interface State {
@@ -14,7 +15,7 @@ export class ViewLobby extends React.Component<Props, State> {
   state: State = {
     storage: BrowserStorage.get(),
     isHost: false,
-    tempName: '',
+    tempName: hri.random(),
     tempJoin: '',
   };
 

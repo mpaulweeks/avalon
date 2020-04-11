@@ -25,22 +25,22 @@ export class ViewVote extends WebSocketView<Props, State, Data> {
   voteSuccess() {
     const newData = { ...this.state.data, };
     newData.votes[this.id] = 'success';
-    this.message(newData);
+    // this.message(newData);
   }
   voteFail() {
     const newData = { ...this.state.data, };
     newData.votes[this.id] = 'fail';
-    this.message(newData);
+    // this.message(newData);
   }
   voteClear() {
     const newData = { ...this.state.data, };
     newData.votes = {};
-    this.message(newData);
+    // this.message(newData);
   }
   toggleReveal() {
     const newData = { ...this.state.data, };
     newData.showResults = !newData.showResults;
-    this.message(newData);
+    // this.message(newData);
   }
 
   render() {

@@ -1,3 +1,5 @@
+import { hri } from "human-readable-ids";
+
 export interface StorageLayer {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
@@ -16,18 +18,22 @@ export interface UserState {
 export class BrowserStorage {
   static store: StorageLayer = window.localStorage;
 
+  static reset() {
+    this.set({
+      id: hri.random(),
+      name: undefined,
+      game: undefined,
+    });
+  }
   static set(data: UserState) {
     this.store.setItem('state', JSON.stringify(data));
   }
   static get(): UserState {
-    const stored = this.store.getItem('state');
+    let stored = this.store.getItem('state');
     if (!stored) {
-      const defaultState = {
-        id: randomId(6),
-      };
-      this.set(defaultState);
-      return defaultState;
+      this.reset();
+      stored = this.store.getItem('state');
     }
-    return JSON.parse(stored) as UserState;
+    return JSON.parse(stored as any) as UserState;
   }
 }

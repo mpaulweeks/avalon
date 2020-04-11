@@ -7,7 +7,7 @@
     "predeploy": "cd be && npm run build && cd ../fe && npm run build",
     "deploybe": "cd be && npm run deploy",
     "deployfe": "gh-pages -d fe/build",
-    "deploy": "npm run deploybe && npm run deployfe",
+    "deploy": "npm run deployfe",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

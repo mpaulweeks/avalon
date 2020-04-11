@@ -2,19 +2,9 @@ import React from 'react';
 import { WebSocketView, StateBase } from './WebSocketView';
 import { RoleData, RoleType, Roles } from './Role';
 import { BrowserStorage } from './Storage';
+import { FIREBASE } from './firebase';
+import { GameData } from './types';
 
-interface GameData {
-  id: string;
-  host?: string;
-  roles: string[];
-  players: {
-    [key: string]: {
-      id: string;
-      name: string;
-      role?: RoleType;
-    };
-  };
-}
 interface Props {
   isHost: boolean;
   game: string;
@@ -35,25 +25,29 @@ export class ViewGame extends WebSocketView<Props, State, GameData> {
       },
     },
   };
-  path() { return `game/${BrowserStorage.get().game || 0}`; }
 
-  // overrides
-  onOpen() {
+  componentDidMount() {
+    this.join();
+  }
+
+  async join() {
+    const { data } = this.state;
     if (this.props.isHost) {
-      this.message(this.state.data);
+      FIREBASE.updateGame(data);
+    } else {
+      // if joining a game, ensure self and broadcast
+      const hostData = await FIREBASE.getGameData(data.id);
+      hostData.players = {
+        ...data.players,
+        ...hostData.players,
+      };
+      FIREBASE.updateGame(hostData);
+      this.onReceive(hostData);
     }
+    FIREBASE.joinGame(data.id, data => this.onReceive(data));
   }
   onReceive(data: GameData) {
     console.log('received:', data);
-    const current = this.state.data;
-    if (!current.host) {
-      // if joining a game, ensure self and broadcast
-      data.players = {
-        ...current.players,
-        ...data.players,
-      };
-      this.message(data);
-    }
     this.setState({ data: data, });
   }
 
@@ -73,8 +67,16 @@ export class ViewGame extends WebSocketView<Props, State, GameData> {
     return (
       <div>
         <h1>Game #{data.id}</h1>
+        <div>i am: {me.name}</div>
         <div>host: {hostName}</div>
-        <div>players: {Object.values(data.players).map(o => o.id + '/' + o.name).join(', ')}</div>
+        <br/>
+        <div>players:
+          <ul>
+            {Object.values(data.players).map(o => (
+              <li>{o.name}</li>
+            ))}
+          </ul>
+        </div>
 
         {me.role && (
           <div>
