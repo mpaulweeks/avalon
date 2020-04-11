@@ -1,5 +1,7 @@
 import { RoleType } from "./Role";
 
+export const Version = '1.0.0';
+
 export type MissionResult = 'blue' | 'red' | 'neutral';
 export const MissionResultType = {
   Blue: 'blue victory' as MissionResult,

@@ -4,7 +4,7 @@ import { ViewVote } from "./ViewVote";
 import { ViewLobby } from "./ViewLobby";
 import { ViewReset } from "./ViewReset";
 import { FIREBASE } from "./firebase";
-import { GameData, isDebug, getBoardFor } from "./types";
+import { GameData, isDebug, getBoardFor, Version } from "./types";
 import { BrowserStorage, randomId, UserState } from "./Storage";
 import { ViewGame } from "./ViewGame";
 import { ViewSetup } from "./ViewSetup";
@@ -226,6 +226,9 @@ export class ViewHub extends React.Component<Props, State> {
                 <span onClick={() => this.setState({ view: Views.Debug })}>Debug</span>
               </li>
             )}
+            <li>
+              v.{Version}
+            </li>
           </ul>
         </nav>
 
