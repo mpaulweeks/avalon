@@ -1,5 +1,4 @@
 import React from 'react';
-import { RoleData, Roles } from './Role';
 import { BrowserStorage, UserState } from './Storage';
 import { GameData } from './types';
 
@@ -20,9 +19,6 @@ export class ViewGame extends React.Component<Props, State> {
     const me = data.players[storage.id] || {
       name: storage.name,
     };
-    const myData = RoleData[me.role || Roles.BasicBlue];
-    const others = Object.keys(data.players).filter(id => id !== storage.id).map(key => data.players[key]);
-    const youSee = others.filter(o => o.role && myData.sees.includes(o.role)).map(o => o.name);
 
     return (
       <div>

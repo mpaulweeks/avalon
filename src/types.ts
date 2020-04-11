@@ -4,7 +4,7 @@ export interface PlayerData {
   [key: string]: {
     id: string;
     name: string;
-    role?: RoleType;
+    role?: RoleType | null;
   }
 };
 

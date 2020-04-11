@@ -80,14 +80,20 @@ export class ViewSetup extends React.Component<Props, State> {
     });
     FIREBASE.updatePlayers(id, players);
   }
+  clear() {
+    const { id, players } = this.props.data;
+    Object.keys(players).forEach((id, index) => {
+      players[id].role = null; // null for Firebase
+    });
+    FIREBASE.updatePlayers(id, players);
+  }
 
-  renderRoles(roles: RoleType[]) {
-    const { isHost } = this.props;
+  renderRoles(roles: RoleType[], canEdit: boolean) {
     return (
       <ul>
         {roles.map((role, i) => (
         <li key={i}>
-          {isHost && <DeleteLink onClick={() => this.removeRole(role)}>X</DeleteLink>}
+          {canEdit && <DeleteLink onClick={() => this.removeRole(role)}>X</DeleteLink>}
           {RoleData[role].name}
         </li>
         ))}
@@ -109,6 +115,12 @@ export class ViewSetup extends React.Component<Props, State> {
     const { isHost, data } = this.props;
     const { errorMessage } = this.state;
 
+    const isAssigned = Object.values(data.players).some(p => p.role);
+    const canEdit = isHost && !isAssigned;
+
+    const redRoles = Object.values(data.roles).filter(r => RoleData[r].isRed);
+    const blueRoles = Object.values(data.roles).filter(r => !RoleData[r].isRed);
+
     return (
       <div>
         <h1>Setup</h1>
@@ -116,26 +128,37 @@ export class ViewSetup extends React.Component<Props, State> {
         <h3>
           Players: {Object.keys(data.players).length}
         </h3>
+        <div>
+          {Object.values(data.players).map(o => o.name).join(', ')}
+        </div>
 
         {isHost && (
           <div>
             <h3>Add Roles</h3>
-            {this.renderAdd(RoleTypes.filter(r => RoleData[r].isRed))}
-            <br/>
-            {this.renderAdd(RoleTypes.filter(r => !RoleData[r].isRed))}
-            <br/>
-            <button onClick={() => this.assign()}>SHUFFLE ROLES</button>
-            {errorMessage && (
-              <ErrorMessage>{errorMessage}</ErrorMessage>
+            {isAssigned ? (
+              <div>
+                <button onClick={() => this.clear()}>CLEAR ROLES (reset game)</button>
+              </div>
+            ) : (
+              <div>
+                {this.renderAdd(RoleTypes.filter(r => RoleData[r].isRed))}
+                <br/>
+                {this.renderAdd(RoleTypes.filter(r => !RoleData[r].isRed))}
+                <br/>
+                <button onClick={() => this.assign()}>ASSIGN ROLES</button>
+                {errorMessage && (
+                  <ErrorMessage>{errorMessage}</ErrorMessage>
+                )}
+              </div>
             )}
           </div>
         )}
 
-        <h3>Red Roles</h3>
-        {this.renderRoles(Object.values(data.roles).filter(r => RoleData[r].isRed))}
+        <h3>Red Roles ({redRoles.length})</h3>
+        {this.renderRoles(redRoles, canEdit)}
 
-        <h3>Blue Roles</h3>
-        {this.renderRoles(Object.values(data.roles).filter(r => !RoleData[r].isRed))}
+        <h3>Blue Roles ({blueRoles.length})</h3>
+        {this.renderRoles(blueRoles, canEdit)}
       </div>
     );
   }
