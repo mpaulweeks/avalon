@@ -1,47 +1,47 @@
 import React from 'react';
-import { WebSocketView, StateBase } from './WebSocketView';
 import { BrowserStorage } from './Storage';
-import { VoteType } from './types';
+import { VoteType, Vote } from './types';
+import { FIREBASE } from './firebase';
 
-interface Data {
-  showResults: boolean;
-  votes: {
-    [key: string]: string,
+interface Props { }
+interface State {
+  data: {
+    showResults: boolean;
+    tally: {
+      [key: string]: Vote,
+    };
   };
 }
-interface Props { }
-interface State extends StateBase<Data> { }
 
-export class ViewVote extends WebSocketView<Props, State, Data> {
+export class ViewVote extends React.Component<Props, State> {
+  id = BrowserStorage.get().id;
+  game = BrowserStorage.get().game || '???';
   state: State = {
     data: {
       showResults: false,
-      votes: {},
+      tally: {},
     },
   };
-  path() {
-    return `vote/${BrowserStorage.get().game || 0}`;
-  }
 
   voteSuccess() {
     const newData = { ...this.state.data, };
-    newData.votes[this.id] = VoteType.Success;
-    // this.message(newData);
+    newData.tally[this.id] = VoteType.Success;
+    FIREBASE.updateVotes(this.game, newData);
   }
   voteFail() {
     const newData = { ...this.state.data, };
-    newData.votes[this.id] = VoteType.Fail;
-    // this.message(newData);
+    newData.tally[this.id] = VoteType.Fail;
+    FIREBASE.updateVotes(this.game, newData);
   }
   voteClear() {
     const newData = { ...this.state.data, };
-    newData.votes = {};
-    // this.message(newData);
+    newData.tally = {};
+    FIREBASE.updateVotes(this.game, newData);
   }
   toggleReveal() {
     const newData = { ...this.state.data, };
     newData.showResults = !newData.showResults;
-    // this.message(newData);
+    FIREBASE.updateVotes(this.game, newData);
   }
 
   render() {
@@ -54,7 +54,7 @@ export class ViewVote extends WebSocketView<Props, State, Data> {
       <div>
         <h1>Vote</h1>
 
-        {data.votes[this.id] ? (
+        {data.tally[this.id] ? (
           <h3> you have voted </h3>
         ) : (
             <div>
@@ -74,17 +74,17 @@ export class ViewVote extends WebSocketView<Props, State, Data> {
 
         <h3>results!</h3>
 
-        {data.showResults && Object.keys(data.votes).length ? (
+        {data.showResults && Object.keys(data.tally).length ? (
           <div>
-            {Object.keys(data.votes).map(key => (
+            {Object.keys(data.tally).map(key => (
               <div key={key}>
-                {key}: {data.votes[key]}
+                {key}: {data.tally[key]}
               </div>
             ))}
           </div>
         ) : (
             <p>
-              {Object.keys(data.votes).length} votes counted
+              {Object.keys(data.tally).length} votes counted
             </p>
           )}
       </div>

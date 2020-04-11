@@ -23,7 +23,10 @@ export class ViewGame extends WebSocketView<Props, State, GameData> {
           name: BrowserStorage.get().name || '???',
         },
       },
-      votes: {},
+      votes: {
+        showResults: false,
+        tally: {},
+      },
     },
   };
 

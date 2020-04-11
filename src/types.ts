@@ -15,7 +15,10 @@ export const VoteType = {
 };
 
 export interface VoteData {
-  [key: string]: Vote;
+  showResults: boolean;
+  tally: {
+    [key: string]: Vote;
+  };
 };
 
 export interface GameData {
