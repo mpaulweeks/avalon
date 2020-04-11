@@ -1,61 +1,22 @@
 import React from 'react';
-import { WebSocketView, StateBase } from './WebSocketView';
-import { RoleData, RoleType, Roles } from './Role';
+import { RoleData, Roles } from './Role';
 import { BrowserStorage } from './Storage';
-import { FIREBASE } from './firebase';
 import { GameData } from './types';
 
 interface Props {
-  isHost: boolean;
-  game: string;
+  data: GameData;
 }
-interface State extends StateBase<GameData> { }
+interface State {
+  isHost: boolean;
+}
 
-export class ViewGame extends WebSocketView<Props, State, GameData> {
+export class ViewGame extends React.Component<Props, State> {
   state: State = {
-    data: {
-      id: this.props.game,
-      host: this.props.isHost ? BrowserStorage.get().id : undefined,
-      roles: [],
-      players: {
-        [BrowserStorage.get().id]: {
-          id: BrowserStorage.get().id,
-          name: BrowserStorage.get().name || '???',
-        },
-      },
-      votes: {
-        showResults: false,
-        tally: {},
-      },
-    },
+    isHost: BrowserStorage.get().id === this.props.data.host,
   };
 
-  componentDidMount() {
-    this.join();
-  }
-
-  async join() {
-    const { data } = this.state;
-    if (this.props.isHost) {
-      FIREBASE.updateGame(data);
-    } else {
-      // if joining a game, ensure self and broadcast
-      const hostData = await FIREBASE.getGameData(data.id);
-      const players = {
-        ...data.players,
-        ...hostData.players,
-      };
-      FIREBASE.updatePlayers(data.id, players);
-    }
-    FIREBASE.joinGame(data.id, data => this.onReceive(data));
-  }
-  onReceive(data: GameData) {
-    console.log('received:', data);
-    this.setState({ data: data, });
-  }
-
   render() {
-    const { data } = this.state;
+    const { data } = this.props;
     const host = data.host && data.players[data.host];
     const hostName = host ? host.name : '???';
 

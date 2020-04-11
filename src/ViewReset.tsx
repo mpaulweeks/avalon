@@ -2,25 +2,15 @@ import React from 'react';
 import { BrowserStorage, randomId, UserState } from './Storage';
 import { FIREBASE } from './firebase';
 
-interface Props { }
-interface State {
+interface Props {
   storage: UserState,
+  reset(): void;
 }
+interface State {}
 
 export class ViewReset extends React.Component<Props, State> {
-  state: State = {
-    storage: BrowserStorage.get(),
-  };
-  reset() {
-    const { storage } = this.state;
-    if (storage.game) {
-      FIREBASE.leaveGame(storage.game);
-    }
-    BrowserStorage.reset();
-    this.setState({ storage: BrowserStorage.get(), });
-  }
   render() {
-    const { id, name, game } = this.state.storage;
+    const { id, name, game } = this.props.storage;
     return (
       <div>
         <h1>Current Local State</h1>
@@ -28,7 +18,7 @@ export class ViewReset extends React.Component<Props, State> {
         <h3>name: {name}</h3>
         <h3>game: {game}</h3>
         <div>
-          <button onClick={() => this.reset()}>reset everything</button>
+          <button onClick={() => this.props.reset()}>reset everything</button>
         </div>
       </div>
     );

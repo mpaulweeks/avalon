@@ -1,12 +1,13 @@
 import React from 'react';
-import { BrowserStorage, UserState, randomId } from './Storage';
-import { ViewGame } from './ViewGame';
+import { BrowserStorage, UserState } from './Storage';
 import { hri } from 'human-readable-ids';
 
-interface Props { }
+interface Props {
+  createGame(): void;
+  joinGame(id: string): void;
+}
 interface State {
   storage: UserState;
-  isHost: boolean;
   tempName: string;
   tempJoin: string;
 }
@@ -14,7 +15,6 @@ interface State {
 export class ViewLobby extends React.Component<Props, State> {
   state: State = {
     storage: BrowserStorage.get(),
-    isHost: false,
     tempName: hri.random().split('-')[0],
     tempJoin: '',
   };
@@ -26,30 +26,9 @@ export class ViewLobby extends React.Component<Props, State> {
     });
     this.setState({ storage: BrowserStorage.get(), });
   }
-  createGame() {
-    BrowserStorage.set({
-      ...BrowserStorage.get(),
-      game: randomId(3),
-    });
-    this.setState({
-      storage: BrowserStorage.get(),
-      isHost: true,
-    });
-  }
-  joinGame() {
-    BrowserStorage.set({
-      ...BrowserStorage.get(),
-      game: this.state.tempJoin,
-    });
-    this.setState({ storage: BrowserStorage.get(), });
-  }
 
   render() {
-    const { storage, isHost, tempName, tempJoin } = this.state;
-
-    if (storage.game) {
-      return <ViewGame isHost={isHost} game={storage.game} />
-    }
+    const { storage, tempName, tempJoin } = this.state;
 
     if (!storage.name) {
       return (
@@ -66,14 +45,14 @@ export class ViewLobby extends React.Component<Props, State> {
         <h1>Find a Game</h1>
 
         <div>
-          <button onClick={() => this.createGame()}>create game</button>
+          <button onClick={() => this.props.createGame()}>create game</button>
         </div>
 
         <hr />
 
         <div>
           <input value={tempJoin} onChange={event => this.setState({ tempJoin: event.target.value, })} />
-          <button onClick={() => this.joinGame()}>join game</button>
+          <button onClick={() => this.props.joinGame(tempJoin)}>join game</button>
         </div>
       </div>
     );

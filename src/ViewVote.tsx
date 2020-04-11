@@ -1,60 +1,45 @@
 import React from 'react';
 import { BrowserStorage } from './Storage';
-import { VoteType, Vote } from './types';
+import { VoteType, Vote, GameData } from './types';
 import { FIREBASE } from './firebase';
 
-interface Props { }
-interface State {
-  data: {
-    showResults: boolean;
-    tally: {
-      [key: string]: Vote,
-    };
-  };
+interface Props {
+  data: GameData;
 }
+interface State { }
 
 export class ViewVote extends React.Component<Props, State> {
   id = BrowserStorage.get().id;
-  game = BrowserStorage.get().game || '???';
-  state: State = {
-    data: {
-      showResults: false,
-      tally: {},
-    },
-  };
+  state: State = {};
 
   voteSuccess() {
-    const newData = { ...this.state.data, };
-    newData.tally[this.id] = VoteType.Success;
-    FIREBASE.updateVotes(this.game, newData);
+    const newVotes = { ...this.props.data.votes, };
+    newVotes.tally[this.id] = VoteType.Success;
+    FIREBASE.updateVotes(this.props.data.id, newVotes);
   }
   voteFail() {
-    const newData = { ...this.state.data, };
-    newData.tally[this.id] = VoteType.Fail;
-    FIREBASE.updateVotes(this.game, newData);
+    const newVotes = { ...this.props.data.votes, };
+    newVotes.tally[this.id] = VoteType.Fail;
+    FIREBASE.updateVotes(this.props.data.id, newVotes);
   }
   voteClear() {
-    const newData = { ...this.state.data, };
-    newData.tally = {};
-    FIREBASE.updateVotes(this.game, newData);
+    const newVotes = { ...this.props.data.votes, };
+    newVotes.tally = {};
+    FIREBASE.updateVotes(this.props.data.id, newVotes);
   }
   toggleReveal() {
-    const newData = { ...this.state.data, };
-    newData.showResults = !newData.showResults;
-    FIREBASE.updateVotes(this.game, newData);
+    const newVotes = { ...this.props.data.votes, };
+    newVotes.showResults = !newVotes.showResults;
+    FIREBASE.updateVotes(this.props.data.id, newVotes);
   }
 
   render() {
-    const { data } = this.state;
-
-    if (!BrowserStorage.get().game) {
-      return <h3>you must be in a game to vote</h3>;
-    }
+    const { votes } = this.props.data;
     return (
       <div>
         <h1>Vote</h1>
 
-        {data.tally[this.id] ? (
+        {votes.tally[this.id] ? (
           <h3> you have voted </h3>
         ) : (
             <div>
@@ -67,24 +52,24 @@ export class ViewVote extends React.Component<Props, State> {
 
         <div>
           <button onClick={() => this.voteClear()}>clear all votes</button>
-          <button onClick={() => this.toggleReveal()}>{data.showResults ? 'hide' : 'show'} votes</button>
+          <button onClick={() => this.toggleReveal()}>{votes.showResults ? 'hide' : 'show'} votes</button>
         </div>
 
         <hr />
 
         <h3>results!</h3>
 
-        {data.showResults && Object.keys(data.tally).length ? (
+        {votes.showResults && Object.keys(votes.tally).length ? (
           <div>
-            {Object.keys(data.tally).map(key => (
+            {Object.keys(votes.tally).map(key => (
               <div key={key}>
-                {key}: {data.tally[key]}
+                {key}: {votes.tally[key]}
               </div>
             ))}
           </div>
         ) : (
             <p>
-              {Object.keys(data.tally).length} votes counted
+              {Object.keys(votes.tally).length} votes counted
             </p>
           )}
       </div>
