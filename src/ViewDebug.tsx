@@ -27,6 +27,7 @@ export class ViewDebug extends React.Component<Props, State> {
         {games.map(game => (
           <div key={game.id}>{game.id}: {Object.values(game.players).map(p => p.name).join(', ')}</div>
         ))}
+        <button onClick={() => FIREBASE.deleteAllGames()}> delete all </button>
       </div>
     );
   }

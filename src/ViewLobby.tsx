@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserStorage, UserState } from './Storage';
 import { hri } from 'human-readable-ids';
+import { isDev } from './types';
 
 interface Props {
   createGame(): void;
@@ -15,7 +16,7 @@ interface State {
 export class ViewLobby extends React.Component<Props, State> {
   state: State = {
     storage: BrowserStorage.get(),
-    tempName: hri.random().split('-')[0],
+    tempName: isDev ? hri.random().split('-')[0] : '',
     tempJoin: '',
   };
 
@@ -45,13 +46,19 @@ export class ViewLobby extends React.Component<Props, State> {
         <h1>Find a Game</h1>
 
         <div>
-          <button onClick={() => this.props.createGame()}>create game</button>
+          <button onClick={() => this.props.createGame()}>create new game</button>
         </div>
 
-        <hr />
+        <h3>or</h3>
 
         <div>
-          <input value={tempJoin} onChange={event => this.setState({ tempJoin: event.target.value, })} />
+          <input
+            value={tempJoin}
+            onChange={event => this.setState({ tempJoin: event.target.value, })}
+            placeholder="enter game id"
+          />
+          <br/>
+          <br/>
           <button onClick={() => this.props.joinGame(tempJoin)}>join game</button>
         </div>
       </div>

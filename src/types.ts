@@ -28,3 +28,5 @@ export interface GameData {
   players: PlayerData;
   votes: VoteData;
 }
+
+export const isDev = window.location.href.includes('localhost');

@@ -23,7 +23,6 @@ class FirebaseSingleton implements IFirebase {
 
   constructor() {
     firebase.initializeApp(config);
-    // firebase.analytics();
     this.db = firebase.database();
   }
 
@@ -32,10 +31,13 @@ class FirebaseSingleton implements IFirebase {
     return new Promise<GameData[]>((resolve, reject) => {
       this.db.ref(`game`).once('value', resp => {
         const data = resp.val();
-        console.log('got:', data)
-        resolve(Object.values(data) as GameData[]);
+        console.log('got all games:', data)
+        resolve(Object.values(data || {}) as GameData[]);
       });
     });
+  }
+  deleteAllGames() {
+    this.db.ref(`game`).set({});
   }
 
   updateGame(data: GameData) {
@@ -57,7 +59,7 @@ class FirebaseSingleton implements IFirebase {
     return new Promise<GameData>((resolve, reject) => {
       this.db.ref(`game/${gameId}`).once('value', resp => {
         const data = resp.val();
-        console.log('got:', data)
+        console.log('got game data:', data)
         resolve(data as GameData);
       });
     });

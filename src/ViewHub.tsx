@@ -69,18 +69,22 @@ export class ViewHub extends React.Component<Props, State> {
   }
 
   private async join(data: GameData) {
-    this.setState({ view: Views.Game, });
     if (data.host) {
       FIREBASE.updateGame(data);
     } else {
       // if joining a game, ensure self and broadcast
       const hostData = await FIREBASE.getGameData(data.id);
+      if (!hostData) {
+        this.reset();
+        return;
+      }
       const players = {
         ...data.players,
         ...hostData.players,
       };
       FIREBASE.updatePlayers(data.id, players);
     }
+    this.setState({ view: Views.Game, });
     FIREBASE.joinGame(data.id, data => this.onReceive(data));
   }
   private onReceive(data: GameData) {
