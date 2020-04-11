@@ -54,7 +54,7 @@ export class ViewVote extends React.Component<Props, State> {
         ) : (
             <div>
               <button onClick={() => this.voteSuccess()}>vote SUCCESS</button>
-              {canThrowRed && <button onClick={() => this.voteFail()}>vote FAIL</button>}
+              <button onClick={() => this.voteFail()}>vote FAIL</button>
             </div>
           )}
 
