@@ -24,7 +24,7 @@ export interface VoteData {
 export interface GameData {
   id: string;
   host?: string;
-  roles: string[];
+  roles: RoleType[];
   players: PlayerData;
   votes: VoteData;
 }

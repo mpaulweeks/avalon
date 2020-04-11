@@ -7,16 +7,17 @@ import { FIREBASE } from "./firebase";
 import { GameData } from "./types";
 import { BrowserStorage, randomId, UserState } from "./Storage";
 import { ViewGame } from "./ViewGame";
+import { ViewSetup } from "./ViewSetup";
 
-type ViewType = 'lobby' | 'game' | 'vote' | 'reset' | 'debug';
+type ViewType = 'lobby' | 'game' | 'setup' | 'vote' | 'reset' | 'debug';
 const Views = {
   Lobby: 'lobby' as ViewType,
   Game: 'game' as ViewType,
+  Setup: 'setup' as ViewType,
   Vote: 'vote' as ViewType,
   Reset: 'reset' as ViewType,
   Debug: 'debug' as ViewType,
 }
-const existingGame = BrowserStorage.get().game;
 
 interface Props {}
 interface State {
@@ -84,6 +85,7 @@ export class ViewHub extends React.Component<Props, State> {
   private onReceive(data: GameData) {
     console.log('received:', data);
     this.setState({ data: {
+      roles: [],
       ...data,
       votes: {
         tally: {},
@@ -132,6 +134,11 @@ export class ViewHub extends React.Component<Props, State> {
             )}
             {data && (
               <li>
+                <span onClick={() => this.setState({ view: Views.Setup })}>Setup</span>
+              </li>
+            )}
+            {data && (
+              <li>
                 <span onClick={() => this.setState({ view: Views.Vote })}>Vote</span>
               </li>
             )}
@@ -152,15 +159,20 @@ export class ViewHub extends React.Component<Props, State> {
         {view === Views.Game && data && (
           <ViewGame isHost={isHost} data={data} />
         )}
+        {view === Views.Setup && data && (
+          <ViewSetup isHost={isHost} data={data} />
+        )}
         {view === Views.Vote && data && (
           <ViewVote isHost={isHost} data={data} />
         )}
+
         {view === Views.Lobby && !data && (
           <ViewLobby
             createGame={() => this.createGame()}
             joinGame={id => this.joinGame(id)}
           />
         )}
+
         {view === Views.Reset && (
           <ViewReset
             storage={storage}

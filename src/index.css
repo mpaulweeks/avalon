@@ -27,5 +27,6 @@ code {
 }
 
 button {
-  font-size: 2em;
+  font-size: 1rem;
+  padding: 0.5em;
 }

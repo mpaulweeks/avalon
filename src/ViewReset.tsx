@@ -1,6 +1,5 @@
 import React from 'react';
-import { BrowserStorage, randomId, UserState } from './Storage';
-import { FIREBASE } from './firebase';
+import { UserState } from './Storage';
 
 interface Props {
   storage: UserState,
