@@ -50,7 +50,12 @@ export class CompRole extends React.Component<Props, State> {
           </div>
         ) : (
           <div>
-            roles haven't been assigned yet
+            <div>
+              players: {Object.values(data.players).map(p => p.name).join(', ')}
+            </div>
+            <div>
+              roles haven't been assigned yet
+            </div>
           </div>
         )}
       </RoleBox>

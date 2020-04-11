@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserStorage, UserState } from './Storage';
-import { GameData } from './types';
+import { GameData, MissionResults } from './types';
 import { FIREBASE } from './firebase';
-import { HostBox, Flex, MissionIcon } from './shared';
+import { HostBox, Board, MissionIcon } from './shared';
 
 interface Props {
   data: GameData;
@@ -23,6 +23,18 @@ export class ViewGame extends React.Component<Props, State> {
       current: newCurrent,
     });
   }
+  missionChange(mIndex: number) {
+    const { isHost, data } = this.props;
+    if (!isHost) { return; }
+    const { id, board } = data;
+    const mission = board.missions[mIndex];
+    const currIndex = MissionResults.indexOf(mission.result);
+    const nextIndex = (currIndex + 1) % MissionResults.length;
+    const nextState = MissionResults[nextIndex];
+    mission.result = nextState;
+    FIREBASE.updateBoard(id, board);
+  }
+
   render() {
     const { isHost, data } = this.props;
     const hostData = data.host && data.players[data.host];
@@ -53,16 +65,16 @@ export class ViewGame extends React.Component<Props, State> {
           </div>
         )}
 
-        <Flex>
-          {board.missions.map(m => (
-            <div>
-              <MissionIcon result={m.result}>
+        <Board>
+          {board.missions.map((m, index) => (
+            <div key={index}>
+              <MissionIcon result={m.result} onClick={() => this.missionChange(index)}>
                 {m.required}
               </MissionIcon>
               {m.neededFails > 1 && `${m.neededFails} fails needed`}
             </div>
           ))}
-        </Flex>
+        </Board>
 
       </div>
     );

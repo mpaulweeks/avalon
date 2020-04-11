@@ -25,7 +25,12 @@ export class ViewDebug extends React.Component<Props, State> {
         </p>
         <h3>games</h3>
         {games.map(game => (
-          <div key={game.id}>{game.id}: {Object.values(game.players).map(p => p.name).join(', ')}</div>
+          <div key={game.id}>
+            {game.id}:
+            {Object.values(game.players).map(p => (
+              <span key={p.id} onClick={() => FIREBASE.kickPlayer(game, p.id)}>{p.name}</span>
+            ))}
+          </div>
         ))}
         <button onClick={() => FIREBASE.deleteAllGames()}> delete all </button>
       </div>

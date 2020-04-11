@@ -7,29 +7,39 @@ export const HostBox = styled.div`
   border: 0.2rem solid red;
 `;
 
-export const Flex = styled.div`
+export const Board = styled.div`
   display: flex;
+
+  text-align: center;
 `;
 
 export const MissionIcon = styled.div<{ result: MissionResult }>`
-  font-size: 3rem;
-  width: 1em;
-  heigth: 1em;
+  font-size: 4rem;
+  margin: 0.2em;
+  width: 1.5em;
+  height: 1.5em;
   border: 1px solid black;
-  border-radius: 1em;
+  border-radius: 2em;
+  cursor: pointer;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  user-select: none;
 
   ${props => `
-    ${props.result === MissionResultType.Neutral && `
+    ${props.result === MissionResultType.Neutral ? `
       color: black;
       background-color: white;
-    `}
-    ${props.result === MissionResultType.Blue && `
+    `: ''}
+    ${props.result === MissionResultType.Blue ? `
       color: white;
       background-color: blue;
-    `}
-    ${props.result === MissionResultType.Red && `
+    `: ''}
+    ${props.result === MissionResultType.Red ? `
       color: white;
       background-color: red;
-    `}
+    `: ''}
   `}
 `;

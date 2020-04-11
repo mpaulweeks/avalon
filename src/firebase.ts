@@ -1,6 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/database';
-import { GameData, PlayerData, VoteData, TurnData, NominationData } from './types';
+import { GameData, PlayerData, VoteData, TurnData, NominationData, BoardData } from './types';
 import { RoleType } from './Role';
 
 const config = {
@@ -26,6 +26,7 @@ class FirebaseSingleton implements IFirebase {
     this.db = firebase.database();
   }
 
+  // debug
   async getAllGames(){
     console.log('fetching all game data');
     return new Promise<GameData[]>((resolve, reject) => {
@@ -36,28 +37,48 @@ class FirebaseSingleton implements IFirebase {
       });
     });
   }
+  async kickPlayer(game: GameData, playerId: string) {
+    const {id, nominations, players, turn, votes} = game;
+    nominations.roster = (nominations.roster || []).filter(pid => pid !== playerId);
+    delete (nominations.tally || {})[playerId];
+    delete (players || {})[playerId];
+    if (turn) {
+      turn.order = turn.order.filter(pid => pid !== playerId);
+      if (turn.current === playerId) {
+        turn.current = turn.order[0];
+      }
+    }
+    delete (votes.tally || {})[playerId];
+    await this.updateNominations(id, nominations);
+    await this.updatePlayers(id, players);
+    await this.updateTurnOrder(id, turn);
+    await this.updateVotes(id, votes);
+  }
   deleteAllGames() {
     this.db.ref(`game`).set({});
   }
 
   updateGame(data: GameData) {
     console.log('saving data:', data);
-    this.db.ref(`game/${data.id}`).set(data);
+    return this.db.ref(`game/${data.id}`).set(data);
+  }
+  updateBoard(gameId: string, data: BoardData) {
+    return this.db.ref(`game/${gameId}/board`).set(data);
   }
   updateNominations(gameId: string, data: NominationData) {
-    this.db.ref(`game/${gameId}/nominations`).set(data);
+    return this.db.ref(`game/${gameId}/nominations`).set(data);
   }
   updatePlayers(gameId: string, data: PlayerData) {
-    this.db.ref(`game/${gameId}/players`).set(data);
+    return this.db.ref(`game/${gameId}/players`).set(data);
   }
   updateRoles(gameId: string, data: RoleType[]) {
-    this.db.ref(`game/${gameId}/roles`).set(data);
+    return this.db.ref(`game/${gameId}/roles`).set(data);
   }
   updateTurnOrder(gameId: string, data: TurnData | null) {
-    this.db.ref(`game/${gameId}/turn`).set(data);
+    return this.db.ref(`game/${gameId}/turn`).set(data || null);
   }
   updateVotes(gameId: string, data: VoteData) {
-    this.db.ref(`game/${gameId}/votes`).set(data);
+    return this.db.ref(`game/${gameId}/votes`).set(data);
   }
 
   async getGameData(gameId: string){
