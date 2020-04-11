@@ -23,6 +23,7 @@ export class ViewGame extends WebSocketView<Props, State, GameData> {
           name: BrowserStorage.get().name || '???',
         },
       },
+      votes: {},
     },
   };
 
@@ -37,12 +38,11 @@ export class ViewGame extends WebSocketView<Props, State, GameData> {
     } else {
       // if joining a game, ensure self and broadcast
       const hostData = await FIREBASE.getGameData(data.id);
-      hostData.players = {
+      const players = {
         ...data.players,
         ...hostData.players,
       };
-      FIREBASE.updateGame(hostData);
-      this.onReceive(hostData);
+      FIREBASE.updatePlayers(data.id, players);
     }
     FIREBASE.joinGame(data.id, data => this.onReceive(data));
   }

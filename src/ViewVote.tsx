@@ -1,6 +1,7 @@
 import React from 'react';
 import { WebSocketView, StateBase } from './WebSocketView';
 import { BrowserStorage } from './Storage';
+import { VoteType } from './types';
 
 interface Data {
   showResults: boolean;
@@ -24,12 +25,12 @@ export class ViewVote extends WebSocketView<Props, State, Data> {
 
   voteSuccess() {
     const newData = { ...this.state.data, };
-    newData.votes[this.id] = 'success';
+    newData.votes[this.id] = VoteType.Success;
     // this.message(newData);
   }
   voteFail() {
     const newData = { ...this.state.data, };
-    newData.votes[this.id] = 'fail';
+    newData.votes[this.id] = VoteType.Fail;
     // this.message(newData);
   }
   voteClear() {
