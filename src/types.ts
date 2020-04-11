@@ -1,6 +1,6 @@
 import { RoleType } from "./Role";
 
-export const Version = '1.0.1';
+export const Version = '1.0.2';
 
 export type MissionResult = 'blue' | 'red' | 'neutral';
 export const MissionResultType = {
