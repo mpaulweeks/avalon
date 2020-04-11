@@ -1,5 +1,24 @@
 import { RoleType } from "./Role";
 
+export type MissionResult = 'blue' | 'red' | 'neutral';
+export const MissionResultType = {
+  Blue: 'support' as MissionResult,
+  Red: 'reject' as MissionResult,
+  Neutral: 'neutral' as MissionResult,
+};
+export const MissionResults = Object.values(MissionResultType);
+
+export interface MissionData {
+  result: MissionResult;
+  required: number;
+  neededFails: number;
+}
+
+export interface BoardData {
+  missions: MissionData[];
+  vetos: number;
+}
+
 export interface PlayerData {
   [key: string]: {
     id: string;
@@ -43,6 +62,7 @@ export interface VoteData {
 export interface GameData {
   id: string;
   host?: string;
+  board: BoardData;
   nominations: NominationData;
   players: PlayerData;
   roles: RoleType[];

@@ -4,7 +4,7 @@ import { ViewVote } from "./ViewVote";
 import { ViewLobby } from "./ViewLobby";
 import { ViewReset } from "./ViewReset";
 import { FIREBASE } from "./firebase";
-import { GameData, isDebug } from "./types";
+import { GameData, isDebug, MissionResultType } from "./types";
 import { BrowserStorage, randomId, UserState } from "./Storage";
 import { ViewGame } from "./ViewGame";
 import { ViewSetup } from "./ViewSetup";
@@ -56,6 +56,16 @@ export class ViewHub extends React.Component<Props, State> {
     return {
       id: game,
       host: undefined,
+      board: {
+        vetos: 0,
+        missions: [
+          { required: 3, neededFails: 1, result: MissionResultType.Neutral },
+          { required: 4, neededFails: 1, result: MissionResultType.Neutral },
+          { required: 4, neededFails: 1, result: MissionResultType.Neutral },
+          { required: 5, neededFails: 2, result: MissionResultType.Neutral },
+          { required: 5, neededFails: 1, result: MissionResultType.Neutral },
+        ],
+      },
       nominations: {
         showResults: false,
         roster: [],
@@ -94,7 +104,7 @@ export class ViewHub extends React.Component<Props, State> {
     }
     // this.setState({ view: Views.Game, });
     // todo debug
-    this.setState({ view: Views.Nominate, });
+    this.setState({ view: Views.Game, });
     FIREBASE.joinGame(data.id, data => this.onReceive(data));
   }
   private onReceive(data: GameData) {

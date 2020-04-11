@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserStorage, UserState } from './Storage';
 import { GameData } from './types';
 import { FIREBASE } from './firebase';
-import { HostBox } from './shared';
+import { HostBox, Flex, MissionIcon } from './shared';
 
 interface Props {
   data: GameData;
@@ -33,7 +33,7 @@ export class ViewGame extends React.Component<Props, State> {
       name: storage.name,
     };
 
-    const { turn } = data;
+    const { board, turn } = data;
 
     return (
       <div>
@@ -41,7 +41,7 @@ export class ViewGame extends React.Component<Props, State> {
         <div>i am: {me.name}</div>
         <div>host: {hostName}</div>
         <br/>
-        {turn ? (
+        {turn && (
           <div>
             {isHost && (
               <HostBox>
@@ -51,9 +51,18 @@ export class ViewGame extends React.Component<Props, State> {
               </HostBox>
             )}
           </div>
-        ) : (
-          'setup the game to see the board'
         )}
+
+        <Flex>
+          {board.missions.map(m => (
+            <div>
+              <MissionIcon result={m.result}>
+                {m.required}
+              </MissionIcon>
+              {m.neededFails > 1 && `${m.neededFails} fails needed`}
+            </div>
+          ))}
+        </Flex>
 
       </div>
     );
