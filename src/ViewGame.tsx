@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserStorage, UserState } from './Storage';
 import { GameData } from './types';
+import { FIREBASE } from './firebase';
 
 interface Props {
   data: GameData;
@@ -10,15 +11,28 @@ interface Props {
 interface State { }
 
 export class ViewGame extends React.Component<Props, State> {
+  nextTurn() {
+    const { id, turn } = this.props.data;
+    if (!turn) { return; }
+    const currentIndex = turn.order.indexOf(turn.current);
+    const nextIndex = (currentIndex + 1) % turn.order.length;
+    const newCurrent = turn.order[nextIndex];
+    FIREBASE.updateTurnOrder(id, {
+      ...turn,
+      current: newCurrent,
+    });
+  }
   render() {
-    const { data } = this.props;
-    const host = data.host && data.players[data.host];
-    const hostName = host ? host.name : '???';
+    const { isHost, data } = this.props;
+    const hostData = data.host && data.players[data.host];
+    const hostName = hostData ? hostData.name : '???';
 
     const storage = BrowserStorage.get();
     const me = data.players[storage.id] || {
       name: storage.name,
     };
+
+    const { turn } = data;
 
     return (
       <div>
@@ -26,13 +40,19 @@ export class ViewGame extends React.Component<Props, State> {
         <div>i am: {me.name}</div>
         <div>host: {hostName}</div>
         <br/>
-        <div>players:
-          <ul>
-            {Object.values(data.players).map(o => (
-              <li key={o.id}>{o.name}</li>
-            ))}
-          </ul>
-        </div>
+        {turn ? (
+          <div>
+            {isHost && (
+              <div>
+                <button onClick={() => this.nextTurn()}>
+                  Next Turn
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          'setup the game to see the board'
+        )}
 
       </div>
     );

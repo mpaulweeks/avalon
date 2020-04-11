@@ -61,6 +61,7 @@ export class ViewHub extends React.Component<Props, State> {
           name: name || '???',
         },
       },
+      turn: null,
       votes: {
         showResults: false,
         tally: {},
@@ -91,6 +92,7 @@ export class ViewHub extends React.Component<Props, State> {
     console.log('received:', data);
     this.setState({ data: {
       roles: [],
+      turn: null,
       ...data,
       votes: {
         tally: {},

@@ -74,11 +74,16 @@ export class ViewSetup extends React.Component<Props, State> {
       });
     }
     this.setState({ errorMessage: undefined });
-    const shuffled = shuffle(roles);
-    Object.keys(players).forEach((id, index) => {
-      players[id].role = shuffled[index];
+    const shuffledPlayers = shuffle(Object.keys(players));
+    const shuffledRoles = shuffle(roles);
+    shuffledPlayers.forEach((id, index) => {
+      players[id].role = shuffledRoles[index];
     });
     FIREBASE.updatePlayers(id, players);
+    FIREBASE.updateTurnOrder(id, {
+      current: shuffledPlayers[0],
+      order: shuffledPlayers,
+    });
   }
   clear() {
     const { id, players } = this.props.data;
@@ -86,6 +91,7 @@ export class ViewSetup extends React.Component<Props, State> {
       players[id].role = null; // null for Firebase
     });
     FIREBASE.updatePlayers(id, players);
+    FIREBASE.updateTurnOrder(id, null);
   }
 
   renderRoles(roles: RoleType[], canEdit: boolean) {

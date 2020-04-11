@@ -8,6 +8,11 @@ export interface PlayerData {
   }
 };
 
+export interface TurnData {
+  current: string;
+  order: string[];
+};
+
 export type Vote = 'success' | 'fail';
 export const VoteType = {
   Success: 'success' as Vote,
@@ -26,6 +31,7 @@ export interface GameData {
   host?: string;
   roles: RoleType[];
   players: PlayerData;
+  turn: TurnData | null;
   votes: VoteData;
 }
 

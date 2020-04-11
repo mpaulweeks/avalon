@@ -30,6 +30,21 @@ export class CompRole extends React.Component<Props, State> {
       <RoleBox>
         {me.role ? (
           <div>
+            {data.turn && (
+              <div>
+                turn order: {data.turn.order.map((pid, index, array) => {
+                  const pdata = data.players[pid];
+                  const name = (pdata ? pdata.name : '???') + (index < array.length - 1 ? ',' : '');
+                  return (
+                    <span key={pid}>
+                      {pid === data.turn?.current ? (
+                        <b> {name} </b>
+                      ) : (name)}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
             <div>you are: {myData.name}</div>
             <div>you see: {youSee.join(', ') || '(nobody)'}</div>
           </div>
