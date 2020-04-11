@@ -1,40 +1,31 @@
 import React from 'react';
+import { GameData } from './types';
+import { FIREBASE } from './firebase';
 
-import { WebSocketView, StateBase, baseDomainPing } from './WebSocketView';
-
-interface Data {
-  rss: string;
-  heapTotal: string;
-  heapUsed: string;
-  external: string;
-}
-type StateKey = keyof Data;
 interface Props {}
-interface State extends StateBase<Data> {}
+interface State {
+  games: GameData[];
+}
 
-export class ViewDebug extends WebSocketView<Props, State, Data> {
-  state = {
-    data: {
-      rss: '?',
-      heapTotal: '?',
-      heapUsed: '?',
-      external: '?',
-    },
+export class ViewDebug extends React.Component<Props, State> {
+  state: State = {
+    games: [],
   };
-  path() { return 'memory'; }
+
+  componentDidMount() {
+    FIREBASE.getAllGames().then(games => this.setState({ games: games, }));
+  }
   render() {
-    const { data } = this.state;
+    const { games } = this.state;
     return (
       <div>
         <h1>Debugging Health Info</h1>
         <p>
           <a href="https://mpaulweeks.github.io/avalon/">mpaulweeks.github.io/avalon</a>
         </p>
-        <p>
-          <a href={baseDomainPing}>{baseDomainPing}</a>
-        </p>
-        {Object.keys(data).map(key => (
-          <div key={key}>{key}: {data[key as StateKey]}</div>
+        <h3>games</h3>
+        {games.map(game => (
+          <div key={game.id}>{game.id}: {Object.values(game.players).map(p => p.name).join(', ')}</div>
         ))}
       </div>
     );

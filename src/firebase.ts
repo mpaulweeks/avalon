@@ -26,6 +26,17 @@ class FirebaseSingleton implements IFirebase {
     this.db = firebase.database();
   }
 
+  async getAllGames(){
+    console.log('fetching all game data');
+    return new Promise<GameData[]>((resolve, reject) => {
+      this.db.ref(`game`).once('value', resp => {
+        const data = resp.val();
+        console.log('got:', data)
+        resolve(Object.values(data) as GameData[]);
+      });
+    });
+  }
+
   updateGame(data: GameData) {
     console.log('saving data:', data);
     this.db.ref(`game/${data.id}`).set(data);

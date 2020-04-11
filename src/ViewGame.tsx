@@ -73,7 +73,7 @@ export class ViewGame extends WebSocketView<Props, State, GameData> {
         <div>players:
           <ul>
             {Object.values(data.players).map(o => (
-              <li>{o.name}</li>
+              <li key={o.id}>{o.name}</li>
             ))}
           </ul>
         </div>

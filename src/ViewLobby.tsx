@@ -15,7 +15,7 @@ export class ViewLobby extends React.Component<Props, State> {
   state: State = {
     storage: BrowserStorage.get(),
     isHost: false,
-    tempName: hri.random(),
+    tempName: hri.random().split('-')[0],
     tempJoin: '',
   };
 
