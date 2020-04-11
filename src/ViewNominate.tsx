@@ -37,13 +37,69 @@ export class ViewNominate extends React.Component<Props, State> {
     FIREBASE.updateNominations(this.props.data.id, newVotes);
   }
 
+  addToRoster(pid: string) {
+    const { nominations } = this.props.data;
+    const newRoster = [ ...nominations.roster ];
+    newRoster.push(pid);
+    newRoster.sort();
+    FIREBASE.updateNominations(this.props.data.id, {
+      ...nominations,
+      roster: newRoster,
+    });
+  }
+  removeFromRoster(pid: string) {
+    const { nominations } = this.props.data;
+    const newRoster = [ ...nominations.roster ];
+    const index = newRoster.findIndex(p => p === pid);
+    if (index >= 0) {
+      newRoster.splice(index, 1);
+      FIREBASE.updateNominations(this.props.data.id, {
+        ...nominations,
+        roster: newRoster,
+      });
+    }
+  }
+
   render() {
-    const { isHost, storage, data } = this.props;
-    const { nominations } = data;
+    const { isHost, data } = this.props;
+    const { nominations, players } = data;
+    const isDealer = data.turn && data.turn.current === this.id;
+    const outOfRoster = Object.keys(players).filter(pid => !nominations.roster.includes(pid));
+    outOfRoster.sort();
     const shuffledTally = shuffle(Object.keys(nominations.tally));
     return (
       <div>
         <h1>Nominate for Mission</h1>
+
+        <h3>Nominated:</h3>
+        <div>
+          {nominations.roster.length ? (
+            isDealer ? nominations.roster.map((pid, i) => (
+              <button key={i} onClick={() => this.removeFromRoster(pid)}>
+                {players[pid].name}
+              </button>
+            )) : (
+              nominations.roster.map(pid => players[pid].name).join(', ')
+            )
+          ) : (
+            'nobody has been nominated yet'
+          )}
+        </div>
+
+        {isDealer && outOfRoster.length > 0 && (
+          <div>
+            <h3>Eligible:</h3>
+            <div>
+              {outOfRoster.map((pid, i) => (
+                <button key={i} onClick={() => this.addToRoster(pid)}>
+                  {players[pid].name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <hr/>
 
         {nominations.tally[this.id] && (
           <h3> you have voted </h3>

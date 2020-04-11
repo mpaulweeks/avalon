@@ -21,6 +21,7 @@ export const NominationType = {
 
 export interface NominationData {
   showResults: boolean;
+  roster: string[];
   tally: {
     [key: string]: Nomination;
   };

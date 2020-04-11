@@ -58,6 +58,7 @@ export class ViewHub extends React.Component<Props, State> {
       host: undefined,
       nominations: {
         showResults: false,
+        roster: [],
         tally: {},
       },
       roles: [],
@@ -103,6 +104,7 @@ export class ViewHub extends React.Component<Props, State> {
       turn: null,
       ...data,
       nominations: {
+        roster: [],
         tally: {},
         ...data.nominations,
       },
