@@ -2,8 +2,8 @@ import { RoleType } from "./Role";
 
 export type MissionResult = 'blue' | 'red' | 'neutral';
 export const MissionResultType = {
-  Blue: 'support' as MissionResult,
-  Red: 'reject' as MissionResult,
+  Blue: 'blue victory' as MissionResult,
+  Red: 'red victory' as MissionResult,
   Neutral: 'neutral' as MissionResult,
 };
 export const MissionResults = Object.values(MissionResultType);
@@ -32,9 +32,9 @@ export interface TurnData {
   order: string[];
 };
 
-export type Nomination = 'support' | 'reject';
+export type Nomination = 'approve' | 'reject';
 export const NominationType = {
-  Support: 'support' as Nomination,
+  Approve: 'approve' as Nomination,
   Reject: 'reject' as Nomination,
 };
 
@@ -81,19 +81,19 @@ export const isDebug = window.location.href.includes('#d');
  */
 export function shuffle<T>(orig: T[]): T[] {
   const array = orig.concat();
-	var currentIndex = array.length;
-	var temporaryValue, randomIndex;
+  var currentIndex = array.length;
+  var temporaryValue, randomIndex;
 
-	// While there remain elements to shuffle...
-	while (0 !== currentIndex) {
-		// Pick a remaining element...
-		randomIndex = Math.floor(Math.random() * currentIndex);
-		currentIndex -= 1;
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
 
-		// And swap it with the current element.
-		temporaryValue = array[currentIndex];
-		array[currentIndex] = array[randomIndex];
-		array[randomIndex] = temporaryValue;
-	}
-	return array;
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+  return array;
 };

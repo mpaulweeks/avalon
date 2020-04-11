@@ -33,31 +33,36 @@ export class CompRole extends React.Component<Props, State> {
             {data.turn && (
               <div>
                 turn order: {data.turn.order.map((pid, index, array) => {
-                  const pdata = data.players[pid];
-                  const name = (pdata ? pdata.name : '???') + (index < array.length - 1 ? ',' : '');
-                  return (
-                    <span key={pid}>
-                      {pid === data.turn?.current ? (
-                        <b> {name} </b>
-                      ) : (name)}
-                    </span>
-                  );
-                })}
+                const pdata = data.players[pid];
+                const name = (pdata ? pdata.name : '???') + (index < array.length - 1 ? ',' : '');
+                return (
+                  <span key={pid}>
+                    {pid === data.turn?.current ? (
+                      <b> {name} </b>
+                    ) : (name)}
+                  </span>
+                );
+              })}
               </div>
             )}
             <div>you are: {myData.name}</div>
             <div>you see: {youSee.join(', ') || '(nobody)'}</div>
+            {data.nominations.roster.length && (
+              <div>
+                nomination: {data.nominations.roster.map(pid => data.players[pid].name).join(', ')}
+              </div>
+            )}
           </div>
         ) : (
-          <div>
             <div>
-              players: {Object.values(data.players).map(p => p.name).join(', ')}
+              <div>
+                players: {Object.values(data.players).map(p => p.name).join(', ')}
+              </div>
+              <div>
+                roles haven't been assigned yet
             </div>
-            <div>
-              roles haven't been assigned yet
             </div>
-          </div>
-        )}
+          )}
       </RoleBox>
     );
   }

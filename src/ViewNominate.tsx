@@ -18,7 +18,7 @@ export class ViewNominate extends React.Component<Props, State> {
 
   voteSuccess() {
     const newVotes = { ...this.props.data.nominations, };
-    newVotes.tally[this.id] = NominationType.Support;
+    newVotes.tally[this.id] = NominationType.Approve;
     FIREBASE.updateNominations(this.props.data.id, newVotes);
   }
   voteFail() {
@@ -39,7 +39,7 @@ export class ViewNominate extends React.Component<Props, State> {
 
   addToRoster(pid: string) {
     const { nominations } = this.props.data;
-    const newRoster = [ ...nominations.roster ];
+    const newRoster = [...nominations.roster];
     newRoster.push(pid);
     newRoster.sort();
     FIREBASE.updateNominations(this.props.data.id, {
@@ -49,7 +49,7 @@ export class ViewNominate extends React.Component<Props, State> {
   }
   removeFromRoster(pid: string) {
     const { nominations } = this.props.data;
-    const newRoster = [ ...nominations.roster ];
+    const newRoster = [...nominations.roster];
     const index = newRoster.findIndex(p => p === pid);
     if (index >= 0) {
       newRoster.splice(index, 1);
@@ -79,11 +79,11 @@ export class ViewNominate extends React.Component<Props, State> {
                 {players[pid].name}
               </button>
             )) : (
-              nominations.roster.map(pid => players[pid].name).join(', ')
-            )
+                nominations.roster.map(pid => players[pid].name).join(', ')
+              )
           ) : (
-            'nobody has been nominated yet'
-          )}
+              'nobody has been nominated yet'
+            )}
         </div>
 
         {isDealer && outOfRoster.length > 0 && (
@@ -99,7 +99,7 @@ export class ViewNominate extends React.Component<Props, State> {
           </div>
         )}
 
-        <hr/>
+        <hr />
 
         {nominations.tally[this.id] && (
           <h3> you have voted </h3>
