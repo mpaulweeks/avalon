@@ -12,7 +12,6 @@ simple WS app
 
 - auto clear + hide, nom + mission votes on "next turn"
 
-- highlight current tab
 - diff black box for secret info
 - only lets noms vote on mission
 - add help page for website usage and rules page for avalon

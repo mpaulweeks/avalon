@@ -9,25 +9,9 @@ body {
 
 nav ul {
   list-style-type: none;
-  margin: 1em;
-  margin-left: 0;
+  margin: 0;
   padding: 0;
   display: flex;
-}
-nav ul li {
-  margin: 0 1em;
-}
-nav ul li:first-child {
-  margin-left: 0;
-}
-nav ul li span {
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
 }
 
 input, button {

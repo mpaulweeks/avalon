@@ -1,4 +1,5 @@
 import React from "react";
+import styled from "styled-components";
 import { ViewDebug } from "./ViewDebug";
 import { ViewVote } from "./ViewVote";
 import { ViewLobby } from "./ViewLobby";
@@ -10,6 +11,27 @@ import { ViewGame } from "./ViewGame";
 import { ViewSetup } from "./ViewSetup";
 import { CompRole } from "./CompRole";
 import { ViewNominate } from "./ViewNominate";
+
+const HeaderLink = styled.li<{ current: boolean, hasLink: boolean }>`
+  margin: 0.5em;
+  margin-top: 0;
+  padding: 0.5em;
+  box-sizing: border-box;
+  border: 0.2em solid #00000000;
+
+  ${props => props.hasLink ? `
+    cursor: pointer;
+    text-decoration: underline;
+  ` : ''}
+
+  ${props => props.current ? `
+    border-color: grey;
+  ` : ''}
+
+  &:first-child {
+    margin-left: 0;
+  }
+`;
 
 type ViewType = 'lobby' | 'game' | 'setup' | 'nominate' | 'vote' | 'reset' | 'debug';
 const Views = {
@@ -186,6 +208,18 @@ export class ViewHub extends React.Component<Props, State> {
       </div>
     )
   }
+  renderLink(label: string, type?: ViewType) {
+    const onClick = !!type ? () => this.setState({ view: type }) : () => {};
+    return (
+      <HeaderLink
+        current={type === this.state.view}
+        hasLink={!!type}
+        onClick={onClick}
+      >
+        {label}
+      </HeaderLink>
+    );
+  }
 
   render() {
     const { storage, data } = this.state;
@@ -193,42 +227,14 @@ export class ViewHub extends React.Component<Props, State> {
       <div>
         <nav>
           <ul>
-            {data && (
-              <li>
-                <span onClick={() => this.setState({ view: Views.Game })}>Game #{data.id}</span>
-              </li>
-            )}
-            {data && (
-              <li>
-                <span onClick={() => this.setState({ view: Views.Nominate })}>Nominate</span>
-              </li>
-            )}
-            {data && (
-              <li>
-                <span onClick={() => this.setState({ view: Views.Vote })}>Mission</span>
-              </li>
-            )}
-            {data && (
-              <li>
-                <span onClick={() => this.setState({ view: Views.Setup })}>Setup</span>
-              </li>
-            )}
-            {!data && (
-              <li>
-                <span onClick={() => this.setState({ view: Views.Lobby })}>Lobby</span>
-              </li>
-            )}
-            <li>
-              <span onClick={() => this.setState({ view: Views.Reset })}>Reset</span>
-            </li>
-            {isDebug && (
-              <li>
-                <span onClick={() => this.setState({ view: Views.Debug })}>Debug</span>
-              </li>
-            )}
-            <li>
-              v.{Version}
-            </li>
+            {data && this.renderLink(`Game #${data.id}`, Views.Game)}
+            {data && this.renderLink(`Nominate`, Views.Nominate)}
+            {data && this.renderLink(`Mission`, Views.Vote)}
+            {data && this.renderLink(`Setup`, Views.Setup)}
+            {!data && this.renderLink(`Lobby`, Views.Lobby)}
+            {this.renderLink(`Reset`, Views.Reset)}
+            {isDebug && this.renderLink(`Debug`, Views.Debug)}
+            {this.renderLink(`v.${Version}`)}
           </ul>
         </nav>
 
