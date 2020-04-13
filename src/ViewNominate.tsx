@@ -91,15 +91,19 @@ export class ViewNominate extends React.Component<Props, State> {
             )}
         </div>
 
-        {isDealer && outOfRoster.length > 0 && (
+        {isDealer && (
           <div>
-            <h3>Eligible:</h3>
+            <h3>Not Nominated:</h3>
             <div>
-              {outOfRoster.map((pid, i) => (
-                <button key={i} onClick={() => this.addToRoster(pid)}>
-                  {players[pid].name}
-                </button>
-              ))}
+              {outOfRoster.length > 0 ? (
+                outOfRoster.map((pid, i) => (
+                  <button key={i} onClick={() => this.addToRoster(pid)}>
+                    {players[pid].name}
+                  </button>
+                ))
+              ) : (
+                'everyone has been nominated'
+              )}
             </div>
           </div>
         )}
@@ -107,7 +111,7 @@ export class ViewNominate extends React.Component<Props, State> {
         <h3>cast your vote for who goes on the mission</h3>
 
         {nominations.tally[this.id] && (
-          <h3> you have voted </h3>
+          <div> you have voted </div>
         )}
         <div>
           <button onClick={() => this.voteSuccess()}>vote SUPPORT</button>

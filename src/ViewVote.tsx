@@ -16,12 +16,24 @@ export class ViewVote extends React.Component<Props, State> {
   id = BrowserStorage.get().id;
   state: State = {};
 
+  getMyRole() {
+    const { storage, data } = this.props;
+    const me = data.players[storage.id] || {
+      name: storage.name,
+    };
+    return RoleData[me.role || Roles.BasicBlue];
+  }
+
   voteSuccess() {
     const newVotes = { ...this.props.data.votes, };
     newVotes.tally[this.id] = VoteType.Success;
     FIREBASE.updateVotes(this.props.data.id, newVotes);
   }
   voteFail() {
+    if (!this.getMyRole().isRed) {
+      alert('only red players can vote fail!');
+      return;
+    }
     const newVotes = { ...this.props.data.votes, };
     newVotes.tally[this.id] = VoteType.Fail;
     FIREBASE.updateVotes(this.props.data.id, newVotes);
@@ -38,13 +50,8 @@ export class ViewVote extends React.Component<Props, State> {
   }
 
   render() {
-    const { isHost, storage, data } = this.props;
+    const { isHost, data } = this.props;
     const { votes } = data;
-    const me = data.players[storage.id] || {
-      name: storage.name,
-    };
-    const myData = RoleData[me.role || Roles.BasicBlue];
-    const canThrowRed = myData.isRed || !me.role;
     return (
       <div>
         <h1>Mission Vote</h1>
