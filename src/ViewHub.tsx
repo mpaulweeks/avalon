@@ -15,8 +15,7 @@ import { ViewNominate } from "./ViewNominate";
 const HeaderLink = styled.li<{ current: boolean, hasLink: boolean }>`
   margin: 0.5em;
   margin-top: 0;
-  padding: 0.5em;
-  box-sizing: border-box;
+  padding: 0.8em 0.8em;
   border: 0.2em solid #00000000;
 
   ${props => props.hasLink ? `
