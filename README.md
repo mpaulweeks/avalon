@@ -8,14 +8,9 @@ simple WS app
 
 ## todo
 
-- host tracks win/loss and veto count
-
-- auto clear + hide, nom + mission votes on "next turn"
-
-- only lets noms vote on mission
+- game board tracks veto count
+- game board tracks nominations
 - add help page for website usage and rules page for avalon
-- when joining, assert current name over existing data
-  - add ability to change name in reset menu
+- add ability to change name in reset menu
 - add "deleted" optional timestamp to game
   - if/when receive deleted, show alert, then reset
-  - ensure reset puts you at lobby if tab === game

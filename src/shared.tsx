@@ -9,6 +9,7 @@ export const StyledBox = styled.div`
 
 export const HostBox = styled(StyledBox)`
   border-color: purple;
+  background-color: plum;
 `;
 
 export const Board = styled.div`

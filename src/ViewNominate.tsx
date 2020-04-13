@@ -111,7 +111,10 @@ export class ViewNominate extends React.Component<Props, State> {
         <h3>cast your vote for who goes on the mission</h3>
 
         {nominations.tally[this.id] && (
-          <div> you have voted </div>
+          <div>
+            <div> you have voted </div>
+            <br/>
+          </div>
         )}
         <div>
           <button onClick={() => this.voteSuccess()}>vote SUPPORT</button>
@@ -137,7 +140,7 @@ export class ViewNominate extends React.Component<Props, State> {
           </div>
         ) : (
             <p>
-              {Object.keys(nominations.tally).length} votes counted
+              {Object.keys(nominations.tally).length}/{Object.keys(players).length} votes counted
             </p>
           )}
       </div>

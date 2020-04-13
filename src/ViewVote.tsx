@@ -51,34 +51,31 @@ export class ViewVote extends React.Component<Props, State> {
 
   render() {
     const { isHost, data } = this.props;
-    const { votes } = data;
+    const { nominations, votes } = data;
+    const isNom = nominations.roster.includes(this.id);
     return (
       <div>
         <h1>Mission Vote</h1>
 
-        <h3> cast your mission vote </h3>
-        {votes.tally[this.id] ? (
-          <div> you have voted </div>
+        {isNom ? (
+          <div>
+            <h3> cast your mission vote </h3>
+            {votes.tally[this.id] ? (
+              <div> you have voted </div>
+            ) : (
+              <div>
+                <button onClick={() => this.voteSuccess()}>vote SUCCESS</button>
+                <button onClick={() => this.voteFail()}>vote FAIL</button>
+              </div>
+            )}
+          </div>
         ) : (
-            <div>
-              <button onClick={() => this.voteSuccess()}>vote SUCCESS</button>
-              <button onClick={() => this.voteFail()}>vote FAIL</button>
-            </div>
-          )}
-
-        <br />
-        <div>
-          <button onClick={() => this.voteClear()}>clear all votes</button>
-        </div>
-
-        {isHost && (
-          <HostBox>
-            <button onClick={() => this.toggleReveal()}>{votes.showResults ? 'hide' : 'show'} votes</button>
-          </HostBox>
+          <div>
+            only nominated players can vote during the mission
+          </div>
         )}
 
         <h3>results!</h3>
-
         {votes.showResults && Object.keys(votes.tally).length ? (
           <div>
             {Object.values(votes.tally).map((vote, i) => (
@@ -89,9 +86,16 @@ export class ViewVote extends React.Component<Props, State> {
           </div>
         ) : (
             <p>
-              {Object.keys(votes.tally).length} votes counted
+              {Object.keys(votes.tally).length}/{nominations.roster.length} votes counted
             </p>
           )}
+
+        {isHost && (
+          <HostBox>
+            <button onClick={() => this.toggleReveal()}>{votes.showResults ? 'hide' : 'show'} votes</button>
+            <button onClick={() => this.voteClear()}>clear all votes</button>
+          </HostBox>
+        )}
       </div>
     );
   }

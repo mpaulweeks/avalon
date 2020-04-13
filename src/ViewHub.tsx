@@ -5,7 +5,7 @@ import { ViewVote } from "./ViewVote";
 import { ViewLobby } from "./ViewLobby";
 import { ViewReset } from "./ViewReset";
 import { FIREBASE } from "./firebase";
-import { GameData, isDebug, getBoardFor, Version } from "./types";
+import { GameData, isDebug, getBoardFor, Version, PlayerData } from "./types";
 import { BrowserStorage, randomId, UserState } from "./Storage";
 import { ViewGame } from "./ViewGame";
 import { ViewSetup } from "./ViewSetup";
@@ -31,8 +31,9 @@ const HeaderLink = styled(StyledBox)<{ current: boolean, hasLink: boolean }>`
   }
 `;
 
-type ViewType = 'lobby' | 'game' | 'setup' | 'nominate' | 'vote' | 'reset' | 'debug';
+type ViewType = 'loading' | 'lobby' | 'game' | 'setup' | 'nominate' | 'vote' | 'reset' | 'debug';
 const Views = {
+  Loading: 'loading' as ViewType,
   Lobby: 'lobby' as ViewType,
   Game: 'game' as ViewType,
   Setup: 'setup' as ViewType,
@@ -51,13 +52,15 @@ interface State {
 
 export class ViewHub extends React.Component<Props, State> {
   state: State = {
-    view: Views.Lobby,
+    view: Views.Loading,
     storage: BrowserStorage.get(),
   };
   componentDidMount() {
     const { storage } = this.state;
     if (storage.name && storage.game) {
       this.join(this.genGuestGameData());
+    } else {
+      this.setState({ view: Views.Lobby, });
     }
   }
 
@@ -97,26 +100,36 @@ export class ViewHub extends React.Component<Props, State> {
     };
   }
 
-  private async join(data: GameData) {
-    if (data.host) {
-      FIREBASE.updateGame(data);
+  private async join(localData: GameData) {
+    if (localData.host) {
+      FIREBASE.updateGame(localData);
     } else {
       // if joining a game, ensure self and broadcast
-      const hostData = await FIREBASE.getGameData(data.id);
+      const hostData = await FIREBASE.getGameData(localData.id);
       if (!hostData) {
+        // if no game data for old id, reset
         this.reset();
         return;
       }
-      const players = {
-        ...data.players,
+
+      // add self to host.players, but prefer local name
+      const myId = this.state.storage.id;
+      const localMe = localData.players[myId];
+      const remoteMe = hostData.players[myId] || {};
+      const players: PlayerData = {
         ...hostData.players,
+        [myId]: {
+          ...localMe,
+          ...remoteMe,
+          name: localMe.name,
+        },
       };
-      FIREBASE.updatePlayers(data.id, players);
+      FIREBASE.updatePlayers(localData.id, players);
     }
     // this.setState({ view: Views.Game, });
     // todo debug
     this.setState({ view: Views.Game, });
-    FIREBASE.joinGame(data.id, data => this.onReceive(data));
+    FIREBASE.joinGame(localData.id, data => this.onReceive(data));
   }
   private onReceive(data: GameData) {
     console.log('received:', data);
@@ -159,6 +172,7 @@ export class ViewHub extends React.Component<Props, State> {
     }
     BrowserStorage.reset();
     this.setState({
+      view: this.state.view === Views.Reset ? Views.Reset : Views.Lobby,
       storage: BrowserStorage.get(),
       data: undefined,
     });
@@ -195,6 +209,14 @@ export class ViewHub extends React.Component<Props, State> {
     }
     if (view === Views.Debug) {
       return <ViewDebug />
+    }
+
+    if (view === Views.Loading) {
+      return (
+        <h3>
+          connecting to server, please wait...
+        </h3>
+      );
     }
 
     return (

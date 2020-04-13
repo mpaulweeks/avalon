@@ -60,8 +60,8 @@ export class ViewGame extends React.Component<Props, State> {
     return (
       <div>
         <h1>Game #{data.id}</h1>
-        <div>i am: {me.name}</div>
         <div>host: {hostName}</div>
+        <div>i am: {me.name}</div>
         <br />
         {turn && (
           <div>
