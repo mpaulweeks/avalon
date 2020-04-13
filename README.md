@@ -8,9 +8,16 @@ simple WS app
 
 ## todo
 
-- randomize turn order when roles assigned, display on game
-- make customizable board
 - host tracks win/loss and veto count
 
 - auto clear + hide, nom + mission votes on "next turn"
-- add needed nom count to nom page
+
+- highlight current tab
+- diff black box for secret info
+- only lets noms vote on mission
+- add help page for website usage and rules page for avalon
+- when joining, assert current name over existing data
+  - add ability to change name in reset menu
+- add "deleted" optional timestamp to game
+  - if/when receive deleted, show alert, then reset
+  - ensure reset puts you at lobby if tab === game
