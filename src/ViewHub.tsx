@@ -9,14 +9,13 @@ import { GameData, isDebug, getBoardFor, Version } from "./types";
 import { BrowserStorage, randomId, UserState } from "./Storage";
 import { ViewGame } from "./ViewGame";
 import { ViewSetup } from "./ViewSetup";
-import { CompRole } from "./CompRole";
+import { ViewBar } from "./ViewBar";
 import { ViewNominate } from "./ViewNominate";
+import { StyledBox } from "./shared";
 
-const HeaderLink = styled.li<{ current: boolean, hasLink: boolean }>`
-  margin: 0.5em;
-  margin-top: 0;
-  padding: 0.8em 0.8em;
-  border: 0.2em solid #00000000;
+const HeaderLink = styled(StyledBox)<{ current: boolean, hasLink: boolean }>`
+  margin: 0 0.5em;
+  border-color: #00000000;
 
   ${props => props.hasLink ? `
     cursor: pointer;
@@ -238,7 +237,7 @@ export class ViewHub extends React.Component<Props, State> {
         </nav>
 
         {data && (
-          <CompRole data={data} storage={storage} />
+          <ViewBar data={data} storage={storage} />
         )}
 
         {this.renderMain()}

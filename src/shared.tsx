@@ -1,10 +1,14 @@
 import styled from 'styled-components';
 import { MissionResult, MissionResultType } from './types';
 
-export const HostBox = styled.div`
-  margin: 0.5rem 0;
-  padding: 0.5rem;
-  border: 0.2rem solid red;
+export const StyledBox = styled.div`
+  margin: 1rem 0;
+  padding: 0.8rem;
+  border: 0.2rem solid green;
+`;
+
+export const HostBox = styled(StyledBox)`
+  border-color: purple;
 `;
 
 export const Board = styled.div`
