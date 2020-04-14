@@ -14,6 +14,7 @@ export interface MissionData {
   result: MissionResult;
   required: number;
   neededFails: number;
+  roster?: string[] | null;
 }
 
 export interface BoardData {
@@ -74,6 +75,11 @@ export interface GameData {
 
 export const isDev = window.location.href.includes('localhost');
 export const isDebug = window.location.href.includes('#d');
+if (!isDebug) {
+  const orig = console.log;
+  console.log = (...args: any[]) => {};
+  orig('activate debug move to view logs'.toUpperCase());
+}
 
 /**
  * Randomly shuffle an array

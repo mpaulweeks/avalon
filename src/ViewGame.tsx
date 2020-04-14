@@ -45,6 +45,23 @@ export class ViewGame extends React.Component<Props, State> {
     FIREBASE.updateBoard(id, board);
   }
 
+  setMissionNoms(mIndex: number) {
+    const { isHost, data } = this.props;
+    if (!isHost) { return; }
+    const { id, board } = data;
+    const mission = board.missions[mIndex];
+    mission.roster = data.nominations.roster;
+    FIREBASE.updateBoard(id, board);
+  }
+  clearMissionNoms(mIndex: number) {
+    const { isHost, data } = this.props;
+    if (!isHost) { return; }
+    const { id, board } = data;
+    const mission = board.missions[mIndex];
+    mission.roster = null;
+    FIREBASE.updateBoard(id, board);
+  }
+
   render() {
     const { isHost, data } = this.props;
     const hostData = data.host && data.players[data.host];
@@ -55,7 +72,7 @@ export class ViewGame extends React.Component<Props, State> {
       name: storage.name,
     };
 
-    const { board, turn } = data;
+    const { board, turn, players } = data;
 
     return (
       <div>
@@ -81,7 +98,29 @@ export class ViewGame extends React.Component<Props, State> {
               <MissionIcon result={m.result} onClick={() => this.missionChange(index)}>
                 {m.required}
               </MissionIcon>
-              {m.neededFails > 1 && `${m.neededFails} fails needed`}
+              {m.neededFails > 1 ? (
+                <div>
+                  {m.neededFails} fails needed
+                </div>
+              ) : <br/>}
+              {m.roster && m.roster.map(pid => (
+                <div key={pid}>
+                  {players[pid].name}
+                </div>
+              ))}
+              {isHost && (
+                <HostBox>
+                  {m.roster ? (
+                    <button onClick={() => this.clearMissionNoms(index)}>
+                      remove<br/>noms
+                    </button>
+                  ) : (
+                    <button onClick={() => this.setMissionNoms(index)}>
+                      set<br/>noms
+                    </button>
+                  )}
+                </HostBox>
+              )}
             </div>
           ))}
         </Board>
