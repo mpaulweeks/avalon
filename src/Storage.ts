@@ -1,4 +1,5 @@
 import { hri } from "human-readable-ids";
+import { APP_VERSION } from "./utils";
 
 export interface StorageLayer {
   getItem(key: string): string | null;
@@ -10,6 +11,7 @@ export function randomId(length: number) {
 }
 
 export interface UserState {
+  v: string;
   id: string;
   name?: string;
   game?: string;
@@ -18,8 +20,13 @@ export interface UserState {
 export class BrowserStorage {
   static store: StorageLayer = window.localStorage;
 
+  private static getMinor(v: string) {
+    return (v || '0.0.0').split('.').slice(0, 2).join('.');
+  }
+
   static reset() {
     this.set({
+      v: APP_VERSION,
       id: hri.random(),
       name: undefined,
       game: undefined,
@@ -29,11 +36,13 @@ export class BrowserStorage {
     this.store.setItem('state', JSON.stringify(data));
   }
   static get(): UserState {
-    let stored = this.store.getItem('state');
-    if (!stored) {
-      this.reset();
-      stored = this.store.getItem('state');
+    const stored = this.store.getItem('state') || '{}';
+    const data = JSON.parse(stored as any) as UserState;
+    const isValid = data && this.getMinor(data.v) === this.getMinor(APP_VERSION);
+    if (isValid) {
+      return data;
     }
-    return JSON.parse(stored as any) as UserState;
+    this.reset();
+    return this.get();
   }
 }

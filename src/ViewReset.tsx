@@ -19,13 +19,13 @@ export class ViewReset extends React.Component<Props, State> {
     }
   }
   render() {
-    const { id, name, game } = this.props.storage;
+    const { storage } = this.props;
     return (
       <div>
         <h1>Current Local State</h1>
-        <h3>id: {id}</h3>
-        <h3>name: {name}</h3>
-        <h3>game: {game}</h3>
+        <pre>
+          {JSON.stringify(storage, null, 2)}
+        </pre>
         <div>
           <button onClick={() => this.tryReset()}>reset everything</button>
         </div>

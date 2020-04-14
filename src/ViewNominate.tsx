@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserStorage, UserState } from './Storage';
-import { GameData, NominationType, shuffle, MissionResultType } from './types';
+import { GameData, NominationType, MissionResultType } from './types';
 import { FIREBASE } from './firebase';
 import { HostBox } from './shared';
+import { shuffle } from './utils';
 
 interface Props {
   isHost: boolean;

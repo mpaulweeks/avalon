@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import styled from 'styled-components';
 import { RoleData, Roles } from './Role';
 import { UserState } from './Storage';
@@ -33,6 +33,7 @@ export class ViewBar extends React.Component<Props, State> {
     const youSee = others.filter(o => o.role && myData.sees.includes(o.role)).map(o => o.name);
 
     const nominations = data.nominations.roster.length > 0 ? data.nominations.roster.map(pid => data.players[pid].name).join(', ') : '(nobody)';
+    const playerIds = data.turn ? data.turn.order : Object.keys(data.players).sort();
 
     return (
       <div>
@@ -50,25 +51,21 @@ export class ViewBar extends React.Component<Props, State> {
           )}
         </SecretBox>
         <RoleBox>
-          {data.turn ? (
-            <div>
-              turn order: {data.turn.order.map((pid, index, array) => {
+          <div>
+            turn order: {playerIds.map((pid, index, array) => {
               const pdata = data.players[pid];
               const name = (pdata ? pdata.name : '???') + (index < array.length - 1 ? ',' : '');
+              const style: CSSProperties = {
+                color: pid === data.host ? 'purple' : 'blact',
+                fontWeight: (data.turn && pid === data.turn.current) ? 'bold' : 'normal',
+              };
               return (
-                <span key={pid}>
-                  {pid === data.turn?.current ? (
-                    <b> {name} </b>
-                  ) : (name)}
+                <span key={pid} style={style}>
+                  {name}&nbsp;
                 </span>
               );
             })}
-            </div>
-          ) : (
-            <div>
-              players: {Object.values(data.players).map(p => p.name).join(', ')}
-            </div>
-          )}
+          </div>
           <div>
             nomination: {nominations}
           </div>

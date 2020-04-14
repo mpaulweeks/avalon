@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserStorage, UserState } from './Storage';
+import { UserState } from './Storage';
 import { GameData, MissionResults } from './types';
 import { FIREBASE } from './firebase';
 import { HostBox, Board, MissionIcon } from './shared';
@@ -64,22 +64,11 @@ export class ViewGame extends React.Component<Props, State> {
 
   render() {
     const { isHost, data } = this.props;
-    const hostData = data.host && data.players[data.host];
-    const hostName = hostData ? hostData.name : '???';
-
-    const storage = BrowserStorage.get();
-    const me = data.players[storage.id] || {
-      name: storage.name,
-    };
-
     const { board, turn, players } = data;
 
     return (
       <div>
         <h1>Game #{data.id}</h1>
-        <div>host: {hostName}</div>
-        <div>i am: {me.name}</div>
-        <br />
         {turn && (
           <div>
             {isHost && (

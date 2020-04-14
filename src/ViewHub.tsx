@@ -5,7 +5,8 @@ import { ViewVote } from "./ViewVote";
 import { ViewLobby } from "./ViewLobby";
 import { ViewReset } from "./ViewReset";
 import { FIREBASE } from "./firebase";
-import { GameData, isDebug, getBoardFor, Version, PlayerData } from "./types";
+import { GameData, PlayerData } from "./types";
+import { isDebug, getBoardFor, APP_VERSION } from "./utils";
 import { BrowserStorage, randomId, UserState } from "./Storage";
 import { ViewGame } from "./ViewGame";
 import { ViewSetup } from "./ViewSetup";
@@ -128,7 +129,7 @@ export class ViewHub extends React.Component<Props, State> {
     }
     // this.setState({ view: Views.Game, });
     // todo debug
-    this.setState({ view: Views.Game, });
+    this.setState({ view: Views.Game, storage: BrowserStorage.get(), });
     FIREBASE.joinGame(localData.id, data => this.onReceive(data));
   }
   private onReceive(data: GameData) {
@@ -254,7 +255,7 @@ export class ViewHub extends React.Component<Props, State> {
             {!data && this.renderLink(`Lobby`, Views.Lobby)}
             {this.renderLink(`Reset`, Views.Reset)}
             {isDebug && this.renderLink(`Debug`, Views.Debug)}
-            {this.renderLink(`v.${Version}`)}
+            {this.renderLink(`v.${APP_VERSION}`)}
           </ul>
         </nav>
 

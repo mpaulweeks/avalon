@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserStorage, UserState } from './Storage';
 import { hri } from 'human-readable-ids';
-import { isDev } from './types';
+import { isDev } from './utils';
 
 interface Props {
   createGame(): void;

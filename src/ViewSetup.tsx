@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { RoleData, RoleType, RoleTypes } from './Role';
-import { GameData, shuffle, getBoardFor } from './types';
+import { GameData } from './types';
+import { getBoardFor, shuffle } from "./utils";
 import { FIREBASE } from './firebase';
 import { UserState } from './Storage';
 import { HostBox } from './shared';
