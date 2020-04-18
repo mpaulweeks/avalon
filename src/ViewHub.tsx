@@ -14,7 +14,7 @@ import { ViewBar } from "./ViewBar";
 import { ViewNominate } from "./ViewNominate";
 import { StyledBox } from "./shared";
 
-const HeaderLink = styled(StyledBox)<{ current: boolean, hasLink: boolean }>`
+const HeaderLink = styled(StyledBox) <{ current: boolean, hasLink: boolean }>`
   margin: 0 0.5em;
   border-color: #00000000;
 
@@ -94,6 +94,7 @@ export class ViewHub extends React.Component<Props, State> {
         },
       },
       turn: null,
+      vetoes: 0,
       votes: {
         showResults: false,
         tally: {},
@@ -230,7 +231,7 @@ export class ViewHub extends React.Component<Props, State> {
     )
   }
   renderLink(label: string, type?: ViewType) {
-    const onClick = !!type ? () => this.setState({ view: type }) : () => {};
+    const onClick = !!type ? () => this.setState({ view: type }) : () => { };
     return (
       <HeaderLink
         current={type === this.state.view}

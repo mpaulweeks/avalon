@@ -2,7 +2,7 @@ import React from 'react';
 import { UserState } from './Storage';
 import { GameData, MissionResults } from './types';
 import { FIREBASE } from './firebase';
-import { HostBox, Board, MissionIcon } from './shared';
+import { HostBox, Board, MissionIcon, Flex } from './shared';
 
 interface Props {
   data: GameData;
@@ -61,10 +61,16 @@ export class ViewGame extends React.Component<Props, State> {
     mission.roster = null;
     FIREBASE.updateBoard(id, board);
   }
+  addVeto(delta: number) {
+    const { isHost, data } = this.props;
+    if (!isHost) { return; }
+    const { id, vetoes } = data;
+    FIREBASE.updateVetoes(id, vetoes + delta);
+  }
 
   render() {
     const { isHost, data } = this.props;
-    const { board, turn, players } = data;
+    const { board, turn, players, vetoes } = data;
 
     return (
       <div>
@@ -91,7 +97,7 @@ export class ViewGame extends React.Component<Props, State> {
                 <div>
                   {m.neededFails} fails needed
                 </div>
-              ) : <br/>}
+              ) : <br />}
               {m.roster && m.roster.map(pid => (
                 <div key={pid}>
                   {players[pid].name}
@@ -101,18 +107,37 @@ export class ViewGame extends React.Component<Props, State> {
                 <HostBox>
                   {m.roster ? (
                     <button onClick={() => this.clearMissionNoms(index)}>
-                      remove<br/>noms
+                      remove<br />noms
                     </button>
                   ) : (
-                    <button onClick={() => this.setMissionNoms(index)}>
-                      set<br/>noms
-                    </button>
-                  )}
+                      <button onClick={() => this.setMissionNoms(index)}>
+                        set<br />noms
+                      </button>
+                    )}
                 </HostBox>
               )}
             </div>
           ))}
         </Board>
+        <div>
+          Missions are played left to right. The number is how many people are required for each mission.
+          <br />
+          It only takes 1 FAIL to win the mission for Red. First team to 3 missions wins.
+        </div>
+
+        <h3>
+          Vetoes: {vetoes}/4
+        </h3>
+        <div>
+          When the number of vetoes reaches 4, the nomination automatically goes to mission without a group vote.
+        </div>
+
+        {isHost && (
+          <HostBox>
+            <button onClick={() => this.addVeto(1)}>+</button>
+            <button onClick={() => this.addVeto(-1)}>-</button>
+          </HostBox>
+        )}
 
       </div>
     );

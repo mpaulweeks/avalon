@@ -77,6 +77,9 @@ class FirebaseSingleton implements IFirebase {
   updateTurn(gameId: string, data: TurnData | null) {
     return this.db.ref(`game/${gameId}/turn`).set(data || null);
   }
+  updateVetoes(gameId: string, data: number) {
+    return this.db.ref(`game/${gameId}/vetoes`).set(data);
+  }
   updateVotes(gameId: string, data: VoteData) {
     return this.db.ref(`game/${gameId}/votes`).set(data);
   }

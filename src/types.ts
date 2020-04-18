@@ -68,5 +68,6 @@ export interface GameData {
   players: PlayerData;
   roles: RoleType[];
   turn: TurnData | null;
+  vetoes: number;
   votes: VoteData;
 }

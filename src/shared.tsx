@@ -12,11 +12,14 @@ export const HostBox = styled(StyledBox)`
   background-color: plum;
 `;
 
-export const Board = styled.div`
+export const Flex = styled.div`
   display: flex;
-
+  flex-direction: horizontal;
   text-align: center;
+  flex-wrap: nowrap;
 `;
+
+export const Board = styled(Flex)``;
 
 export const MissionIcon = styled.div<{ result: MissionResult }>`
   font-size: 4rem;
