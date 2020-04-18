@@ -66,7 +66,7 @@ export class ViewNominate extends React.Component<Props, State> {
     const isDealer = data.turn && data.turn.current === this.id;
     const outOfRoster = Object.keys(players).filter(pid => !nominations.roster.includes(pid));
     outOfRoster.sort();
-    const shuffledTally = shuffle(Object.keys(nominations.tally));
+    const sortedTally = Object.keys(nominations.tally).sort();
 
     const currentMission = data.board.missions.filter(m => m.result === MissionResultType.Neutral)[0];
     const currentNeeded = currentMission ? currentMission.required : '???';
@@ -103,8 +103,8 @@ export class ViewNominate extends React.Component<Props, State> {
                   </button>
                 ))
               ) : (
-                'everyone has been nominated'
-              )}
+                  'everyone has been nominated'
+                )}
             </div>
           </div>
         )}
@@ -114,7 +114,7 @@ export class ViewNominate extends React.Component<Props, State> {
         {nominations.tally[this.id] && (
           <div>
             <div> you have voted </div>
-            <br/>
+            <br />
           </div>
         )}
         <div>
@@ -133,7 +133,7 @@ export class ViewNominate extends React.Component<Props, State> {
 
         {nominations.showResults && Object.keys(nominations.tally).length ? (
           <div>
-            {shuffledTally.map((pid, i) => (
+            {sortedTally.map((pid, i) => (
               <div key={i}>
                 {data.players[pid].name}: {nominations.tally[pid].toUpperCase()}
               </div>

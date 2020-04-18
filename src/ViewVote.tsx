@@ -4,6 +4,7 @@ import { VoteType, GameData } from './types';
 import { FIREBASE } from './firebase';
 import { RoleData, Roles } from './Role';
 import { HostBox } from './shared';
+import { shuffle } from './utils';
 
 interface Props {
   isHost: boolean;
@@ -63,22 +64,22 @@ export class ViewVote extends React.Component<Props, State> {
             {votes.tally[this.id] ? (
               <div> you have voted </div>
             ) : (
-              <div>
-                <button onClick={() => this.voteSuccess()}>vote SUCCESS</button>
-                <button onClick={() => this.voteFail()}>vote FAIL</button>
-              </div>
-            )}
+                <div>
+                  <button onClick={() => this.voteSuccess()}>vote SUCCESS</button>
+                  <button onClick={() => this.voteFail()}>vote FAIL</button>
+                </div>
+              )}
           </div>
         ) : (
-          <div>
-            only nominated players can vote during the mission
-          </div>
-        )}
+            <div>
+              only nominated players can vote during the mission
+            </div>
+          )}
 
         <h3>results!</h3>
         {votes.showResults && Object.keys(votes.tally).length ? (
           <div>
-            {Object.values(votes.tally).map((vote, i) => (
+            {Object.values(votes.tally).sort().reverse().map((vote, i) => (
               <div key={i}>
                 {vote.toUpperCase()}
               </div>
