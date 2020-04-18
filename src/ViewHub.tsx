@@ -24,8 +24,10 @@ const HeaderLink = styled(StyledBox) <{ current: boolean, hasLink: boolean }>`
   }
 
   ${props => props.hasLink ? `
-    cursor: pointer;
-    text-decoration: underline;
+    & span {
+      cursor: pointer;
+      text-decoration: underline;
+    }
   ` : ''}
 
   ${props => props.current ? `
@@ -249,7 +251,7 @@ export class ViewHub extends React.Component<Props, State> {
         hasLink={!!type}
         onClick={onClick}
       >
-        {props.children}
+        <span>{props.children}</span>
       </HeaderLink>
     );
   }

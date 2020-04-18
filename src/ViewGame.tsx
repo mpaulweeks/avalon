@@ -71,6 +71,7 @@ export class ViewGame extends React.Component<Props, State> {
   render() {
     const { isHost, data } = this.props;
     const { board, turn, players, vetoes } = data;
+    const anyDoubleFails = board.missions.some(m => m.neededFails > 1);
 
     return (
       <div>
@@ -93,11 +94,13 @@ export class ViewGame extends React.Component<Props, State> {
               <MissionIcon result={m.result} onClick={() => this.missionChange(index)}>
                 {m.required}
               </MissionIcon>
-              {m.neededFails > 1 ? (
-                <div>
-                  {m.neededFails} fails needed
-                </div>
-              ) : <br />}
+              {anyDoubleFails && (
+                m.neededFails > 1 ? (
+                  <div>
+                    {m.neededFails} fails needed
+                  </div>
+                ) : <br />
+              )}
               {m.roster && m.roster.map(pid => (
                 <div key={pid}>
                   {players[pid].name}
