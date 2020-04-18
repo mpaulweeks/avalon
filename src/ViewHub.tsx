@@ -16,7 +16,9 @@ import { StyledBox } from "./shared";
 
 const HeaderLink = styled(StyledBox) <{ current: boolean, hasLink: boolean }>`
   margin: 0 0.5em;
+  margin-top: 0;
   border-color: #00000000;
+  border-top-width: 0;
 
   ${props => props.hasLink ? `
     cursor: pointer;
