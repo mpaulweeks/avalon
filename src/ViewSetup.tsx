@@ -124,7 +124,6 @@ export class ViewSetup extends React.Component<Props, State> {
               </div>
             ) : (
                 <div>
-                  <h3>Add Roles</h3>
                   {this.renderAdd(RoleTypes.filter(r => RoleData[r].isRed))}
                   <br />
                   {this.renderAdd(RoleTypes.filter(r => !RoleData[r].isRed))}
