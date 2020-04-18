@@ -19,6 +19,9 @@ const HeaderLink = styled(StyledBox) <{ current: boolean, hasLink: boolean }>`
   margin-top: 0;
   border-color: #00000000;
   border-top-width: 0;
+  & a {
+    color: inherit;
+  }
 
   ${props => props.hasLink ? `
     cursor: pointer;
@@ -51,6 +54,10 @@ interface State {
   view: ViewType;
   storage: UserState;
   data?: GameData;
+}
+
+interface LinkProps {
+  type?: ViewType;
 }
 
 export class ViewHub extends React.Component<Props, State> {
@@ -232,7 +239,9 @@ export class ViewHub extends React.Component<Props, State> {
       </div>
     )
   }
-  renderLink(label: string, type?: ViewType) {
+
+  Link: React.StatelessComponent<LinkProps> = (props) => {
+    const { type } = props;
     const onClick = !!type ? () => this.setState({ view: type }) : () => { };
     return (
       <HeaderLink
@@ -240,7 +249,7 @@ export class ViewHub extends React.Component<Props, State> {
         hasLink={!!type}
         onClick={onClick}
       >
-        {label}
+        {props.children}
       </HeaderLink>
     );
   }
@@ -251,14 +260,17 @@ export class ViewHub extends React.Component<Props, State> {
       <div>
         <nav>
           <ul>
-            {data && this.renderLink(`Game #${data.id}`, Views.Game)}
-            {data && this.renderLink(`Nominate`, Views.Nominate)}
-            {data && this.renderLink(`Mission`, Views.Vote)}
-            {data && this.renderLink(`Setup`, Views.Setup)}
-            {!data && this.renderLink(`Lobby`, Views.Lobby)}
-            {this.renderLink(`Reset`, Views.Reset)}
-            {isDebug && this.renderLink(`Debug`, Views.Debug)}
-            {this.renderLink(`v.${APP_VERSION}`)}
+            {data && <this.Link type={Views.Game}>Game #{data.id}</this.Link>}
+            {data && <this.Link type={Views.Nominate}>Nominate</this.Link>}
+            {data && <this.Link type={Views.Vote}>Mission</this.Link>}
+            {data && <this.Link type={Views.Setup}>Setup</this.Link>}
+            {!data && <this.Link type={Views.Lobby}>Lobby</this.Link>}
+            <this.Link type={Views.Reset}>Reset</this.Link>
+            {isDebug && <this.Link type={Views.Debug}>Debug</this.Link>}
+            <this.Link>
+              <a target="_blank" href="rules.pdf">Rules</a>
+            </this.Link>
+            <this.Link>v.{APP_VERSION}</this.Link>
           </ul>
         </nav>
 
