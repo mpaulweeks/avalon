@@ -2,8 +2,7 @@ import React from 'react';
 import { BrowserStorage, UserState } from './Storage';
 import { GameData, NominationType, MissionResultType } from './types';
 import { FIREBASE } from './firebase';
-import { HostBox } from './shared';
-import { shuffle } from './utils';
+import { HostBox, Green, Red } from './shared';
 
 interface Props {
   isHost: boolean;
@@ -135,7 +134,12 @@ export class ViewNominate extends React.Component<Props, State> {
           <div>
             {sortedTally.map((pid, i) => (
               <div key={i}>
-                {data.players[pid].name}: {nominations.tally[pid].toUpperCase()}
+                {data.players[pid].name}:&nbsp;
+                {nominations.tally[pid] === NominationType.Approve ? (
+                  <Green>{nominations.tally[pid].toUpperCase()}</Green>
+                ) : (
+                    <Red>{nominations.tally[pid].toUpperCase()}</Red>
+                  )}
               </div>
             ))}
           </div>

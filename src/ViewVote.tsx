@@ -3,8 +3,7 @@ import { BrowserStorage, UserState } from './Storage';
 import { VoteType, GameData } from './types';
 import { FIREBASE } from './firebase';
 import { RoleData, Roles } from './Role';
-import { HostBox } from './shared';
-import { shuffle } from './utils';
+import { HostBox, Green, Red } from './shared';
 
 interface Props {
   isHost: boolean;
@@ -81,7 +80,11 @@ export class ViewVote extends React.Component<Props, State> {
           <div>
             {Object.values(votes.tally).sort().reverse().map((vote, i) => (
               <div key={i}>
-                {vote.toUpperCase()}
+                {vote === VoteType.Success ? (
+                  <Green>{vote.toUpperCase()}</Green>
+                ) : (
+                    <Red>{vote.toUpperCase()}</Red>
+                  )}
               </div>
             ))}
           </div>

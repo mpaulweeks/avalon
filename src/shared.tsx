@@ -1,6 +1,15 @@
 import styled from 'styled-components';
 import { MissionResult, MissionResultType } from './types';
 
+export const Green = styled.span`
+  color: green;
+  font-weight: bold;
+`;
+export const Red = styled.span`
+  color: red;
+  font-weight: bold;
+`;
+
 export const StyledBox = styled.div`
   margin: 1rem 0;
   padding: 0.8rem;
