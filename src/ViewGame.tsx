@@ -2,7 +2,7 @@ import React from 'react';
 import { UserState } from './Storage';
 import { GameData, MissionResults } from './types';
 import { FIREBASE } from './firebase';
-import { HostBox, Board, MissionIcon, Flex } from './shared';
+import { HostBox, Board, MissionIcon } from './shared';
 
 interface Props {
   data: GameData;
