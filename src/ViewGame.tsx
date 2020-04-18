@@ -24,6 +24,7 @@ export class ViewGame extends React.Component<Props, State> {
     });
     FIREBASE.updateNominations(id, {
       ...nominations,
+      roster: [],
       showResults: false,
       tally: {},
     });

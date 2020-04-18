@@ -4,4 +4,4 @@
 - add ability to change name in reset menu
 - add "deleted" optional timestamp to game
   - if/when receive deleted, show alert, then reset
-- on next turn, clear and limit
+- limit noms?
