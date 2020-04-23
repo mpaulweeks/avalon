@@ -17,4 +17,5 @@ npm i
 npm run start
 ```
 
+- Add `#d` to URL and refresh for Debug tab + logs
 - Please work on branch and open PR
