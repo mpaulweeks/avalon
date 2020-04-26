@@ -63,7 +63,7 @@ export class ViewNominate extends React.Component<Props, State> {
   render() {
     const { isHost, data } = this.props;
     const { nominations, players } = data;
-    const isDealer = data.turn && data.turn.current === this.id;
+    const isDealer = data.turn && data.turn.current === this.id && !nominations.showResults;
     const sortedPlayers = sortObjVals(players, p => p.id);
     const outOfRoster = sortedPlayers.filter(p => !nominations.roster.includes(p.id));
     const sortedTally = Object.keys(nominations.tally).sort();
@@ -71,7 +71,6 @@ export class ViewNominate extends React.Component<Props, State> {
 
     const currentMission = data.board.missions.filter(m => m.result === MissionResultType.Neutral)[0];
     const currentNeeded = currentMission ? currentMission.required : '???';
-
 
     return (
       <div>
@@ -120,7 +119,6 @@ export class ViewNominate extends React.Component<Props, State> {
         )}
         {!nominations.showResults && (
           <div>
-            <br />
             <button onClick={() => this.voteSuccess()}>vote SUPPORT</button>
             <button onClick={() => this.voteFail()}>vote REJECT</button>
           </div>
