@@ -139,8 +139,6 @@ export class ViewHub extends React.Component<Props, State> {
       };
       FIREBASE.updatePlayers(localData.id, players);
     }
-    // this.setState({ view: Views.Game, });
-    // todo debug
     this.setState({ view: Views.Game, storage: BrowserStorage.get(), });
     FIREBASE.joinGame(localData.id, data => this.onReceive(data));
   }

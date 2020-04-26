@@ -4,6 +4,7 @@ import { VoteType, GameData } from './types';
 import { FIREBASE } from './firebase';
 import { RoleData, Roles } from './Role';
 import { HostBox, Green, Red } from './shared';
+import { sortObjVals } from './utils';
 
 interface Props {
   isHost: boolean;
@@ -51,8 +52,12 @@ export class ViewVote extends React.Component<Props, State> {
 
   render() {
     const { isHost, data } = this.props;
-    const { nominations, votes } = data;
+    const { nominations, players, votes } = data;
     const isNom = nominations.roster.includes(this.id);
+
+    const sortedPlayers = sortObjVals(players, p => p.id);
+    const pendingTally = sortedPlayers.filter(p => nominations.roster.includes(p.id) && !votes.tally[p.id]);
+
     return (
       <div>
         <h1>Mission Vote</h1>
@@ -89,9 +94,18 @@ export class ViewVote extends React.Component<Props, State> {
             ))}
           </div>
         ) : (
-            <p>
+            <div>
               {Object.keys(votes.tally).length}/{nominations.roster.length} votes counted
-            </p>
+              {pendingTally.length ? (
+                <div>
+                  <br />
+                  waiting for:
+                  {pendingTally.map(p => (
+                    <div key={p.id}>{p.name}</div>
+                  ))}
+                </div>
+              ) : ''}
+            </div>
           )}
 
         {isHost && (

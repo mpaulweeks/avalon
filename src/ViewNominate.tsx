@@ -3,6 +3,7 @@ import { BrowserStorage, UserState } from './Storage';
 import { GameData, NominationType, MissionResultType } from './types';
 import { FIREBASE } from './firebase';
 import { HostBox, Green, Red } from './shared';
+import { sortObjVals } from './utils';
 
 interface Props {
   isHost: boolean;
@@ -63,12 +64,14 @@ export class ViewNominate extends React.Component<Props, State> {
     const { isHost, data } = this.props;
     const { nominations, players } = data;
     const isDealer = data.turn && data.turn.current === this.id;
-    const outOfRoster = Object.keys(players).filter(pid => !nominations.roster.includes(pid));
-    outOfRoster.sort();
+    const sortedPlayers = sortObjVals(players, p => p.id);
+    const outOfRoster = sortedPlayers.filter(p => !nominations.roster.includes(p.id));
     const sortedTally = Object.keys(nominations.tally).sort();
+    const pendingTally = sortedPlayers.filter(p => !nominations.tally[p.id]);
 
     const currentMission = data.board.missions.filter(m => m.result === MissionResultType.Neutral)[0];
     const currentNeeded = currentMission ? currentMission.required : '???';
+
 
     return (
       <div>
@@ -96,9 +99,9 @@ export class ViewNominate extends React.Component<Props, State> {
             <h3>Not Nominated:</h3>
             <div>
               {outOfRoster.length > 0 ? (
-                outOfRoster.map((pid, i) => (
-                  <button key={i} onClick={() => this.addToRoster(pid)}>
-                    {players[pid].name}
+                outOfRoster.map((p, i) => (
+                  <button key={i} onClick={() => this.addToRoster(p.id)}>
+                    {p.name}
                   </button>
                 ))
               ) : (
@@ -144,9 +147,18 @@ export class ViewNominate extends React.Component<Props, State> {
             ))}
           </div>
         ) : (
-            <p>
+            <div>
               {Object.keys(nominations.tally).length}/{Object.keys(players).length} votes counted
-            </p>
+              {pendingTally.length ? (
+                <div>
+                  <br />
+                  waiting for:
+                  {pendingTally.map(p => (
+                    <div key={p.id}>{p.name}</div>
+                  ))}
+                </div>
+              ) : ''}
+            </div>
           )}
       </div>
     );
