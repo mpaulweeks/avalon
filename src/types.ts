@@ -71,3 +71,15 @@ export interface GameData {
   vetoes: number;
   votes: VoteData;
 }
+
+export type ViewType = 'loading' | 'lobby' | 'game' | 'setup' | 'nominate' | 'vote' | 'reset' | 'debug';
+export const Views = {
+  Loading: 'loading' as ViewType,
+  Lobby: 'lobby' as ViewType,
+  Game: 'game' as ViewType,
+  Setup: 'setup' as ViewType,
+  Nominate: 'nominate' as ViewType,
+  Vote: 'vote' as ViewType,
+  Reset: 'reset' as ViewType,
+  Debug: 'debug' as ViewType,
+}

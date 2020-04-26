@@ -1,35 +1,31 @@
 import React from 'react';
-import { BrowserStorage, UserState } from './Storage';
+import { Storage, UserState } from './Storage';
 import { hri } from 'human-readable-ids';
 import { isDev } from './utils';
 
 interface Props {
+  storage: UserState;
   createGame(): void;
   joinGame(id: string): void;
 }
 interface State {
-  storage: UserState;
   tempName: string;
   tempJoin: string;
 }
 
 export class ViewLobby extends React.Component<Props, State> {
   state: State = {
-    storage: BrowserStorage.get(),
     tempName: isDev ? hri.random().split('-')[0] : '',
     tempJoin: '',
   };
 
   setName() {
-    BrowserStorage.set({
-      ...BrowserStorage.get(),
-      name: this.state.tempName,
-    });
-    this.setState({ storage: BrowserStorage.get(), });
+    Storage.setName(this.state.tempName);
   }
 
   render() {
-    const { storage, tempName, tempJoin } = this.state;
+    const { storage } = this.props;
+    const { tempName, tempJoin } = this.state;
 
     if (!storage.name) {
       return (
@@ -57,8 +53,8 @@ export class ViewLobby extends React.Component<Props, State> {
             onChange={event => this.setState({ tempJoin: event.target.value, })}
             placeholder="enter game id"
           />
-          <br/>
-          <br/>
+          <br />
+          <br />
           <button onClick={() => this.props.joinGame(tempJoin)}>join game</button>
         </div>
       </div>

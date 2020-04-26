@@ -5,9 +5,9 @@ import { ViewVote } from "./ViewVote";
 import { ViewLobby } from "./ViewLobby";
 import { ViewReset } from "./ViewReset";
 import { FIREBASE } from "./firebase";
-import { GameData, PlayerData } from "./types";
+import { GameData, PlayerData, Views, ViewType } from "./types";
 import { isDebug, getBoardFor, APP_VERSION } from "./utils";
-import { BrowserStorage, randomId, UserState } from "./Storage";
+import { Storage, randomId, UserState } from "./Storage";
 import { ViewGame } from "./ViewGame";
 import { ViewSetup } from "./ViewSetup";
 import { ViewBar } from "./ViewBar";
@@ -39,21 +39,8 @@ const HeaderLink = styled(StyledBox) <{ current: boolean, hasLink: boolean }>`
   }
 `;
 
-type ViewType = 'loading' | 'lobby' | 'game' | 'setup' | 'nominate' | 'vote' | 'reset' | 'debug';
-const Views = {
-  Loading: 'loading' as ViewType,
-  Lobby: 'lobby' as ViewType,
-  Game: 'game' as ViewType,
-  Setup: 'setup' as ViewType,
-  Nominate: 'nominate' as ViewType,
-  Vote: 'vote' as ViewType,
-  Reset: 'reset' as ViewType,
-  Debug: 'debug' as ViewType,
-}
-
 interface Props { }
 interface State {
-  view: ViewType;
   storage: UserState;
   data?: GameData;
 }
@@ -64,27 +51,27 @@ interface LinkProps {
 
 export class ViewHub extends React.Component<Props, State> {
   state: State = {
-    view: Views.Loading,
-    storage: BrowserStorage.get(),
+    storage: Storage.get(),
   };
   componentDidMount() {
+    Storage.onSet = val => this.setState({ storage: val });
     const { storage } = this.state;
     if (storage.name && storage.game) {
       this.join(this.genGuestGameData());
     } else {
-      this.setState({ view: Views.Lobby, });
+      Storage.setView(Views.Lobby);
     }
   }
 
   private genHostGameData(): GameData {
-    const { id } = BrowserStorage.get();
+    const { id } = Storage.get();
     return {
       ...this.genGuestGameData(),
       host: id,
     };
   }
   private genGuestGameData(): GameData {
-    const { id, name, game } = BrowserStorage.get();
+    const { id, name, game } = Storage.get();
     if (!game) {
       throw new Error('game should be set in localStorage');
     }
@@ -114,6 +101,7 @@ export class ViewHub extends React.Component<Props, State> {
   }
 
   private async join(localData: GameData) {
+    const { storage } = this.state;
     if (localData.host) {
       FIREBASE.updateGame(localData);
     } else {
@@ -126,7 +114,7 @@ export class ViewHub extends React.Component<Props, State> {
       }
 
       // add self to host.players, but prefer local name
-      const myId = this.state.storage.id;
+      const myId = storage.id;
       const localMe = localData.players[myId];
       const remoteMe = hostData.players[myId] || {};
       const players: PlayerData = {
@@ -139,7 +127,9 @@ export class ViewHub extends React.Component<Props, State> {
       };
       FIREBASE.updatePlayers(localData.id, players);
     }
-    this.setState({ view: Views.Game, storage: BrowserStorage.get(), });
+    if (storage.view === Views.Lobby) {
+      Storage.setView(Views.Game);
+    }
     FIREBASE.joinGame(localData.id, data => this.onReceive(data));
   }
   private onReceive(data: GameData) {
@@ -163,35 +153,29 @@ export class ViewHub extends React.Component<Props, State> {
   }
 
   createGame() {
-    BrowserStorage.set({
-      ...BrowserStorage.get(),
-      game: randomId(3),
-    });
+    Storage.setGame(randomId(3));
     this.join(this.genHostGameData());
   }
   joinGame(gameId: string) {
-    BrowserStorage.set({
-      ...BrowserStorage.get(),
-      game: gameId,
-    });
+    Storage.setGame(gameId);
     this.join(this.genGuestGameData());
   }
   reset() {
-    const storage = BrowserStorage.get();
+    const storage = Storage.get();
     if (storage.game) {
       FIREBASE.leaveGame(storage.game);
     }
-    BrowserStorage.reset();
+    Storage.reset();
     this.setState({
-      view: this.state.view === Views.Reset ? Views.Reset : Views.Lobby,
-      storage: BrowserStorage.get(),
+      storage: Storage.get(),
       data: undefined,
     });
   }
 
   renderMain() {
-    const { view, storage, data } = this.state;
-    const isHost = !!data && BrowserStorage.get().id === data.host;
+    const { storage, data } = this.state;
+    const { view } = storage;
+    const isHost = !!data && Storage.get().id === data.host;
     if (view === Views.Game && data) {
       return <ViewGame isHost={isHost} data={data} storage={storage} />
     }
@@ -207,6 +191,7 @@ export class ViewHub extends React.Component<Props, State> {
 
     if (view === Views.Lobby && !data) {
       return <ViewLobby
+        storage={storage}
         createGame={() => this.createGame()}
         joinGame={id => this.joinGame(id)}
       />
@@ -242,10 +227,10 @@ export class ViewHub extends React.Component<Props, State> {
 
   Link: React.StatelessComponent<LinkProps> = (props) => {
     const { type } = props;
-    const onClick = !!type ? () => this.setState({ view: type }) : () => { };
+    const onClick = !!type ? () => Storage.setView(type) : () => { };
     return (
       <HeaderLink
-        current={type === this.state.view}
+        current={type === this.state.storage.view}
         hasLink={!!type}
         onClick={onClick}
       >

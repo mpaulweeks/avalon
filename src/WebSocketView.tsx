@@ -1,12 +1,12 @@
 import React from 'react';
-import { BrowserStorage } from './Storage';
+import { Storage } from './Storage';
 
 export interface StateBase<Data> {
   data: Data;
 };
 
 export abstract class WebSocketView<Props, State extends StateBase<Data>, Data> extends React.Component<Props, State> {
-  id = BrowserStorage.get().id;
+  id = Storage.get().id;
 
   componentDidMount() {
   }

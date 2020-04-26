@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserStorage, UserState } from './Storage';
+import { Storage, UserState } from './Storage';
 import { GameData, NominationType, MissionResultType } from './types';
 import { FIREBASE } from './firebase';
 import { HostBox, Green, Red } from './shared';
@@ -13,7 +13,7 @@ interface Props {
 interface State { }
 
 export class ViewNominate extends React.Component<Props, State> {
-  id = BrowserStorage.get().id;
+  id = Storage.get().id;
   state: State = {};
 
   voteSuccess() {
