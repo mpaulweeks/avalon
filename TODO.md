@@ -5,3 +5,4 @@
 - add "deleted" optional timestamp to game
   - if/when receive deleted, show alert, then reset
 - limit noms?
+- on reassign, do the same as "next turn"
