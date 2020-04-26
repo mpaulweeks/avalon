@@ -1,7 +1,7 @@
 import React, { CSSProperties } from 'react';
 import styled from 'styled-components';
-import { RoleData, Roles } from './Role';
-import { GameData, UserState } from './types';
+import { AllRoles } from './Role';
+import { GameData, RoleType, UserState } from './types';
 import { StyledBox } from './shared';
 
 export const SecretBox = styled(StyledBox)`
@@ -27,7 +27,7 @@ export class ViewBar extends React.Component<Props, State> {
     const me = data.players[storage.id] || {
       name: storage.name,
     };
-    const myData = RoleData[me.role || Roles.BasicBlue];
+    const myData = AllRoles[me.role || RoleType.BasicBlue];
     const others = Object.keys(data.players).filter(id => id !== storage.id).map(key => data.players[key]);
     const youSee = others.filter(o => o.role && myData.sees.includes(o.role)).map(o => o.name);
 

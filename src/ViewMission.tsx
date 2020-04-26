@@ -1,7 +1,7 @@
 import React from 'react';
-import { VoteType, GameData, UserState } from './types';
+import { VoteType, GameData, UserState, RoleType } from './types';
 import { FIREBASE } from './firebase';
-import { RoleData, Roles } from './Role';
+import { AllRoles } from './Role';
 import { HostBox, Green, Red } from './shared';
 import { sortObjVals } from './utils';
 
@@ -21,7 +21,7 @@ export class ViewMission extends React.Component<Props, State> {
     const me = data.players[storage.id] || {
       name: storage.name,
     };
-    return RoleData[me.role || Roles.BasicBlue];
+    return AllRoles[me.role || RoleType.BasicBlue];
   }
 
   voteSuccess() {

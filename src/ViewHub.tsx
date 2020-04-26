@@ -5,7 +5,7 @@ import { ViewMission } from "./ViewMission";
 import { ViewLobby } from "./ViewLobby";
 import { ViewReset } from "./ViewReset";
 import { FIREBASE } from "./firebase";
-import { GameData, PlayerData, UserState, Views, ViewType } from "./types";
+import { GameData, PlayerData, UserState, ViewTabType, ViewTab } from "./types";
 import { isDebug, getBoardFor, randomId, APP_VERSION } from "./utils";
 import { STORAGE } from "./storage";
 import { ViewGame } from "./ViewGame";
@@ -46,7 +46,7 @@ interface State {
 }
 
 interface LinkProps {
-  type?: ViewType;
+  type?: ViewTab;
 }
 
 export class ViewHub extends React.Component<Props, State> {
@@ -59,7 +59,7 @@ export class ViewHub extends React.Component<Props, State> {
     if (storage.name && storage.game) {
       this.join(this.genGuestGameData());
     } else {
-      STORAGE.setView(Views.Lobby);
+      STORAGE.setView(ViewTabType.Lobby);
     }
   }
 
@@ -127,8 +127,8 @@ export class ViewHub extends React.Component<Props, State> {
       };
       FIREBASE.updatePlayers(localData.id, players);
     }
-    if (storage.view === Views.Lobby) {
-      STORAGE.setView(Views.Game);
+    if (storage.view === ViewTabType.Lobby) {
+      STORAGE.setView(ViewTabType.Game);
     }
     FIREBASE.joinGame(localData.id, data => this.onReceive(data));
   }
@@ -175,20 +175,20 @@ export class ViewHub extends React.Component<Props, State> {
     const { storage, data } = this.state;
     const { id, view } = storage;
     const isHost = !!data && id === data.host;
-    if (view === Views.Game && data) {
+    if (view === ViewTabType.Game && data) {
       return <ViewGame isHost={isHost} data={data} storage={storage} />
     }
-    if (view === Views.Setup && data) {
+    if (view === ViewTabType.Setup && data) {
       return <ViewSetup isHost={isHost} data={data} storage={storage} />
     }
-    if (view === Views.Nominate && data) {
+    if (view === ViewTabType.Nominate && data) {
       return <ViewNominate isHost={isHost} data={data} storage={storage} />
     }
-    if (view === Views.Vote && data) {
+    if (view === ViewTabType.Mission && data) {
       return <ViewMission isHost={isHost} data={data} storage={storage} />
     }
 
-    if (view === Views.Lobby && !data) {
+    if (view === ViewTabType.Lobby && !data) {
       return <ViewLobby
         storage={storage}
         createGame={() => this.createGame()}
@@ -196,17 +196,17 @@ export class ViewHub extends React.Component<Props, State> {
       />
     }
 
-    if (view === Views.Reset) {
+    if (view === ViewTabType.Reset) {
       return <ViewReset
         storage={storage}
         reset={() => this.reset()}
       />
     }
-    if (view === Views.Debug) {
+    if (view === ViewTabType.Debug) {
       return <ViewDebug />
     }
 
-    if (view === Views.Loading) {
+    if (view === ViewTabType.Loading) {
       return (
         <h3>
           connecting to server, please wait...
@@ -244,13 +244,13 @@ export class ViewHub extends React.Component<Props, State> {
       <div>
         <nav>
           <ul>
-            {data && <this.Link type={Views.Game}>Game #{data.id}</this.Link>}
-            {data && <this.Link type={Views.Nominate}>Nominate</this.Link>}
-            {data && <this.Link type={Views.Vote}>Mission</this.Link>}
-            {data && <this.Link type={Views.Setup}>Setup</this.Link>}
-            {!data && <this.Link type={Views.Lobby}>Lobby</this.Link>}
-            <this.Link type={Views.Reset}>Reset</this.Link>
-            {isDebug && <this.Link type={Views.Debug}>Debug</this.Link>}
+            {data && <this.Link type={ViewTabType.Game}>Game #{data.id}</this.Link>}
+            {data && <this.Link type={ViewTabType.Nominate}>Nominate</this.Link>}
+            {data && <this.Link type={ViewTabType.Mission}>Mission</this.Link>}
+            {data && <this.Link type={ViewTabType.Setup}>Setup</this.Link>}
+            {!data && <this.Link type={ViewTabType.Lobby}>Lobby</this.Link>}
+            <this.Link type={ViewTabType.Reset}>Reset</this.Link>
+            {isDebug && <this.Link type={ViewTabType.Debug}>Debug</this.Link>}
             <this.Link>
               <a target="_blank" href="rules.pdf">Rules</a>
             </this.Link>

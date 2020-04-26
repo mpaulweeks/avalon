@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { RoleData, RoleType, RoleTypes } from './Role';
-import { GameData, UserState } from './types';
+import { AllRoles } from './Role';
+import { GameData, Role, Roles, UserState } from './types';
 import { getBoardFor, shuffle, sortObjVals } from "./utils";
 import { FIREBASE } from './firebase';
 import { HostBox } from './shared';
@@ -28,13 +28,13 @@ interface State {
 export class ViewSetup extends React.Component<Props, State> {
   state: State = {}
 
-  addRole(role: RoleType) {
+  addRole(role: Role) {
     const newRoles = [...this.props.data.roles];
     newRoles.push(role);
     newRoles.sort();
     FIREBASE.updateRoles(this.props.data.id, newRoles);
   }
-  removeRole(role: RoleType) {
+  removeRole(role: Role) {
     const newRoles = [...this.props.data.roles];
     const index = newRoles.findIndex(r => r === role);
     if (index >= 0) {
@@ -71,24 +71,24 @@ export class ViewSetup extends React.Component<Props, State> {
     FIREBASE.updateTurn(id, null);
   }
 
-  renderRoles(roles: RoleType[], canEdit: boolean) {
+  renderRoles(roles: Role[], canEdit: boolean) {
     return (
       <ul>
         {roles.map((role, i) => (
           <li key={i}>
             {canEdit && <DeleteLink onClick={() => this.removeRole(role)}>X</DeleteLink>}
-            {RoleData[role].name}
+            {AllRoles[role].name}
           </li>
         ))}
       </ul>
     );
   }
-  renderAdd(roles: RoleType[]) {
+  renderAdd(roles: Role[]) {
     return (
       <div>
         {roles.map((r, i) => (
           <button key={i} onClick={() => this.addRole(r)}>
-            {RoleData[r].name}
+            {AllRoles[r].name}
           </button>
         ))}
       </div>
@@ -101,8 +101,8 @@ export class ViewSetup extends React.Component<Props, State> {
     const isAssigned = Object.values(data.players).some(p => p.role);
     const canEdit = isHost && !isAssigned;
 
-    const redRoles = Object.values(data.roles).filter(r => RoleData[r].isRed);
-    const blueRoles = Object.values(data.roles).filter(r => !RoleData[r].isRed);
+    const redRoles = Object.values(data.roles).filter(r => AllRoles[r].isRed);
+    const blueRoles = Object.values(data.roles).filter(r => !AllRoles[r].isRed);
 
     const sortedPlayers = sortObjVals(data.players, p => p.name);
 
@@ -125,9 +125,9 @@ export class ViewSetup extends React.Component<Props, State> {
               </div>
             ) : (
                 <div>
-                  {this.renderAdd(RoleTypes.filter(r => RoleData[r].isRed))}
+                  {this.renderAdd(Roles.filter(r => AllRoles[r].isRed))}
                   <br />
-                  {this.renderAdd(RoleTypes.filter(r => !RoleData[r].isRed))}
+                  {this.renderAdd(Roles.filter(r => !AllRoles[r].isRed))}
                   <br />
                   <button onClick={() => this.assign()}>ASSIGN ROLES</button>
                   {errorMessage && (

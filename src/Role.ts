@@ -1,29 +1,16 @@
+import { Role, Roles, RoleType } from './types';
 
-export const RoleTypes = [
-  'BasicBlue',
-  'Merlin',
-  'Percival',
-  'BasicRed',
-  'Assassin',
-  'Mordred',
-  'Morgana',
-] as const;
-export type RoleType = typeof RoleTypes[number];
-
-export const Roles = RoleTypes.reduce((obj, r) => {
-  obj[r] = r;
-  return obj;
-}, {} as { [key in typeof RoleTypes[number]]: RoleType });
-
-export interface Role {
+export interface RoleData {
   isRed: boolean;
   name: string;
-  sees: RoleType[];
+  sees: Role[];
 };
 
-const redsMinusMordred = [Roles.BasicRed, Roles.Assassin, Roles.Morgana];
-const redsPlusMordred = redsMinusMordred.concat([Roles.Mordred]);
-export const RoleData: { [key in typeof RoleTypes[number]]: Role } = {
+const reds = [RoleType.BasicRed, RoleType.Assassin, RoleType.Morgana, RoleType.Mordred, RoleType.Oberon];
+const redsMinusMordred = reds.filter(r => r !== RoleType.Mordred);
+const redsMinusOberon = reds.filter(r => r !== RoleType.Oberon);
+
+export const AllRoles: { [key in typeof Roles[number]]: RoleData } = {
   BasicBlue: {
     isRed: false,
     name: 'Basic Blue',
@@ -37,26 +24,31 @@ export const RoleData: { [key in typeof RoleTypes[number]]: Role } = {
   Percival: {
     isRed: false,
     name: 'Percival',
-    sees: [Roles.Merlin, Roles.Morgana],
+    sees: [RoleType.Merlin, RoleType.Morgana],
   },
   BasicRed: {
     isRed: true,
     name: 'Basic Red',
-    sees: redsPlusMordred,
+    sees: redsMinusOberon,
   },
   Assassin: {
     isRed: true,
     name: 'Assassin',
-    sees: redsPlusMordred,
+    sees: redsMinusOberon,
   },
   Mordred: {
     isRed: true,
     name: 'Mordred',
-    sees: redsPlusMordred,
+    sees: redsMinusOberon,
   },
   Morgana: {
     isRed: true,
     name: 'Morgana',
-    sees: redsPlusMordred,
+    sees: redsMinusOberon,
+  },
+  Oberon: {
+    isRed: true,
+    name: 'Oberon',
+    sees: [],
   },
 };

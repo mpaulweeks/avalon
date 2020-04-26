@@ -1,5 +1,5 @@
 import { hri } from "human-readable-ids";
-import { UserState, Views, ViewType } from "./types";
+import { UserState, ViewTab, ViewTabType } from "./types";
 import { APP_VERSION } from "./utils";
 
 export interface StorageLayer {
@@ -21,7 +21,7 @@ class StorageSingleton {
       id: hri.random(),
       name: undefined,
       game: undefined,
-      view: Views.Reset,
+      view: ViewTabType.Reset,
     });
   }
   private set(data: UserState) {
@@ -40,7 +40,7 @@ class StorageSingleton {
       game: game,
     });
   }
-  setView(view: ViewType) {
+  setView(view: ViewTab) {
     this.set({
       ...this.get(),
       view: view,

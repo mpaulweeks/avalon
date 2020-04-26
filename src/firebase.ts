@@ -1,7 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/database';
-import { RoleType } from './Role';
-import { BoardData, GameData, NominationData, PlayerData, TurnData, VoteData } from './types';
+import { BoardData, GameData, NominationData, PlayerData, Role, TurnData, VoteData } from './types';
 
 const config = {
   apiKey: "AIzaSyAEz0EOh3rS5AQ1XyG4YQcHVtI9QvjbLQY",
@@ -14,10 +13,7 @@ const config = {
   measurementId: "G-E2SERHMFE4"
 };
 
-export interface IFirebase {
-}
-
-class FirebaseSingleton implements IFirebase {
+class FirebaseSingleton {
   private db: firebase.database.Database;
   isOnline = true;
 
@@ -71,7 +67,7 @@ class FirebaseSingleton implements IFirebase {
   updatePlayers(gameId: string, data: PlayerData) {
     return this.db.ref(`game/${gameId}/players`).set(data);
   }
-  updateRoles(gameId: string, data: RoleType[]) {
+  updateRoles(gameId: string, data: Role[]) {
     return this.db.ref(`game/${gameId}/roles`).set(data);
   }
   updateTurn(gameId: string, data: TurnData | null) {
