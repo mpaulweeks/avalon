@@ -116,13 +116,15 @@ export class ViewNominate extends React.Component<Props, State> {
         {nominations.tally[this.id] && (
           <div>
             <div> you have voted </div>
-            <br />
           </div>
         )}
-        <div>
-          <button onClick={() => this.voteSuccess()}>vote SUPPORT</button>
-          <button onClick={() => this.voteFail()}>vote REJECT</button>
-        </div>
+        {!nominations.showResults && (
+          <div>
+            <br />
+            <button onClick={() => this.voteSuccess()}>vote SUPPORT</button>
+            <button onClick={() => this.voteFail()}>vote REJECT</button>
+          </div>
+        )}
 
         {isHost && (
           <HostBox>
