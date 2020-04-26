@@ -1,11 +1,11 @@
 import React from 'react';
-import { UserState } from './Storage';
+import { UserState } from './types';
 
 interface Props {
   storage: UserState,
   reset(): void;
 }
-interface State {}
+interface State { }
 
 export class ViewReset extends React.Component<Props, State> {
   tryReset() {

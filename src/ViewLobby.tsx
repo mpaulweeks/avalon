@@ -1,7 +1,8 @@
 import React from 'react';
-import { Storage, UserState } from './Storage';
+import { STORAGE } from './storage';
 import { hri } from 'human-readable-ids';
 import { isDev } from './utils';
+import { UserState } from './types';
 
 interface Props {
   storage: UserState;
@@ -20,7 +21,7 @@ export class ViewLobby extends React.Component<Props, State> {
   };
 
   setName() {
-    Storage.setName(this.state.tempName);
+    STORAGE.setName(this.state.tempName);
   }
 
   render() {

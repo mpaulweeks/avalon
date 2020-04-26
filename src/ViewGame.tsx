@@ -1,6 +1,5 @@
 import React from 'react';
-import { UserState } from './Storage';
-import { GameData, MissionResults } from './types';
+import { GameData, MissionResults, UserState } from './types';
 import { FIREBASE } from './firebase';
 import { HostBox, Board, MissionIcon } from './shared';
 

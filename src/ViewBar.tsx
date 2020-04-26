@@ -1,8 +1,7 @@
 import React, { CSSProperties } from 'react';
 import styled from 'styled-components';
 import { RoleData, Roles } from './Role';
-import { UserState } from './Storage';
-import { GameData } from './types';
+import { GameData, UserState } from './types';
 import { StyledBox } from './shared';
 
 export const SecretBox = styled(StyledBox)`
@@ -45,26 +44,26 @@ export class ViewBar extends React.Component<Props, State> {
               you see: <b>{youSee.join(', ') || '(nobody)'}</b>
             </div>
           ) : (
-            <div>
-              roles haven't been assigned yet
-            </div>
-          )}
+              <div>
+                roles haven't been assigned yet
+              </div>
+            )}
         </SecretBox>
         <RoleBox>
           <div>
             turn order: {playerIds.map((pid, index, array) => {
-              const pdata = data.players[pid];
-              const name = (pdata ? pdata.name : '???') + (index < array.length - 1 ? ',' : '');
-              const style: CSSProperties = {
-                color: pid === data.host ? 'purple' : 'blact',
-                fontWeight: (data.turn && pid === data.turn.current) ? 'bold' : 'normal',
-              };
-              return (
-                <span key={pid} style={style}>
-                  {name}&nbsp;
-                </span>
-              );
-            })}
+            const pdata = data.players[pid];
+            const name = (pdata ? pdata.name : '???') + (index < array.length - 1 ? ',' : '');
+            const style: CSSProperties = {
+              color: pid === data.host ? 'purple' : 'blact',
+              fontWeight: (data.turn && pid === data.turn.current) ? 'bold' : 'normal',
+            };
+            return (
+              <span key={pid} style={style}>
+                {name}&nbsp;
+              </span>
+            );
+          })}
           </div>
           <div>
             nomination: {nominations}

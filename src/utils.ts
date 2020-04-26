@@ -10,6 +10,10 @@ if (!isDebug) {
   orig('activate debug move to view logs'.toUpperCase());
 }
 
+export function randomId(length: number) {
+  return Math.floor(Math.random() * Math.pow(10, length)).toString().padStart(length, '0');
+}
+
 export function sort<T, E>(arr: T[], keyFunc: (key: T) => E) {
   return arr.concat().sort((a, b) => {
     const ka = keyFunc(a);

@@ -72,6 +72,14 @@ export interface GameData {
   votes: VoteData;
 }
 
+export interface UserState {
+  v: string;
+  id: string;
+  name?: string;
+  game?: string;
+  view: ViewType;
+}
+
 export type ViewType = 'loading' | 'lobby' | 'game' | 'setup' | 'nominate' | 'vote' | 'reset' | 'debug';
 export const Views = {
   Loading: 'loading' as ViewType,

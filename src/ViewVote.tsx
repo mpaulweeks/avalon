@@ -1,6 +1,5 @@
 import React from 'react';
-import { Storage, UserState } from './Storage';
-import { VoteType, GameData } from './types';
+import { VoteType, GameData, UserState } from './types';
 import { FIREBASE } from './firebase';
 import { RoleData, Roles } from './Role';
 import { HostBox, Green, Red } from './shared';
@@ -14,7 +13,7 @@ interface Props {
 interface State { }
 
 export class ViewVote extends React.Component<Props, State> {
-  id = Storage.get().id;
+  id = this.props.storage.id;
   state: State = {};
 
   getMyRole() {

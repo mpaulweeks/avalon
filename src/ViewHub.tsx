@@ -5,9 +5,9 @@ import { ViewVote } from "./ViewVote";
 import { ViewLobby } from "./ViewLobby";
 import { ViewReset } from "./ViewReset";
 import { FIREBASE } from "./firebase";
-import { GameData, PlayerData, Views, ViewType } from "./types";
-import { isDebug, getBoardFor, APP_VERSION } from "./utils";
-import { Storage, randomId, UserState } from "./Storage";
+import { GameData, PlayerData, UserState, Views, ViewType } from "./types";
+import { isDebug, getBoardFor, randomId, APP_VERSION } from "./utils";
+import { STORAGE } from "./storage";
 import { ViewGame } from "./ViewGame";
 import { ViewSetup } from "./ViewSetup";
 import { ViewBar } from "./ViewBar";
@@ -51,15 +51,15 @@ interface LinkProps {
 
 export class ViewHub extends React.Component<Props, State> {
   state: State = {
-    storage: Storage.get(),
+    storage: STORAGE.get(),
   };
   componentDidMount() {
-    Storage.onSet = val => this.setState({ storage: val });
+    STORAGE.onSet = val => this.setState({ storage: val });
     const { storage } = this.state;
     if (storage.name && storage.game) {
       this.join(this.genGuestGameData());
     } else {
-      Storage.setView(Views.Lobby);
+      STORAGE.setView(Views.Lobby);
     }
   }
 
@@ -128,7 +128,7 @@ export class ViewHub extends React.Component<Props, State> {
       FIREBASE.updatePlayers(localData.id, players);
     }
     if (storage.view === Views.Lobby) {
-      Storage.setView(Views.Game);
+      STORAGE.setView(Views.Game);
     }
     FIREBASE.joinGame(localData.id, data => this.onReceive(data));
   }
@@ -153,11 +153,11 @@ export class ViewHub extends React.Component<Props, State> {
   }
 
   createGame() {
-    Storage.setGame(randomId(3));
+    STORAGE.setGame(randomId(3));
     this.join(this.genHostGameData());
   }
   joinGame(gameId: string) {
-    Storage.setGame(gameId);
+    STORAGE.setGame(gameId);
     this.join(this.genGuestGameData());
   }
   reset() {
@@ -165,7 +165,7 @@ export class ViewHub extends React.Component<Props, State> {
     if (storage.game) {
       FIREBASE.leaveGame(storage.game);
     }
-    Storage.reset();
+    STORAGE.reset();
     this.setState({
       data: undefined,
     });
@@ -226,7 +226,7 @@ export class ViewHub extends React.Component<Props, State> {
 
   Link: React.StatelessComponent<LinkProps> = (props) => {
     const { type } = props;
-    const onClick = !!type ? () => Storage.setView(type) : () => { };
+    const onClick = !!type ? () => STORAGE.setView(type) : () => { };
     return (
       <HeaderLink
         current={type === this.state.storage.view}
