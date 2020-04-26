@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { RoleData, RoleType, RoleTypes } from './Role';
 import { GameData } from './types';
-import { getBoardFor, shuffle } from "./utils";
+import { getBoardFor, shuffle, sortObjVals } from "./utils";
 import { FIREBASE } from './firebase';
 import { UserState } from './Storage';
 import { HostBox } from './shared';
@@ -105,15 +105,17 @@ export class ViewSetup extends React.Component<Props, State> {
     const redRoles = Object.values(data.roles).filter(r => RoleData[r].isRed);
     const blueRoles = Object.values(data.roles).filter(r => !RoleData[r].isRed);
 
+    const sortedPlayers = sortObjVals(data.players, p => p.name);
+
     return (
       <div>
         <h1>Setup</h1>
 
         <h3>
-          Players: {Object.keys(data.players).length}
+          Players: {sortedPlayers.length}
         </h3>
         <div>
-          {Object.values(data.players).map(o => o.name).join(', ')}
+          {sortedPlayers.map(o => o.name).join(', ')}
         </div>
 
         {isHost && (
@@ -142,6 +144,23 @@ export class ViewSetup extends React.Component<Props, State> {
 
         <h3>Blue Roles ({blueRoles.length})</h3>
         {this.renderRoles(blueRoles, canEdit)}
+
+        {isHost && (
+          <HostBox>
+            <h3>Kick Player</h3>
+            <p>
+              Mostly an emergency tool if someone resets their info.
+              <br />
+              If the player refreshes without resetting their info, they will rejoin.
+            </p>
+
+            {sortedPlayers.map(p => (
+              <button key={p.id} onClick={() => FIREBASE.kickPlayer(data, p.id)}>
+                {p.name}
+              </button>
+            ))}
+          </HostBox>
+        )}
       </div>
     );
   }

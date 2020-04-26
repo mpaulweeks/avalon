@@ -10,6 +10,20 @@ if (!isDebug) {
   orig('activate debug move to view logs'.toUpperCase());
 }
 
+export function sort<T, E>(arr: T[], keyFunc: (key: T) => E) {
+  return arr.concat().sort((a, b) => {
+    const ka = keyFunc(a);
+    const kb = keyFunc(b);
+    if (ka < kb) { return -1; }
+    if (ka > kb) { return 1; }
+    return 0;
+  });
+}
+
+export function sortObjVals<T, E>(obj: { [key: string]: T }, keyFunc: (key: T) => E) {
+  return sort(Object.values(obj), keyFunc);
+}
+
 /**
  * Randomly shuffle an array
  * https://stackoverflow.com/a/2450976/1293256
