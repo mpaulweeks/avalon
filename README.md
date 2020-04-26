@@ -1,7 +1,21 @@
 # avalon
-simple WS app
 
-## gcp stuff
+simple fe app built on Firebase
 
-- https://stackoverflow.com/questions/18101642/appengine-limit-the-number-of-instances
-- https://cloud.google.com/appengine/docs/standard/python/config/appref
+## setup
+
+```
+npm i
+```
+
+- Firebase credentials are hardcoded because I'm lazy :)
+- Same Firebase connection between dev and prod because still lazy
+
+## dev
+
+```
+npm run start
+```
+
+- Add `#d` to URL and refresh for Debug tab + logs
+- Please work on branch and open PR
