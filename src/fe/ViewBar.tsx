@@ -1,7 +1,7 @@
 import React, { CSSProperties } from 'react';
 import styled from 'styled-components';
-import { AllRoles } from './Role';
-import { GameData, RoleType, UserState } from './types';
+import { AllRoles } from '../core/role';
+import { GameData, RoleType, UserState } from '../core/types';
 import { StyledBox } from './shared';
 
 export const SecretBox = styled(StyledBox)`

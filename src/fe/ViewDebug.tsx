@@ -1,8 +1,8 @@
 import React from 'react';
-import { GameData } from './types';
-import { FIREBASE } from './firebase';
+import { GameData } from '../core/types';
+import { FIREBASE } from '../core/firebase';
 
-interface Props {}
+interface Props { }
 interface State {
   games: GameData[];
 }
@@ -34,7 +34,7 @@ export class ViewDebug extends React.Component<Props, State> {
             ))}
           </div>
         ))}
-        <br/>
+        <br />
         <button onClick={() => FIREBASE.deleteAllGames()}> delete all </button>
       </div>
     );

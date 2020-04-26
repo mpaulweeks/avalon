@@ -1,6 +1,6 @@
 import React from 'react';
-import { GameData, MissionResults, UserState } from './types';
-import { FIREBASE } from './firebase';
+import { GameData, MissionResults, UserState } from '../core/types';
+import { FIREBASE } from '../core/firebase';
 import { HostBox, Board, MissionIcon } from './shared';
 
 interface Props {

@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { ViewHub } from './ViewHub';
+import { ViewHub } from './fe/ViewHub';
 
 ReactDOM.render(
-  <ViewHub/ >,
+  <ViewHub />,
   document.getElementById('root')
 );

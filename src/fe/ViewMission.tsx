@@ -1,9 +1,9 @@
 import React from 'react';
-import { VoteType, GameData, UserState, RoleType } from './types';
-import { FIREBASE } from './firebase';
-import { AllRoles } from './Role';
+import { VoteType, GameData, UserState, RoleType } from '../core/types';
+import { FIREBASE } from '../core/firebase';
+import { AllRoles } from '../core/role';
 import { HostBox, Green, Red } from './shared';
-import { sortObjVals } from './utils';
+import { sortObjVals } from '../core/utils';
 
 interface Props {
   isHost: boolean;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserState } from './types';
+import { UserState } from '../core/types';
 
 interface Props {
   storage: UserState,

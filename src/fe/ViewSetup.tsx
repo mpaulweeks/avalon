@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { AllRoles } from './Role';
-import { GameData, Role, Roles, UserState } from './types';
-import { getBoardFor, shuffle, sortObjVals } from "./utils";
-import { FIREBASE } from './firebase';
+import { AllRoles } from '../core/role';
+import { GameData, Role, Roles, UserState } from '../core/types';
+import { getBoardFor, shuffle, sortObjVals } from "../core/utils";
+import { FIREBASE } from '../core/firebase';
 import { HostBox } from './shared';
 
 const DeleteLink = styled.span`

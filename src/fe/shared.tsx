@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { MissionResult, MissionResultType } from './types';
+import { MissionResult, MissionResultType } from '../core/types';
 
 export const Green = styled.span`
   color: green;

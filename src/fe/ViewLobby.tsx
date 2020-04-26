@@ -1,8 +1,8 @@
 import React from 'react';
-import { STORAGE } from './storage';
+import { STORAGE } from '../core/storage';
 import { hri } from 'human-readable-ids';
-import { isDev } from './utils';
-import { UserState } from './types';
+import { isDev } from '../core/utils';
+import { UserState } from '../core/types';
 
 interface Props {
   storage: UserState;
