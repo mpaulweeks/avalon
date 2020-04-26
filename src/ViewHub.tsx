@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { ViewDebug } from "./ViewDebug";
-import { ViewVote } from "./ViewVote";
+import { ViewMission } from "./ViewMission";
 import { ViewLobby } from "./ViewLobby";
 import { ViewReset } from "./ViewReset";
 import { FIREBASE } from "./firebase";
@@ -185,7 +185,7 @@ export class ViewHub extends React.Component<Props, State> {
       return <ViewNominate isHost={isHost} data={data} storage={storage} />
     }
     if (view === Views.Vote && data) {
-      return <ViewVote isHost={isHost} data={data} storage={storage} />
+      return <ViewMission isHost={isHost} data={data} storage={storage} />
     }
 
     if (view === Views.Lobby && !data) {

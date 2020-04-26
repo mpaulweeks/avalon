@@ -12,7 +12,7 @@ interface Props {
 }
 interface State { }
 
-export class ViewVote extends React.Component<Props, State> {
+export class ViewMission extends React.Component<Props, State> {
   id = this.props.storage.id;
   state: State = {};
 
