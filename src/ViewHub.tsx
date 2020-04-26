@@ -64,14 +64,14 @@ export class ViewHub extends React.Component<Props, State> {
   }
 
   private genHostGameData(): GameData {
-    const { id } = Storage.get();
+    const { id } = this.state.storage;
     return {
       ...this.genGuestGameData(),
       host: id,
     };
   }
   private genGuestGameData(): GameData {
-    const { id, name, game } = Storage.get();
+    const { id, name, game } = this.state.storage;
     if (!game) {
       throw new Error('game should be set in localStorage');
     }
@@ -161,21 +161,20 @@ export class ViewHub extends React.Component<Props, State> {
     this.join(this.genGuestGameData());
   }
   reset() {
-    const storage = Storage.get();
+    const { storage } = this.state;
     if (storage.game) {
       FIREBASE.leaveGame(storage.game);
     }
     Storage.reset();
     this.setState({
-      storage: Storage.get(),
       data: undefined,
     });
   }
 
   renderMain() {
     const { storage, data } = this.state;
-    const { view } = storage;
-    const isHost = !!data && Storage.get().id === data.host;
+    const { id, view } = storage;
+    const isHost = !!data && id === data.host;
     if (view === Views.Game && data) {
       return <ViewGame isHost={isHost} data={data} storage={storage} />
     }
