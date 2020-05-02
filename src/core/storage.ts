@@ -9,7 +9,7 @@ export interface StorageLayer {
 
 class StorageSingleton {
   store: StorageLayer = window.localStorage;
-  onSet: (val: UserState) => void = () => { };
+  onSet: (val: UserState) => Promise<void> = () => Promise.resolve();
 
   private getMinor(v: string) {
     return (v || '0.0.0').split('.').slice(0, 2).join('.');
@@ -24,24 +24,24 @@ class StorageSingleton {
       view: ViewTabType.Reset,
     });
   }
-  private set(data: UserState) {
+  private set(data: UserState): Promise<void> {
     this.store.setItem('state', JSON.stringify(data));
-    this.onSet(data);
+    return this.onSet(data);
   }
   setName(name: string) {
-    this.set({
+    return this.set({
       ...this.get(),
       name: name,
     });
   }
   setGame(game: string) {
-    this.set({
+    return this.set({
       ...this.get(),
       game: game,
     });
   }
   setView(view: ViewTab) {
-    this.set({
+    return this.set({
       ...this.get(),
       view: view,
     });

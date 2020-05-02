@@ -54,7 +54,9 @@ export class ViewHub extends React.Component<Props, State> {
     storage: STORAGE.get(),
   };
   componentDidMount() {
-    STORAGE.onSet = val => this.setState({ storage: val });
+    STORAGE.onSet = val => new Promise((resolve, reject) => {
+      this.setState({ storage: val }, resolve);
+    });
     const { storage } = this.state;
     if (storage.name && storage.game) {
       this.join(this.genGuestGameData());
@@ -152,12 +154,12 @@ export class ViewHub extends React.Component<Props, State> {
     });
   }
 
-  createGame() {
-    STORAGE.setGame(randomId(3));
+  async createGame() {
+    await STORAGE.setGame(randomId(3));
     this.join(this.genHostGameData());
   }
-  joinGame(gameId: string) {
-    STORAGE.setGame(gameId);
+  async joinGame(gameId: string) {
+    await STORAGE.setGame(gameId);
     this.join(this.genGuestGameData());
   }
   reset() {
