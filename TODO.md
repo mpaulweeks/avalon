@@ -1,5 +1,14 @@
 # todo
 
+- record vote history
+- option to reveal assassin / merlin
+- make private info box collapsable
+- add kick-self to reset
+- add lady?
+- add nom lock, cannot vote until locked, unlocking deletes votes
+- add notion of mission lock, dont show mission tab until nom is voted
+- let blues vote red, so do-overs are less revealing
+
 - add help page for website usage and rules page for avalon
 - add ability to change name in reset menu
 - add "deleted" optional timestamp to game
