@@ -13,6 +13,10 @@ export const SecretBox = styled(StyledBox)`
 export const RoleBox = styled(StyledBox)`
   border-color: black;
   background-color: #eeeeee;
+
+  & span {
+    margin: 0 0.1em;
+  }
 `;
 
 interface Props {
@@ -56,12 +60,12 @@ export class ViewBar extends React.Component<Props, State> {
             const pdata = data.players[pid];
             const name = (pdata ? pdata.name : '???') + (index < array.length - 1 ? ',' : '');
             const style: CSSProperties = {
-              color: pid === data.host ? 'purple' : 'blact',
-              fontWeight: (data.turn && pid === data.turn.current) ? 'bold' : 'normal',
+              color: pid === data.host ? 'purple' : 'black',
+              textDecoration: (data.turn && pid === data.turn.current) ? 'underline' : 'none',
             };
             return (
               <span key={pid} style={style}>
-                {name}&nbsp;
+                {name}
               </span>
             );
           })}
