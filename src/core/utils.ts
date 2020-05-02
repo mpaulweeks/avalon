@@ -1,6 +1,6 @@
 import { MissionResultType } from "./types";
 
-export const APP_VERSION = '1.2.3';
+export const APP_VERSION = '1.2.4';
 
 export const isDev = window.location.href.includes('localhost');
 export const isDebug = window.location.href.includes('#d');

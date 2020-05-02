@@ -40,9 +40,9 @@ export class ViewBar extends React.Component<Props, State> {
           <div><u>secret info! do not discuss what's in this box!</u></div>
           {me.role ? (
             <div>
-              you are: <b>{myData.name}</b>.
-              you see: <b>{youSee.join(', ') || '(nobody)'}</b>
-              {myData.description}<br />
+              you are: <b>{myData.name}</b>. you see: <b>{youSee.join(', ') || '(nobody)'}</b>
+              <br />
+              {myData.description}
             </div>
           ) : (
               <div>
