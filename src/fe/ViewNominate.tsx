@@ -16,14 +16,10 @@ export class ViewNominate extends React.Component<Props, State> {
   state: State = {};
 
   voteSuccess() {
-    const newVotes = { ...this.props.data.nominations, };
-    newVotes.tally[this.pid] = NominationType.Approve;
-    FIREBASE.updateNominations(this.props.data.gid, newVotes);
+    FIREBASE.updateNominationsTally(this.props.data.gid, this.pid, NominationType.Approve);
   }
   voteFail() {
-    const newVotes = { ...this.props.data.nominations, };
-    newVotes.tally[this.pid] = NominationType.Reject;
-    FIREBASE.updateNominations(this.props.data.gid, newVotes);
+    FIREBASE.updateNominationsTally(this.props.data.gid, this.pid, NominationType.Reject);
   }
   voteClear() {
     const newVotes = { ...this.props.data.nominations, };

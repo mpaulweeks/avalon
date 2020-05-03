@@ -1,5 +1,5 @@
 import React from 'react';
-import { VoteType, GameData, UserState, RoleType } from '../core/types';
+import { MissionVoteType, GameData, UserState, RoleType } from '../core/types';
 import { FIREBASE } from '../core/firebase';
 import { AllRoles } from '../core/role';
 import { HostBox, Green, Red } from './shared';
@@ -25,24 +25,20 @@ export class ViewMission extends React.Component<Props, State> {
   }
 
   voteSuccess() {
-    const newVotes = { ...this.props.data.votes, };
-    newVotes.tally[this.pid] = VoteType.Success;
-    FIREBASE.updateVotes(this.props.data.gid, newVotes);
+    FIREBASE.updateMissionTally(this.props.data.gid, this.pid, MissionVoteType.Success);
   }
   voteFail() {
-    const newVotes = { ...this.props.data.votes, };
-    newVotes.tally[this.pid] = VoteType.Fail;
-    FIREBASE.updateVotes(this.props.data.gid, newVotes);
+    FIREBASE.updateMissionTally(this.props.data.gid, this.pid, MissionVoteType.Fail);
   }
   voteClear() {
     const newVotes = { ...this.props.data.votes, };
     newVotes.tally = {};
-    FIREBASE.updateVotes(this.props.data.gid, newVotes);
+    FIREBASE.updateMission(this.props.data.gid, newVotes);
   }
   toggleReveal() {
     const newVotes = { ...this.props.data.votes, };
     newVotes.showResults = !newVotes.showResults;
-    FIREBASE.updateVotes(this.props.data.gid, newVotes);
+    FIREBASE.updateMission(this.props.data.gid, newVotes);
   }
 
   render() {
@@ -80,7 +76,7 @@ export class ViewMission extends React.Component<Props, State> {
           <div>
             {Object.values(votes.tally).sort().reverse().map((vote, i) => (
               <div key={i}>
-                {vote === VoteType.Success ? (
+                {vote === MissionVoteType.Success ? (
                   <Green>{vote.toUpperCase()}</Green>
                 ) : (
                     <Red>{vote.toUpperCase()}</Red>

@@ -27,7 +27,7 @@ export class ViewGame extends React.Component<Props, State> {
       showResults: false,
       tally: {},
     });
-    FIREBASE.updateVotes(gid, {
+    FIREBASE.updateMission(gid, {
       ...votes,
       showResults: false,
       tally: {},

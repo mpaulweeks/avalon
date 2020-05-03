@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import firebase from 'firebase/app';
 import 'firebase/database';
-import { BoardData, GameData, NominationData, PlayerData, Role, TurnData, VoteData } from './types';
+import { BoardData, GameData, MissionData, MissionVote, Nomination, NominationData, PlayerData, Role, TurnData } from './types';
 
 dotenv.config();
 const config = {
@@ -50,7 +50,7 @@ class FirebaseSingleton {
     await this.updateNominations(gid, nominations);
     await this.updatePlayers(gid, players);
     await this.updateTurn(gid, turn);
-    await this.updateVotes(gid, votes);
+    await this.updateMission(gid, votes);
   }
   deleteAllGames() {
     this.db.ref(`game`).set({});
@@ -63,8 +63,17 @@ class FirebaseSingleton {
   updateBoard(gameId: string, data: BoardData) {
     return this.db.ref(`game/${gameId}/board`).set(data);
   }
+  updateMission(gameId: string, data: MissionData) {
+    return this.db.ref(`game/${gameId}/votes`).set(data);
+  }
+  updateMissionTally(gameId: string, pid: string, data: MissionVote) {
+    return this.db.ref(`game/${gameId}/votes/tally/${pid}`).set(data);
+  }
   updateNominations(gameId: string, data: NominationData) {
     return this.db.ref(`game/${gameId}/nominations`).set(data);
+  }
+  updateNominationsTally(gameId: string, pid: string, data: Nomination) {
+    return this.db.ref(`game/${gameId}/nominations/tally/${pid}`).set(data);
   }
   updatePlayers(gameId: string, data: PlayerData) {
     return this.db.ref(`game/${gameId}/players`).set(data);
@@ -77,9 +86,6 @@ class FirebaseSingleton {
   }
   updateVetoes(gameId: string, data: number) {
     return this.db.ref(`game/${gameId}/vetoes`).set(data);
-  }
-  updateVotes(gameId: string, data: VoteData) {
-    return this.db.ref(`game/${gameId}/votes`).set(data);
   }
 
   async getGameData(gameId: string) {

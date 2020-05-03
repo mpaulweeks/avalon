@@ -12,10 +12,10 @@ export const ViewTabType = {
   Debug: 'debug' as ViewTab,
 };
 
-export type Vote = 'success' | 'fail';
-export const VoteType = {
-  Success: 'success' as Vote,
-  Fail: 'fail' as Vote,
+export type MissionVote = 'success' | 'fail';
+export const MissionVoteType = {
+  Success: 'success' as MissionVote,
+  Fail: 'fail' as MissionVote,
 };
 
 export type Nomination = 'approve' | 'reject';
@@ -50,7 +50,7 @@ export const RoleType = Roles.reduce((obj, r) => {
 
 // interfaces
 
-export interface MissionData {
+export interface QuestData {
   result: MissionResult;
   required: number;
   neededFails: number;
@@ -58,7 +58,7 @@ export interface MissionData {
 }
 
 export interface BoardData {
-  missions: MissionData[];
+  missions: QuestData[];
   vetos: number;
 }
 
@@ -83,10 +83,10 @@ export interface NominationData {
   };
 };
 
-export interface VoteData {
+export interface MissionData {
   showResults: boolean;
   tally: {
-    [key: string]: Vote;
+    [key: string]: MissionVote;
   };
 };
 
@@ -99,7 +99,7 @@ export interface GameData {
   roles: Role[];
   turn: TurnData | null;
   vetoes: number;
-  votes: VoteData;
+  votes: MissionData;
 }
 
 export interface UserState {
