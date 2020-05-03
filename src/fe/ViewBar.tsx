@@ -19,15 +19,26 @@ export const RoleBox = styled(StyledBox)`
   }
 `;
 
+const ToggleSecrets = styled.div`
+  cursor: pointer;
+`;
+
 interface Props {
   storage: UserState;
   data: GameData;
 }
-interface State { }
+interface State {
+  collapseSecrets: boolean;
+}
 
 export class ViewBar extends React.Component<Props, State> {
+  state: State = {
+    collapseSecrets: false,
+  };
+
   render() {
     const { storage, data } = this.props;
+    const { collapseSecrets } = this.state;
     const me = data.players[storage.id] || {
       name: storage.name,
     };
@@ -41,17 +52,29 @@ export class ViewBar extends React.Component<Props, State> {
     return (
       <div>
         <SecretBox>
-          <div><u>secret info! do not discuss what's in this box!</u></div>
-          {me.role ? (
-            <div>
-              you are: <b>{myData.name}</b>. you see: <b>{youSee.join(', ') || '(nobody)'}</b>
-              <br />
-              {myData.description}
-            </div>
+          {collapseSecrets ? (
+            <ToggleSecrets onClick={() => this.setState({ collapseSecrets: false, })}>
+              (click to show secret info)
+            </ToggleSecrets>
           ) : (
-              <div>
-                roles haven't been assigned yet
-              </div>
+              <ToggleSecrets onClick={() => this.setState({ collapseSecrets: true, })}>
+                <div>
+                  <u>
+                    SECRET INFO! do not discuss what's in this box! click to hide from nearby players!
+                    </u>
+                </div>
+                {me.role ? (
+                  <div>
+                    you are: <b>{myData.name}</b>. you see: <b>{youSee.join(', ') || '(nobody)'}</b>
+                    <br />
+                    {myData.description}
+                  </div>
+                ) : (
+                    <div>
+                      roles haven't been assigned yet
+                    </div>
+                  )}
+              </ToggleSecrets>
             )}
         </SecretBox>
         <RoleBox>

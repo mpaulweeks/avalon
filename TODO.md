@@ -2,7 +2,6 @@
 
 - record vote history
 - option to reveal assassin / merlin
-- make private info box collapsable
 - add kick-self to reset
 - add lady?
 - add nom lock, cannot vote until locked, unlocking deletes votes
