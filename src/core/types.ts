@@ -94,12 +94,12 @@ export interface GameData {
   gid: string;
   host?: string;
   board: BoardData;
+  mission: MissionData;
   nominations: NominationData;
   players: PlayerData;
   roles: Role[];
   turn: TurnData | null;
   vetoes: number;
-  mission: MissionData;
 }
 
 export interface UserState {
