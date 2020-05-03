@@ -95,7 +95,7 @@ export class ViewHub extends React.Component<Props, State> {
       },
       turn: null,
       vetoes: 0,
-      votes: {
+      mission: {
         showResults: false,
         tally: {},
       },
@@ -146,9 +146,9 @@ export class ViewHub extends React.Component<Props, State> {
           tally: {},
           ...data.nominations,
         },
-        votes: {
+        mission: {
           tally: {},
-          ...data.votes,
+          ...data.mission,
         },
       }
     });

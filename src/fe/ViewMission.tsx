@@ -31,23 +31,23 @@ export class ViewMission extends React.Component<Props, State> {
     FIREBASE.updateMissionTally(this.props.data.gid, this.pid, MissionVoteType.Fail);
   }
   voteClear() {
-    const newVotes = { ...this.props.data.votes, };
+    const newVotes = { ...this.props.data.mission, };
     newVotes.tally = {};
     FIREBASE.updateMission(this.props.data.gid, newVotes);
   }
   toggleReveal() {
-    const newVotes = { ...this.props.data.votes, };
+    const newVotes = { ...this.props.data.mission, };
     newVotes.showResults = !newVotes.showResults;
     FIREBASE.updateMission(this.props.data.gid, newVotes);
   }
 
   render() {
     const { isHost, data } = this.props;
-    const { nominations, players, votes } = data;
+    const { nominations, players, mission } = data;
     const isNom = nominations.roster.includes(this.pid);
 
     const sortedPlayers = sortObjVals(players, p => p.pid);
-    const pendingTally = sortedPlayers.filter(p => nominations.roster.includes(p.pid) && !votes.tally[p.pid]);
+    const pendingTally = sortedPlayers.filter(p => nominations.roster.includes(p.pid) && !mission.tally[p.pid]);
 
     return (
       <div>
@@ -56,7 +56,7 @@ export class ViewMission extends React.Component<Props, State> {
         {isNom ? (
           <div>
             <h3> cast your mission vote </h3>
-            {votes.tally[this.pid] ? (
+            {mission.tally[this.pid] ? (
               <div> you have voted </div>
             ) : (
                 <div>
@@ -72,9 +72,9 @@ export class ViewMission extends React.Component<Props, State> {
           )}
 
         <h3>results!</h3>
-        {votes.showResults && Object.keys(votes.tally).length ? (
+        {mission.showResults && Object.keys(mission.tally).length ? (
           <div>
-            {Object.values(votes.tally).sort().reverse().map((vote, i) => (
+            {Object.values(mission.tally).sort().reverse().map((vote, i) => (
               <div key={i}>
                 {vote === MissionVoteType.Success ? (
                   <Green>{vote.toUpperCase()}</Green>
@@ -86,7 +86,7 @@ export class ViewMission extends React.Component<Props, State> {
           </div>
         ) : (
             <div>
-              {Object.keys(votes.tally).length}/{nominations.roster.length} votes counted
+              {Object.keys(mission.tally).length}/{nominations.roster.length} votes counted
               {pendingTally.length ? (
                 <div>
                   <br />
@@ -101,7 +101,7 @@ export class ViewMission extends React.Component<Props, State> {
 
         {isHost && (
           <HostBox>
-            <button onClick={() => this.toggleReveal()}>{votes.showResults ? 'hide' : 'show'} votes</button>
+            <button onClick={() => this.toggleReveal()}>{mission.showResults ? 'hide' : 'show'} votes</button>
             <button onClick={() => this.voteClear()}>clear all votes</button>
           </HostBox>
         )}

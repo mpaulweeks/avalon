@@ -50,7 +50,7 @@ export const RoleType = Roles.reduce((obj, r) => {
 
 // interfaces
 
-export interface QuestData {
+export interface MissionBlueprint {
   result: MissionResult;
   required: number;
   neededFails: number;
@@ -58,7 +58,7 @@ export interface QuestData {
 }
 
 export interface BoardData {
-  missions: QuestData[];
+  missions: MissionBlueprint[];
   vetos: number;
 }
 
@@ -99,7 +99,7 @@ export interface GameData {
   roles: Role[];
   turn: TurnData | null;
   vetoes: number;
-  votes: MissionData;
+  mission: MissionData;
 }
 
 export interface UserState {

@@ -36,7 +36,7 @@ class FirebaseSingleton {
     });
   }
   async kickPlayer(game: GameData, playerId: string) {
-    const { gid, nominations, players, turn, votes } = game;
+    const { gid, nominations, players, turn, mission } = game;
     nominations.roster = (nominations.roster || []).filter(pid => pid !== playerId);
     delete (nominations.tally || {})[playerId];
     delete (players || {})[playerId];
@@ -46,11 +46,11 @@ class FirebaseSingleton {
         turn.current = turn.order[0];
       }
     }
-    delete (votes.tally || {})[playerId];
+    delete (mission.tally || {})[playerId];
     await this.updateNominations(gid, nominations);
     await this.updatePlayers(gid, players);
     await this.updateTurn(gid, turn);
-    await this.updateMission(gid, votes);
+    await this.updateMission(gid, mission);
   }
   deleteAllGames() {
     this.db.ref(`game`).set({});
@@ -64,10 +64,10 @@ class FirebaseSingleton {
     return this.db.ref(`game/${gameId}/board`).set(data);
   }
   updateMission(gameId: string, data: MissionData) {
-    return this.db.ref(`game/${gameId}/votes`).set(data);
+    return this.db.ref(`game/${gameId}/mission`).set(data);
   }
   updateMissionTally(gameId: string, pid: string, data: MissionVote) {
-    return this.db.ref(`game/${gameId}/votes/tally/${pid}`).set(data);
+    return this.db.ref(`game/${gameId}/mission/tally/${pid}`).set(data);
   }
   updateNominations(gameId: string, data: NominationData) {
     return this.db.ref(`game/${gameId}/nominations`).set(data);
