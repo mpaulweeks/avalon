@@ -33,6 +33,7 @@ export class ViewMission extends React.Component<Props, State> {
   voteClear() {
     const newVotes = { ...this.props.data.mission, };
     newVotes.tally = {};
+    newVotes.showResults = false;
     FIREBASE.updateMission(this.props.data.gid, newVotes);
   }
   toggleReveal() {

@@ -24,6 +24,7 @@ export class ViewNominate extends React.Component<Props, State> {
   voteClear() {
     const newVotes = { ...this.props.data.nominations, };
     newVotes.tally = {};
+    newVotes.showResults = false;
     FIREBASE.updateNominations(this.props.data.gid, newVotes);
   }
   toggleReveal() {
