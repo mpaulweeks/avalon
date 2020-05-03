@@ -30,10 +30,6 @@ export class ViewMission extends React.Component<Props, State> {
     FIREBASE.updateVotes(this.props.data.id, newVotes);
   }
   voteFail() {
-    if (!this.getMyRole().isRed) {
-      alert('only red players can vote fail!');
-      return;
-    }
     const newVotes = { ...this.props.data.votes, };
     newVotes.tally[this.id] = VoteType.Fail;
     FIREBASE.updateVotes(this.props.data.id, newVotes);
