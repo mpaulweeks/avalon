@@ -12,22 +12,22 @@ interface State { }
 
 export class ViewGame extends React.Component<Props, State> {
   nextTurn() {
-    const { id, turn, nominations, votes } = this.props.data;
+    const { gid, turn, nominations, votes } = this.props.data;
     if (!turn) { return; }
     const currentIndex = turn.order.indexOf(turn.current);
     const nextIndex = (currentIndex + 1) % turn.order.length;
     const newCurrent = turn.order[nextIndex];
-    FIREBASE.updateTurn(id, {
+    FIREBASE.updateTurn(gid, {
       ...turn,
       current: newCurrent,
     });
-    FIREBASE.updateNominations(id, {
+    FIREBASE.updateNominations(gid, {
       ...nominations,
       roster: [],
       showResults: false,
       tally: {},
     });
-    FIREBASE.updateVotes(id, {
+    FIREBASE.updateVotes(gid, {
       ...votes,
       showResults: false,
       tally: {},
@@ -36,36 +36,36 @@ export class ViewGame extends React.Component<Props, State> {
   missionChange(mIndex: number) {
     const { isHost, data } = this.props;
     if (!isHost) { return; }
-    const { id, board } = data;
+    const { gid, board } = data;
     const mission = board.missions[mIndex];
     const currIndex = MissionResults.indexOf(mission.result);
     const nextIndex = (currIndex + 1) % MissionResults.length;
     const nextState = MissionResults[nextIndex];
     mission.result = nextState;
-    FIREBASE.updateBoard(id, board);
+    FIREBASE.updateBoard(gid, board);
   }
 
   setMissionNoms(mIndex: number) {
     const { isHost, data } = this.props;
     if (!isHost) { return; }
-    const { id, board } = data;
+    const { gid, board } = data;
     const mission = board.missions[mIndex];
     mission.roster = data.nominations.roster;
-    FIREBASE.updateBoard(id, board);
+    FIREBASE.updateBoard(gid, board);
   }
   clearMissionNoms(mIndex: number) {
     const { isHost, data } = this.props;
     if (!isHost) { return; }
-    const { id, board } = data;
+    const { gid, board } = data;
     const mission = board.missions[mIndex];
     mission.roster = null;
-    FIREBASE.updateBoard(id, board);
+    FIREBASE.updateBoard(gid, board);
   }
   addVeto(delta: number) {
     const { isHost, data } = this.props;
     if (!isHost) { return; }
-    const { id, vetoes } = data;
-    FIREBASE.updateVetoes(id, vetoes + delta);
+    const { gid, vetoes } = data;
+    FIREBASE.updateVetoes(gid, vetoes + delta);
   }
 
   render() {
@@ -75,7 +75,7 @@ export class ViewGame extends React.Component<Props, State> {
 
     return (
       <div>
-        <h1>Game #{data.id}</h1>
+        <h1>Game #{data.gid}</h1>
         {turn && (
           <div>
             {isHost && (

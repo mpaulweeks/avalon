@@ -58,7 +58,7 @@ export class ViewHub extends React.Component<Props, State> {
       this.setState({ storage: val }, resolve);
     });
     const { storage } = this.state;
-    if (storage.name && storage.game) {
+    if (storage.name && storage.gid) {
       this.join(this.genGuestGameData());
     } else {
       STORAGE.setView(ViewTabType.Lobby);
@@ -66,19 +66,19 @@ export class ViewHub extends React.Component<Props, State> {
   }
 
   private genHostGameData(): GameData {
-    const { id } = this.state.storage;
+    const { pid } = this.state.storage;
     return {
       ...this.genGuestGameData(),
-      host: id,
+      host: pid,
     };
   }
   private genGuestGameData(): GameData {
-    const { id, name, game } = this.state.storage;
-    if (!game) {
+    const { pid, name, gid } = this.state.storage;
+    if (!gid) {
       throw new Error('game should be set in localStorage');
     }
     return {
-      id: game,
+      gid: gid,
       host: undefined,
       board: getBoardFor(7),
       nominations: {
@@ -88,8 +88,8 @@ export class ViewHub extends React.Component<Props, State> {
       },
       roles: [],
       players: {
-        [id]: {
-          id: id,
+        [pid]: {
+          pid: pid,
           name: name || '???',
         },
       },
@@ -108,7 +108,7 @@ export class ViewHub extends React.Component<Props, State> {
       FIREBASE.updateGame(localData);
     } else {
       // if joining a game, ensure self and broadcast
-      const hostData = await FIREBASE.getGameData(localData.id);
+      const hostData = await FIREBASE.getGameData(localData.gid);
       if (!hostData) {
         // if no game data for old id, reset
         this.reset();
@@ -116,7 +116,7 @@ export class ViewHub extends React.Component<Props, State> {
       }
 
       // add self to host.players, but prefer local name
-      const myId = storage.id;
+      const myId = storage.pid;
       const localMe = localData.players[myId];
       const remoteMe = hostData.players[myId] || {};
       const players: PlayerData = {
@@ -127,12 +127,12 @@ export class ViewHub extends React.Component<Props, State> {
           name: localMe.name,
         },
       };
-      FIREBASE.updatePlayers(localData.id, players);
+      FIREBASE.updatePlayers(localData.gid, players);
     }
     if (storage.view === ViewTabType.Lobby) {
       STORAGE.setView(ViewTabType.Game);
     }
-    FIREBASE.joinGame(localData.id, data => this.onReceive(data));
+    FIREBASE.joinGame(localData.gid, data => this.onReceive(data));
   }
   private onReceive(data: GameData) {
     console.log('received:', data);
@@ -163,20 +163,22 @@ export class ViewHub extends React.Component<Props, State> {
     this.join(this.genGuestGameData());
   }
   reset() {
-    const { storage } = this.state;
-    if (storage.game) {
-      FIREBASE.leaveGame(storage.game);
+    const { data, storage } = this.state;
+    if (storage.gid) {
+      FIREBASE.leaveGame(storage.gid);
     }
-    STORAGE.reset();
+    if (data) {
+      FIREBASE.kickPlayer(data, storage.pid);
+    }
     this.setState({
       data: undefined,
-    });
+    }, () => STORAGE.reset());
   }
 
   renderMain() {
     const { storage, data } = this.state;
-    const { id, view } = storage;
-    const isHost = !!data && id === data.host;
+    const { pid, view } = storage;
+    const isHost = !!data && pid === data.host;
     if (view === ViewTabType.Game && data) {
       return <ViewGame isHost={isHost} data={data} storage={storage} />
     }
@@ -194,7 +196,7 @@ export class ViewHub extends React.Component<Props, State> {
       return <ViewLobby
         storage={storage}
         createGame={() => this.createGame()}
-        joinGame={id => this.joinGame(id)}
+        joinGame={gid => this.joinGame(gid)}
       />
     }
 
@@ -246,7 +248,7 @@ export class ViewHub extends React.Component<Props, State> {
       <div>
         <nav>
           <ul>
-            {data && <this.Link type={ViewTabType.Game}>Game #{data.id}</this.Link>}
+            {data && <this.Link type={ViewTabType.Game}>Game #{data.gid}</this.Link>}
             {data && <this.Link type={ViewTabType.Nominate}>Nominate</this.Link>}
             {data && <this.Link type={ViewTabType.Mission}>Mission</this.Link>}
             {data && <this.Link type={ViewTabType.Setup}>Setup</this.Link>}

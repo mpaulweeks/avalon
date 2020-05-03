@@ -18,9 +18,9 @@ class StorageSingleton {
   reset() {
     this.set({
       v: APP_VERSION,
-      id: hri.random(),
+      pid: hri.random(),
       name: undefined,
-      game: undefined,
+      gid: undefined,
       view: ViewTabType.Reset,
     });
   }
@@ -34,10 +34,10 @@ class StorageSingleton {
       name: name,
     });
   }
-  setGame(game: string) {
+  setGame(gid: string) {
     return this.set({
       ...this.get(),
-      game: game,
+      gid: gid,
     });
   }
   setView(view: ViewTab) {

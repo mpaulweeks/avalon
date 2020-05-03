@@ -64,7 +64,7 @@ export interface BoardData {
 
 export interface PlayerData {
   [key: string]: {
-    id: string;
+    pid: string;
     name: string;
     role?: Role | null;
   }
@@ -91,7 +91,7 @@ export interface VoteData {
 };
 
 export interface GameData {
-  id: string;
+  gid: string;
   host?: string;
   board: BoardData;
   nominations: NominationData;
@@ -104,8 +104,8 @@ export interface GameData {
 
 export interface UserState {
   v: string;
-  id: string;
+  pid: string;
   name?: string;
-  game?: string;
+  gid?: string;
   view: ViewTab;
 }

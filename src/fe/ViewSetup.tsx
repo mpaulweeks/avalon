@@ -32,18 +32,18 @@ export class ViewSetup extends React.Component<Props, State> {
     const newRoles = [...this.props.data.roles];
     newRoles.push(role);
     newRoles.sort();
-    FIREBASE.updateRoles(this.props.data.id, newRoles);
+    FIREBASE.updateRoles(this.props.data.gid, newRoles);
   }
   removeRole(role: Role) {
     const newRoles = [...this.props.data.roles];
     const index = newRoles.findIndex(r => r === role);
     if (index >= 0) {
       newRoles.splice(index, 1);
-      FIREBASE.updateRoles(this.props.data.id, newRoles);
+      FIREBASE.updateRoles(this.props.data.gid, newRoles);
     }
   }
   assign() {
-    const { id, players, roles } = this.props.data;
+    const { gid, players, roles } = this.props.data;
     if (Object.keys(players).length !== roles.length) {
       return this.setState({
         errorMessage: 'you need the same number of roles as players',
@@ -52,23 +52,23 @@ export class ViewSetup extends React.Component<Props, State> {
     this.setState({ errorMessage: undefined });
     const shuffledPlayers = shuffle(Object.keys(players));
     const shuffledRoles = shuffle(roles);
-    shuffledPlayers.forEach((id, index) => {
-      players[id].role = shuffledRoles[index];
+    shuffledPlayers.forEach((pid, index) => {
+      players[pid].role = shuffledRoles[index];
     });
-    FIREBASE.updateBoard(id, getBoardFor(roles.length));
-    FIREBASE.updatePlayers(id, players);
-    FIREBASE.updateTurn(id, {
+    FIREBASE.updateBoard(gid, getBoardFor(roles.length));
+    FIREBASE.updatePlayers(gid, players);
+    FIREBASE.updateTurn(gid, {
       current: shuffledPlayers[0],
       order: shuffledPlayers,
     });
   }
   clear() {
-    const { id, players } = this.props.data;
+    const { gid, players } = this.props.data;
     Object.keys(players).forEach((id, index) => {
       players[id].role = null; // null for Firebase
     });
-    FIREBASE.updatePlayers(id, players);
-    FIREBASE.updateTurn(id, null);
+    FIREBASE.updatePlayers(gid, players);
+    FIREBASE.updateTurn(gid, null);
   }
 
   renderRoles(roles: Role[], canEdit: boolean) {
@@ -154,7 +154,7 @@ export class ViewSetup extends React.Component<Props, State> {
             </p>
 
             {sortedPlayers.map(p => (
-              <button key={p.id} onClick={() => FIREBASE.kickPlayer(data, p.id)}>
+              <button key={p.pid} onClick={() => FIREBASE.kickPlayer(data, p.pid)}>
                 {p.name}
               </button>
             ))}

@@ -13,12 +13,12 @@ interface Props {
 interface State { }
 
 export class ViewMission extends React.Component<Props, State> {
-  id = this.props.storage.id;
+  pid = this.props.storage.pid;
   state: State = {};
 
   getMyRole() {
     const { storage, data } = this.props;
-    const me = data.players[storage.id] || {
+    const me = data.players[storage.pid] || {
       name: storage.name,
     };
     return AllRoles[me.role || RoleType.BasicBlue];
@@ -26,32 +26,32 @@ export class ViewMission extends React.Component<Props, State> {
 
   voteSuccess() {
     const newVotes = { ...this.props.data.votes, };
-    newVotes.tally[this.id] = VoteType.Success;
-    FIREBASE.updateVotes(this.props.data.id, newVotes);
+    newVotes.tally[this.pid] = VoteType.Success;
+    FIREBASE.updateVotes(this.props.data.gid, newVotes);
   }
   voteFail() {
     const newVotes = { ...this.props.data.votes, };
-    newVotes.tally[this.id] = VoteType.Fail;
-    FIREBASE.updateVotes(this.props.data.id, newVotes);
+    newVotes.tally[this.pid] = VoteType.Fail;
+    FIREBASE.updateVotes(this.props.data.gid, newVotes);
   }
   voteClear() {
     const newVotes = { ...this.props.data.votes, };
     newVotes.tally = {};
-    FIREBASE.updateVotes(this.props.data.id, newVotes);
+    FIREBASE.updateVotes(this.props.data.gid, newVotes);
   }
   toggleReveal() {
     const newVotes = { ...this.props.data.votes, };
     newVotes.showResults = !newVotes.showResults;
-    FIREBASE.updateVotes(this.props.data.id, newVotes);
+    FIREBASE.updateVotes(this.props.data.gid, newVotes);
   }
 
   render() {
     const { isHost, data } = this.props;
     const { nominations, players, votes } = data;
-    const isNom = nominations.roster.includes(this.id);
+    const isNom = nominations.roster.includes(this.pid);
 
-    const sortedPlayers = sortObjVals(players, p => p.id);
-    const pendingTally = sortedPlayers.filter(p => nominations.roster.includes(p.id) && !votes.tally[p.id]);
+    const sortedPlayers = sortObjVals(players, p => p.pid);
+    const pendingTally = sortedPlayers.filter(p => nominations.roster.includes(p.pid) && !votes.tally[p.pid]);
 
     return (
       <div>
@@ -60,7 +60,7 @@ export class ViewMission extends React.Component<Props, State> {
         {isNom ? (
           <div>
             <h3> cast your mission vote </h3>
-            {votes.tally[this.id] ? (
+            {votes.tally[this.pid] ? (
               <div> you have voted </div>
             ) : (
                 <div>
@@ -96,7 +96,7 @@ export class ViewMission extends React.Component<Props, State> {
                   <br />
                   waiting for:
                   {pendingTally.map(p => (
-                    <div key={p.id}>{p.name}</div>
+                    <div key={p.pid}>{p.name}</div>
                   ))}
                 </div>
               ) : ''}

@@ -36,7 +36,7 @@ class FirebaseSingleton {
     });
   }
   async kickPlayer(game: GameData, playerId: string) {
-    const { id, nominations, players, turn, votes } = game;
+    const { gid, nominations, players, turn, votes } = game;
     nominations.roster = (nominations.roster || []).filter(pid => pid !== playerId);
     delete (nominations.tally || {})[playerId];
     delete (players || {})[playerId];
@@ -47,10 +47,10 @@ class FirebaseSingleton {
       }
     }
     delete (votes.tally || {})[playerId];
-    await this.updateNominations(id, nominations);
-    await this.updatePlayers(id, players);
-    await this.updateTurn(id, turn);
-    await this.updateVotes(id, votes);
+    await this.updateNominations(gid, nominations);
+    await this.updatePlayers(gid, players);
+    await this.updateTurn(gid, turn);
+    await this.updateVotes(gid, votes);
   }
   deleteAllGames() {
     this.db.ref(`game`).set({});
@@ -58,7 +58,7 @@ class FirebaseSingleton {
 
   updateGame(data: GameData) {
     console.log('saving data:', data);
-    return this.db.ref(`game/${data.id}`).set(data);
+    return this.db.ref(`game/${data.gid}`).set(data);
   }
   updateBoard(gameId: string, data: BoardData) {
     return this.db.ref(`game/${gameId}/board`).set(data);

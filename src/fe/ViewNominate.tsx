@@ -12,28 +12,28 @@ interface Props {
 interface State { }
 
 export class ViewNominate extends React.Component<Props, State> {
-  id = this.props.storage.id;
+  pid = this.props.storage.pid;
   state: State = {};
 
   voteSuccess() {
     const newVotes = { ...this.props.data.nominations, };
-    newVotes.tally[this.id] = NominationType.Approve;
-    FIREBASE.updateNominations(this.props.data.id, newVotes);
+    newVotes.tally[this.pid] = NominationType.Approve;
+    FIREBASE.updateNominations(this.props.data.gid, newVotes);
   }
   voteFail() {
     const newVotes = { ...this.props.data.nominations, };
-    newVotes.tally[this.id] = NominationType.Reject;
-    FIREBASE.updateNominations(this.props.data.id, newVotes);
+    newVotes.tally[this.pid] = NominationType.Reject;
+    FIREBASE.updateNominations(this.props.data.gid, newVotes);
   }
   voteClear() {
     const newVotes = { ...this.props.data.nominations, };
     newVotes.tally = {};
-    FIREBASE.updateNominations(this.props.data.id, newVotes);
+    FIREBASE.updateNominations(this.props.data.gid, newVotes);
   }
   toggleReveal() {
     const newVotes = { ...this.props.data.nominations, };
     newVotes.showResults = !newVotes.showResults;
-    FIREBASE.updateNominations(this.props.data.id, newVotes);
+    FIREBASE.updateNominations(this.props.data.gid, newVotes);
   }
 
   addToRoster(pid: string) {
@@ -41,7 +41,7 @@ export class ViewNominate extends React.Component<Props, State> {
     const newRoster = [...nominations.roster];
     newRoster.push(pid);
     newRoster.sort();
-    FIREBASE.updateNominations(this.props.data.id, {
+    FIREBASE.updateNominations(this.props.data.gid, {
       ...nominations,
       roster: newRoster,
     });
@@ -52,7 +52,7 @@ export class ViewNominate extends React.Component<Props, State> {
     const index = newRoster.findIndex(p => p === pid);
     if (index >= 0) {
       newRoster.splice(index, 1);
-      FIREBASE.updateNominations(this.props.data.id, {
+      FIREBASE.updateNominations(this.props.data.gid, {
         ...nominations,
         roster: newRoster,
       });
@@ -62,11 +62,11 @@ export class ViewNominate extends React.Component<Props, State> {
   render() {
     const { isHost, data } = this.props;
     const { nominations, players } = data;
-    const isDealer = data.turn && data.turn.current === this.id && !nominations.showResults;
-    const sortedPlayers = sortObjVals(players, p => p.id);
-    const outOfRoster = sortedPlayers.filter(p => !nominations.roster.includes(p.id));
+    const isDealer = data.turn && data.turn.current === this.pid && !nominations.showResults;
+    const sortedPlayers = sortObjVals(players, p => p.pid);
+    const outOfRoster = sortedPlayers.filter(p => !nominations.roster.includes(p.pid));
     const sortedTally = Object.keys(nominations.tally).sort();
-    const pendingTally = sortedPlayers.filter(p => !nominations.tally[p.id]);
+    const pendingTally = sortedPlayers.filter(p => !nominations.tally[p.pid]);
 
     const currentMission = data.board.missions.filter(m => m.result === MissionResultType.Neutral)[0];
     const currentNeeded = currentMission ? currentMission.required : '???';
@@ -98,7 +98,7 @@ export class ViewNominate extends React.Component<Props, State> {
             <div>
               {outOfRoster.length > 0 ? (
                 outOfRoster.map((p, i) => (
-                  <button key={i} onClick={() => this.addToRoster(p.id)}>
+                  <button key={i} onClick={() => this.addToRoster(p.pid)}>
                     {p.name}
                   </button>
                 ))
@@ -111,7 +111,7 @@ export class ViewNominate extends React.Component<Props, State> {
 
         <h3>cast your vote for who goes on the mission</h3>
 
-        {nominations.tally[this.id] && (
+        {nominations.tally[this.pid] && (
           <div>
             <div> you have voted </div>
           </div>
@@ -153,7 +153,7 @@ export class ViewNominate extends React.Component<Props, State> {
                   <br />
                   waiting for:
                   {pendingTally.map(p => (
-                    <div key={p.id}>{p.name}</div>
+                    <div key={p.pid}>{p.name}</div>
                   ))}
                 </div>
               ) : ''}

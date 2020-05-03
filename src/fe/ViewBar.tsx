@@ -39,11 +39,11 @@ export class ViewBar extends React.Component<Props, State> {
   render() {
     const { storage, data } = this.props;
     const { collapseSecrets } = this.state;
-    const me = data.players[storage.id] || {
+    const me = data.players[storage.pid] || {
       name: storage.name,
     };
     const myData = AllRoles[me.role || RoleType.BasicBlue];
-    const others = Object.keys(data.players).filter(id => id !== storage.id).map(key => data.players[key]);
+    const others = Object.keys(data.players).filter(id => id !== storage.pid).map(key => data.players[key]);
     const youSee = others.filter(o => o.role && myData.sees.includes(o.role)).map(o => o.name);
 
     const nominations = data.nominations.roster.length > 0 ? data.nominations.roster.map(pid => data.players[pid].name).join(', ') : '(nobody)';

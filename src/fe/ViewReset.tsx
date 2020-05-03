@@ -9,9 +9,9 @@ interface State { }
 
 export class ViewReset extends React.Component<Props, State> {
   tryReset() {
-    const { game } = this.props.storage;
+    const { gid } = this.props.storage;
     let confirmed = true;
-    if (game) {
+    if (gid) {
       confirmed = window.confirm("Are you sure you want to reset?\nIf you leave a game in progress, you will not be able to rejoin.");
     }
     if (confirmed) {
@@ -27,7 +27,7 @@ export class ViewReset extends React.Component<Props, State> {
           {JSON.stringify(storage, null, 2)}
         </pre>
         <div>
-          <button onClick={() => this.tryReset()}>reset everything</button>
+          <button onClick={() => this.tryReset()}>Leave game and reset local data</button>
         </div>
       </div>
     );
