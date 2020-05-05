@@ -12,7 +12,7 @@ interface State { }
 
 export class ViewGame extends React.Component<Props, State> {
   nextTurn() {
-    const { gid, turn, nominations, mission } = this.props.data;
+    const { gid, turn } = this.props.data;
     if (!turn) { return; }
     const currentIndex = turn.order.indexOf(turn.current);
     const nextIndex = (currentIndex + 1) % turn.order.length;
@@ -21,17 +21,8 @@ export class ViewGame extends React.Component<Props, State> {
       ...turn,
       current: newCurrent,
     });
-    FIREBASE.updateNominations(gid, {
-      ...nominations,
-      roster: [],
-      showResults: false,
-      tally: {},
-    });
-    FIREBASE.updateMission(gid, {
-      ...mission,
-      showResults: false,
-      tally: {},
-    });
+    FIREBASE.clearNominations(gid);
+    FIREBASE.clearMission(gid);
   }
   missionChange(mIndex: number) {
     const { isHost, data } = this.props;

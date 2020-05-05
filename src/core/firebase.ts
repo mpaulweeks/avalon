@@ -56,6 +56,21 @@ class FirebaseSingleton {
     this.db.ref(`game`).set({});
   }
 
+  clearMission(gameId: string) {
+    return this.updateMission(gameId, {
+      showResults: false,
+      tally: {},
+    });
+  }
+  clearNominations(gameId: string) {
+    return this.updateNominations(gameId, {
+      roster: [],
+      hostLocked: false,
+      showResults: false,
+      tally: {},
+    });
+  }
+
   updateGame(data: GameData) {
     console.log('saving data:', data);
     return this.db.ref(`game/${data.gid}`).set(data);

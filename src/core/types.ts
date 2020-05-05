@@ -78,6 +78,7 @@ export interface TurnData {
 export interface NominationData {
   showResults: boolean;
   roster: string[];
+  hostLocked: boolean;
   tally: {
     [key: string]: Nomination;
   };

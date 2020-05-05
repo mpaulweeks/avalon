@@ -25,12 +25,28 @@ export class ViewNominate extends React.Component<Props, State> {
     const newVotes = { ...this.props.data.nominations, };
     newVotes.tally = {};
     newVotes.showResults = false;
+    newVotes.hostLocked = false;
     FIREBASE.updateNominations(this.props.data.gid, newVotes);
   }
   toggleReveal() {
     const newVotes = { ...this.props.data.nominations, };
     newVotes.showResults = !newVotes.showResults;
     FIREBASE.updateNominations(this.props.data.gid, newVotes);
+  }
+  lockTheNoms() {
+    const isDealer = this.getIsDealer();
+    if (!isDealer) {
+      return alert('only the host should be able to lock the nom! error!');
+    }
+    const newVotes = { ...this.props.data.nominations, };
+    newVotes.hostLocked = true;
+    FIREBASE.updateNominations(this.props.data.gid, newVotes);
+  }
+
+  getIsDealer() {
+    const { data } = this.props;
+    const { nominations } = data;
+    return data.turn && data.turn.current === this.pid && !nominations.showResults;
   }
 
   addToRoster(pid: string) {
@@ -59,7 +75,7 @@ export class ViewNominate extends React.Component<Props, State> {
   render() {
     const { isHost, data } = this.props;
     const { nominations, players } = data;
-    const isDealer = data.turn && data.turn.current === this.pid && !nominations.showResults;
+    const isDealer = this.getIsDealer();
     const sortedPlayers = sortObjVals(players, p => p.pid);
     const outOfRoster = sortedPlayers.filter(p => !nominations.roster.includes(p.pid));
     const sortedTally = Object.keys(nominations.tally).sort();
@@ -77,7 +93,7 @@ export class ViewNominate extends React.Component<Props, State> {
         <h3>Nominated:</h3>
         <div>
           {nominations.roster.length ? (
-            isDealer ? nominations.roster.map((pid, i) => (
+            (isDealer && !nominations.hostLocked) ? nominations.roster.map((pid, i) => (
               <button key={i} onClick={() => this.removeFromRoster(pid)}>
                 {players[pid].name}
               </button>
@@ -90,70 +106,91 @@ export class ViewNominate extends React.Component<Props, State> {
         </div>
 
         {isDealer && (
-          <div>
-            <h3>Not Nominated:</h3>
+          nominations.hostLocked ? (
             <div>
-              {outOfRoster.length > 0 ? (
-                outOfRoster.map((p, i) => (
-                  <button key={i} onClick={() => this.addToRoster(p.pid)}>
-                    {p.name}
-                  </button>
-                ))
-              ) : (
-                  'everyone has been nominated'
-                )}
+              <br />
+              <button onClick={() => this.voteClear()}>Clear votes and change the nomination</button>
             </div>
-          </div>
-        )}
-
-        <h3>cast your vote for who goes on the mission</h3>
-
-        {nominations.tally[this.pid] && (
-          <div>
-            <div> you have voted </div>
-          </div>
-        )}
-        {!nominations.showResults && (
-          <div>
-            <button onClick={() => this.voteSuccess()}>vote SUPPORT</button>
-            <button onClick={() => this.voteFail()}>vote REJECT</button>
-          </div>
-        )}
-
-        {isHost && (
-          <HostBox>
-            <button onClick={() => this.toggleReveal()}>{nominations.showResults ? 'hide' : 'show'} votes</button>
-            <button onClick={() => this.voteClear()}>clear all votes</button>
-          </HostBox>
-        )}
-
-        <h3>results!</h3>
-
-        {nominations.showResults && Object.keys(nominations.tally).length ? (
-          <div>
-            {sortedTally.map((pid, i) => (
-              <div key={i}>
-                {data.players[pid].name}:&nbsp;
-                {nominations.tally[pid] === NominationType.Approve ? (
-                  <Green>{nominations.tally[pid].toUpperCase()}</Green>
-                ) : (
-                    <Red>{nominations.tally[pid].toUpperCase()}</Red>
-                  )}
+          ) : (
+              <div>
+                <h3>Add to Nomination:</h3>
+                <div>
+                  {outOfRoster.length > 0 ? (
+                    outOfRoster.map((p, i) => (
+                      <button key={i} onClick={() => this.addToRoster(p.pid)}>
+                        {p.name}
+                      </button>
+                    ))
+                  ) : (
+                      'everyone has been nominated'
+                    )}
+                </div>
               </div>
             ))}
+
+        {!nominations.hostLocked ? (
+          <div>
+            <h3>
+              waiting for nomination to be locked in...
+            </h3>
+            {isDealer && (
+              <div>
+                <button onClick={() => this.lockTheNoms()}>Lock and start voting</button>
+              </div>
+            )}
           </div>
         ) : (
             <div>
-              {Object.keys(nominations.tally).length}/{Object.keys(players).length} votes counted
-              {pendingTally.length ? (
+              <h3>cast your vote for who goes on the mission</h3>
+
+              {nominations.tally[this.pid] && (
                 <div>
-                  <br />
-                  waiting for:
-                  {pendingTally.map(p => (
-                    <div key={p.pid}>{p.name}</div>
+                  you have voted
+                </div>
+              )}
+              {!nominations.showResults && (
+                <div>
+                  <button onClick={() => this.voteSuccess()}>vote SUPPORT</button>
+                  <button onClick={() => this.voteFail()}>vote REJECT</button>
+                </div>
+              )}
+
+              {isHost && (
+                <HostBox>
+                  <button onClick={() => this.toggleReveal()}>{nominations.showResults ? 'hide' : 'show'} votes</button>
+                  <button onClick={() => this.voteClear()}>clear all votes</button>
+                </HostBox>
+              )}
+
+              <h3>results!</h3>
+
+              {nominations.showResults && Object.keys(nominations.tally).length ? (
+                <div>
+                  {sortedTally.map((pid, i) => (
+                    <div key={i}>
+                      {data.players[pid].name}:&nbsp;
+                      {nominations.tally[pid] === NominationType.Approve ? (
+                        <Green>{nominations.tally[pid].toUpperCase()}</Green>
+                      ) : (
+                          <Red>{nominations.tally[pid].toUpperCase()}</Red>
+                        )}
+                    </div>
                   ))}
                 </div>
-              ) : ''}
+              ) : (
+                  <div>
+                    {Object.keys(nominations.tally).length}/{Object.keys(players).length} votes counted
+                    {pendingTally.length ? (
+                      <div>
+                        <br />
+                    waiting for:
+                        {pendingTally.map(p => (
+                          <div key={p.pid}>{p.name}</div>
+                        ))}
+                      </div>
+                    ) : ''}
+                  </div>
+                )}
             </div>
           )}
       </div>

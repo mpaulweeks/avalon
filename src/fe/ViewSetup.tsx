@@ -61,15 +61,8 @@ export class ViewSetup extends React.Component<Props, State> {
       current: shuffledPlayers[0],
       order: shuffledPlayers,
     });
-    FIREBASE.updateNominations(gid, {
-      roster: [],
-      showResults: false,
-      tally: {},
-    });
-    FIREBASE.updateMission(gid, {
-      showResults: false,
-      tally: {},
-    });
+    FIREBASE.clearNominations(gid);
+    FIREBASE.clearMission(gid);
   }
   clear() {
     const { gid, players } = this.props.data;

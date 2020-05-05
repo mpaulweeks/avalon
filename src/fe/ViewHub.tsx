@@ -83,6 +83,7 @@ export class ViewHub extends React.Component<Props, State> {
       board: getBoardFor(7),
       nominations: {
         showResults: false,
+        hostLocked: false,
         roster: [],
         tally: {},
       },
