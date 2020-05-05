@@ -65,7 +65,7 @@ class FirebaseSingleton {
   clearNominations(gameId: string) {
     return this.updateNominations(gameId, {
       roster: [],
-      hostLocked: false,
+      dealerLocked: false,
       showResults: false,
       tally: {},
     });

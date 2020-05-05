@@ -25,7 +25,7 @@ export class ViewNominate extends React.Component<Props, State> {
     const newVotes = { ...this.props.data.nominations, };
     newVotes.tally = {};
     newVotes.showResults = false;
-    newVotes.hostLocked = false;
+    newVotes.dealerLocked = false;
     FIREBASE.updateNominations(this.props.data.gid, newVotes);
   }
   toggleReveal() {
@@ -36,10 +36,10 @@ export class ViewNominate extends React.Component<Props, State> {
   lockTheNoms() {
     const isDealer = this.getIsDealer();
     if (!isDealer) {
-      return alert('only the host should be able to lock the nom! error!');
+      return alert('only the dealer should be able to lock the nom! error!');
     }
     const newVotes = { ...this.props.data.nominations, };
-    newVotes.hostLocked = true;
+    newVotes.dealerLocked = true;
     FIREBASE.updateNominations(this.props.data.gid, newVotes);
   }
 
@@ -93,7 +93,7 @@ export class ViewNominate extends React.Component<Props, State> {
         <h3>Nominated:</h3>
         <div>
           {nominations.roster.length ? (
-            (isDealer && !nominations.hostLocked) ? nominations.roster.map((pid, i) => (
+            (isDealer && !nominations.dealerLocked) ? nominations.roster.map((pid, i) => (
               <button key={i} onClick={() => this.removeFromRoster(pid)}>
                 {players[pid].name}
               </button>
@@ -106,7 +106,7 @@ export class ViewNominate extends React.Component<Props, State> {
         </div>
 
         {isDealer && (
-          nominations.hostLocked ? (
+          nominations.dealerLocked ? (
             <div>
               <br />
               <button onClick={() => this.voteClear()}>Clear votes and change the nomination</button>
@@ -128,7 +128,7 @@ export class ViewNominate extends React.Component<Props, State> {
               </div>
             ))}
 
-        {!nominations.hostLocked ? (
+        {!nominations.dealerLocked ? (
           <div>
             <h3>
               waiting for nomination to be locked in...
