@@ -59,7 +59,12 @@ export class ViewHub extends React.Component<Props, State> {
     });
     const { storage } = this.state;
     if (storage.name && storage.gid) {
-      this.join(this.genGuestGameData());
+      try {
+        this.join(this.genGuestGameData());
+      } catch (e) {
+        // bubble up to ErrorBoundary
+        this.setState(() => { throw e; });
+      }
     } else {
       STORAGE.setView(ViewTabType.Lobby);
     }
