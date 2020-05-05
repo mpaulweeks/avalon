@@ -29,7 +29,7 @@ npm i
 npm run start
 ```
 
-- Add `#d` to URL and refresh for Debug tab + logs
+- Add `?d` to URL and refresh for Debug tab + logs
 - Please fork and open PRs
 
 ## design
