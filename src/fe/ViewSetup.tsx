@@ -93,12 +93,17 @@ export class ViewSetup extends React.Component<Props, State> {
   renderRoles(roles: Role[], canEdit: boolean) {
     return (
       <ul>
-        {roles.map((role, i) => (
-          <li key={i}>
-            {canEdit && <DeleteLink onClick={() => this.removeRole(role)}>X</DeleteLink>}
-            {AllRoles[role].name}
-          </li>
-        ))}
+        {roles.map((role, i) => {
+          const data = AllRoles[role];
+          const Color = data.isRed ? Red : Blue;
+          return (
+            <li key={i}>
+              {canEdit && <DeleteLink onClick={() => this.removeRole(role)}>X</DeleteLink>}
+              &nbsp;<Color>{data.name}</Color>
+              &nbsp;<i>({data.description})</i>
+            </li>
+          );
+        })}
       </ul>
     );
   }
