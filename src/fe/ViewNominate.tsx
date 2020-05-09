@@ -43,7 +43,7 @@ export class ViewNominate extends React.Component<Props, State> {
     await FIREBASE.updateNominations(this.props.data.gid, newVotes);
   }
 
-  async getIsDealer() {
+  getIsDealer() {
     const { data } = this.props;
     const { nominations } = data;
     return data.turn && (data.turn.current === this.pid) && !nominations.showResults;
