@@ -53,7 +53,7 @@ class FirebaseSingleton {
     await this.updateMission(gid, mission);
   }
   deleteAllGames() {
-    this.db.ref(`game`).set({});
+    return this.db.ref(`game`).set({});
   }
 
   hidePlayers(gid: string) {
@@ -134,15 +134,15 @@ class FirebaseSingleton {
     });
   }
 
-  joinGame(gameId: string, callback: (val: any) => void): void {
+  joinGame(gameId: string, callback: (val: any) => void) {
     console.log('enabling hook:', gameId);
-    this.db.ref(`game/${gameId}`).on('value', data => {
+    return this.db.ref(`game/${gameId}`).on('value', data => {
       callback(data.val());
     });
   }
-  leaveGame(gameId: string): void {
+  leaveGame(gameId: string) {
     console.log('disabling hook:', gameId);
-    this.db.ref(`game/${gameId}`).off('value');
+    return this.db.ref(`game/${gameId}`).off('value');
   }
 }
 

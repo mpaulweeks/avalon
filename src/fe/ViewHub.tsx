@@ -116,7 +116,7 @@ export class ViewHub extends React.Component<Props, State> {
   private async join(localData: GameData) {
     const { storage } = this.state;
     if (localData.host) {
-      FIREBASE.updateGame(localData);
+      await FIREBASE.updateGame(localData);
     } else {
       // if joining a game, ensure self and broadcast
       const hostData = await FIREBASE.getGameData(localData.gid);
@@ -138,12 +138,12 @@ export class ViewHub extends React.Component<Props, State> {
           name: localMe.name,
         },
       };
-      FIREBASE.updatePlayers(localData.gid, players);
+      await FIREBASE.updatePlayers(localData.gid, players);
     }
     if (storage.view === ViewTabType.Lobby) {
       STORAGE.setView(ViewTabType.Game);
     }
-    FIREBASE.joinGame(localData.gid, data => this.onReceive(data));
+    await FIREBASE.joinGame(localData.gid, data => this.onReceive(data));
   }
   private onReceive(data: GameData) {
     console.log('received:', data);
@@ -167,19 +167,19 @@ export class ViewHub extends React.Component<Props, State> {
 
   async createGame() {
     await STORAGE.setGame(randomId(3));
-    this.join(this.genHostGameData());
+    await this.join(this.genHostGameData());
   }
   async joinGame(gameId: string) {
     await STORAGE.setGame(gameId);
-    this.join(this.genGuestGameData());
+    await this.join(this.genGuestGameData());
   }
-  reset() {
+  async reset() {
     const { data, storage } = this.state;
     if (storage.gid) {
-      FIREBASE.leaveGame(storage.gid);
+      await FIREBASE.leaveGame(storage.gid);
     }
     if (data) {
-      FIREBASE.kickPlayer(data, storage.pid);
+      await FIREBASE.kickPlayer(data, storage.pid);
     }
     this.setState({
       data: undefined,

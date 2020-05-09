@@ -28,18 +28,18 @@ interface State {
 export class ViewSetup extends React.Component<Props, State> {
   state: State = {}
 
-  addRole(role: Role) {
+  async addRole(role: Role) {
     const newRoles = [...this.props.data.roles];
     newRoles.push(role);
     newRoles.sort();
-    FIREBASE.updateRoles(this.props.data.gid, newRoles);
+    await FIREBASE.updateRoles(this.props.data.gid, newRoles);
   }
-  removeRole(role: Role) {
+  async removeRole(role: Role) {
     const newRoles = [...this.props.data.roles];
     const index = newRoles.findIndex(r => r === role);
     if (index >= 0) {
       newRoles.splice(index, 1);
-      FIREBASE.updateRoles(this.props.data.gid, newRoles);
+      await FIREBASE.updateRoles(this.props.data.gid, newRoles);
     }
   }
   async assign() {
@@ -69,14 +69,14 @@ export class ViewSetup extends React.Component<Props, State> {
       await FIREBASE.giveLadyTo(gid, shuffledPlayers.slice(-1)[0]);
     }
   }
-  clear() {
+  async clear() {
     const { gid, players } = this.props.data;
     Object.keys(players).forEach((id, index) => {
       players[id].role = null; // null for Firebase
     });
-    FIREBASE.updatePlayers(gid, players);
-    FIREBASE.updateTurn(gid, null);
-    FIREBASE.hidePlayers(gid);
+    await FIREBASE.updatePlayers(gid, players);
+    await FIREBASE.updateTurn(gid, null);
+    await FIREBASE.hidePlayers(gid);
   }
 
   renderReveal(players: PlayerData[]) {

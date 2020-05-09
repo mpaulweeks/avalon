@@ -24,22 +24,22 @@ export class ViewMission extends React.Component<Props, State> {
     return AllRoles[me.role || RoleType.BasicBlue];
   }
 
-  voteSuccess() {
-    FIREBASE.updateMissionTally(this.props.data.gid, this.pid, MissionVoteType.Success);
+  async voteSuccess() {
+    await FIREBASE.updateMissionTally(this.props.data.gid, this.pid, MissionVoteType.Success);
   }
-  voteFail() {
-    FIREBASE.updateMissionTally(this.props.data.gid, this.pid, MissionVoteType.Fail);
+  async voteFail() {
+    await FIREBASE.updateMissionTally(this.props.data.gid, this.pid, MissionVoteType.Fail);
   }
-  voteClear() {
+  async voteClear() {
     const newVotes = { ...this.props.data.mission, };
     newVotes.tally = {};
     newVotes.showResults = false;
-    FIREBASE.updateMission(this.props.data.gid, newVotes);
+    await FIREBASE.updateMission(this.props.data.gid, newVotes);
   }
-  toggleReveal() {
+  async toggleReveal() {
     const newVotes = { ...this.props.data.mission, };
     newVotes.showResults = !newVotes.showResults;
-    FIREBASE.updateMission(this.props.data.gid, newVotes);
+    await FIREBASE.updateMission(this.props.data.gid, newVotes);
   }
 
   render() {
