@@ -23,9 +23,11 @@
     "typescript": "~3.7.2"
   },
   "scripts": {
+    "remove-maps": "rm build/static/js/*.map",
+    "predeploy": "npm run build && npm run remove-maps",
+    "deploy": "git push && npm run build && gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "deploy": "git push && npm run build && gh-pages -d build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
