@@ -2,7 +2,7 @@ import React from 'react';
 import { GameData, NominationType, MissionResultType, UserState } from '../core/types';
 import { FIREBASE } from '../core/firebase';
 import { HostBox, Green, Red } from './shared';
-import { sortObjVals } from '../core/utils';
+import { sortObjVals, getCurrentPlayers } from '../core/utils';
 
 interface Props {
   isHost: boolean;
@@ -76,7 +76,7 @@ export class ViewNominate extends React.Component<Props, State> {
     const { isHost, data } = this.props;
     const { nominations, players } = data;
     const isDealer = this.getIsDealer();
-    const sortedPlayers = sortObjVals(players, p => p.pid);
+    const sortedPlayers = getCurrentPlayers(data);
     const outOfRoster = sortedPlayers.filter(p => !nominations.roster.includes(p.pid));
     const sortedTally = Object.keys(nominations.tally).sort();
     const pendingTally = sortedPlayers.filter(p => !nominations.tally[p.pid]);
@@ -179,7 +179,7 @@ export class ViewNominate extends React.Component<Props, State> {
                 </div>
               ) : (
                   <div>
-                    {Object.keys(nominations.tally).length}/{Object.keys(players).length} votes counted
+                    {Object.keys(nominations.tally).length}/{sortedPlayers.length} votes counted
                     {pendingTally.length ? (
                       <div>
                         <br />

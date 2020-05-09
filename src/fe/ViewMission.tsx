@@ -3,7 +3,7 @@ import { MissionVoteType, GameData, UserState, RoleType } from '../core/types';
 import { FIREBASE } from '../core/firebase';
 import { AllRoles } from '../core/role';
 import { HostBox, Green, Red } from './shared';
-import { sortObjVals } from '../core/utils';
+import { sortObjVals, getCurrentPlayers } from '../core/utils';
 
 interface Props {
   isHost: boolean;
@@ -44,10 +44,10 @@ export class ViewMission extends React.Component<Props, State> {
 
   render() {
     const { isHost, data } = this.props;
-    const { nominations, players, mission } = data;
+    const { nominations, mission } = data;
     const isNom = nominations.roster.includes(this.pid);
 
-    const sortedPlayers = sortObjVals(players, p => p.pid);
+    const sortedPlayers = getCurrentPlayers(data);
     const pendingTally = sortedPlayers.filter(p => nominations.roster.includes(p.pid) && !mission.tally[p.pid]);
 
     return (

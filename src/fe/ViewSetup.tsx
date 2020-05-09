@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { AllRoles } from '../core/role';
 import { GameData, Role, Roles, UserState, PlayerData } from '../core/types';
-import { getBoardFor, shuffle, sortObjVals } from "../core/utils";
+import { getBoardFor, shuffle, sortObjVals, getCurrentPlayers } from "../core/utils";
 import { FIREBASE } from '../core/firebase';
 import { HostBox, Blue, Red } from './shared';
 
@@ -127,23 +127,23 @@ export class ViewSetup extends React.Component<Props, State> {
     const { isHost, data } = this.props;
     const { errorMessage } = this.state;
 
-    const isAssigned = Object.values(data.players).some(p => p.role);
+    const allPlayers = sortObjVals(data.players, p => p.name);
+    const isAssigned = allPlayers.some(p => p.role);
     const canEdit = isHost && !isAssigned;
+    const currentPlayers = isAssigned ? getCurrentPlayers(data) : allPlayers;
 
     const redRoles = Object.values(data.roles).filter(r => AllRoles[r].isRed);
     const blueRoles = Object.values(data.roles).filter(r => !AllRoles[r].isRed);
-
-    const sortedPlayers = sortObjVals(data.players, p => p.name);
 
     return (
       <div>
         <h1>Setup</h1>
 
         <h3>
-          Players: {sortedPlayers.length}
+          Players: {currentPlayers.length}
         </h3>
         <div>
-          {sortedPlayers.map(o => o.name).join(', ')}
+          {currentPlayers.map(o => o.name).join(', ')}
         </div>
 
         {isHost && (
@@ -182,7 +182,7 @@ export class ViewSetup extends React.Component<Props, State> {
         {data.reveal && (
           <div>
             <h3>GAME OVER! This was everyone's identity:</h3>
-            {this.renderReveal(sortedPlayers)}
+            {this.renderReveal(currentPlayers)}
           </div>
         )}
 
@@ -201,7 +201,7 @@ export class ViewSetup extends React.Component<Props, State> {
               If the player refreshes without resetting their info, they will rejoin.
             </p>
 
-            {sortedPlayers.map(p => (
+            {allPlayers.map(p => (
               <button key={p.pid} onClick={() => FIREBASE.kickPlayer(data, p.pid)}>
                 {p.name}
               </button>

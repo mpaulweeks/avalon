@@ -3,6 +3,7 @@ import { GameData, UserState } from '../core/types';
 import { FIREBASE } from '../core/firebase';
 import { AllRoles } from '../core/role';
 import { Red, Blue } from './shared';
+import { getCurrentPlayers } from '../core/utils';
 
 interface Props {
   isHost: boolean;
@@ -32,10 +33,11 @@ export class ViewLady extends React.Component<Props, State> {
     const examinedRole = examinedPlayer && examinedPlayer.role && AllRoles[examinedPlayer.role];
     const ExaminedColor = examinedRole && examinedRole.isRed ? Red : Blue;
 
-    const currentPlayer = Object.values(players).filter(p => p.hasLady)[0];
+    const currentPlayers = getCurrentPlayers(data);
+    const currentPlayer = currentPlayers.filter(p => p.hasLady)[0];
     const currentName = currentPlayer && currentPlayer.name;
-    const previousOwners = Object.values(players).filter(p => !!p.sawLady);
-    const eligible = Object.values(players).filter(p => p.pid !== this.pid && !p.sawLady);
+    const previousOwners = currentPlayers.filter(p => !!p.sawLady);
+    const eligible = currentPlayers.filter(p => p.pid !== this.pid && !p.sawLady);
 
     return (
       <div>

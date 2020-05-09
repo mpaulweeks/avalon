@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { AllRoles } from '../core/role';
 import { GameData, RoleType, UserState } from '../core/types';
 import { StyledBox } from './shared';
+import { getCurrentPlayers } from '../core/utils';
 
 export const SecretBox = styled(StyledBox)`
   background-color: black;
@@ -40,11 +41,11 @@ export class ViewBar extends React.Component<Props, State> {
       name: storage.name,
     };
     const myData = AllRoles[me.role || RoleType.BasicBlue];
-    const others = Object.keys(data.players).filter(id => id !== storage.pid).map(key => data.players[key]);
+    const others = (data.turn ? data.turn.order : []).filter(id => id !== storage.pid).map(key => data.players[key]);
     const youSee = others.filter(o => o.role && myData.sees.includes(o.role)).map(o => o.name);
 
     const nominations = data.nominations.roster.length > 0 ? data.nominations.roster.map(pid => data.players[pid].name).join(', ') : '(nobody)';
-    const playerIds = data.turn ? data.turn.order : Object.keys(data.players).sort();
+    const playerIds = data.turn ? data.turn.order : getCurrentPlayers(data).map(p => p.pid);
 
     return (
       <div>
