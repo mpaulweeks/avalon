@@ -27,8 +27,8 @@ export class ViewDebug extends React.Component<Props, State> {
         {games.map(game => (
           <div key={game.gid}>
             {game.gid}
-            {Object.values(game.players).map(p => (
-              <span key={p.pid} onClick={() => FIREBASE.kickPlayer(game, p.pid)}>
+            {Object.values(game.players).map((p, pi) => (
+              <span key={pi + '-' + p.pid} onClick={() => FIREBASE.kickPlayer(game, p.pid)}>
                 &nbsp;/ {p.name}
               </span>
             ))}

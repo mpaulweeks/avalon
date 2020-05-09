@@ -19,15 +19,21 @@ export class ErrorBoundary extends React.Component<Props, State> {
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.log('error caught by boundary!', error, info);
     this.setState({ hasError: true });
-    setTimeout(() => {
-      STORAGE.reset();
-      window.location.reload();
-    }, 3000);
+  }
+
+  reset() {
+    STORAGE.reset();
+    window.location.reload();
   }
 
   render() {
     if (this.state.hasError) {
-      return <h1>Something went wrong. Reseting in 3 seconds...</h1>;
+      return (
+        <div>
+          <h1>Something went wrong.</h1>
+          Try refreshing first. If that doesn't work and you're stuck on this screen, <button onClick={() => this.reset()}>RESET LOCAL DATA</button>
+        </div>
+      );
     }
     return this.props.children;
   }

@@ -3,7 +3,7 @@ import { MissionVoteType, GameData, UserState, RoleType } from '../core/types';
 import { FIREBASE } from '../core/firebase';
 import { AllRoles } from '../core/role';
 import { HostBox, Green, Red } from './shared';
-import { sortObjVals, getCurrentPlayers } from '../core/utils';
+import { getCurrentPlayers } from '../core/utils';
 
 interface Props {
   isHost: boolean;

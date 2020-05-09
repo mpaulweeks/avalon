@@ -2,7 +2,7 @@ import React from 'react';
 import { GameData, NominationType, MissionResultType, UserState } from '../core/types';
 import { FIREBASE } from '../core/firebase';
 import { HostBox, Green, Red } from './shared';
-import { sortObjVals, getCurrentPlayers } from '../core/utils';
+import { getCurrentPlayers } from '../core/utils';
 
 interface Props {
   isHost: boolean;
