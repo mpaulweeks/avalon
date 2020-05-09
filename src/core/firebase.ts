@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import firebase from 'firebase/app';
 import 'firebase/database';
-import { BoardData, GameData, MissionData, MissionVote, Nomination, NominationData, PlayerData, Role, TurnData } from './types';
+import { BoardData, GameData, MissionData, MissionVote, Nomination, NominationData, PlayersById, Role, TurnData } from './types';
 
 dotenv.config();
 const config = {
@@ -56,6 +56,12 @@ class FirebaseSingleton {
     this.db.ref(`game`).set({});
   }
 
+  hidePlayers(gid: string) {
+    return this.db.ref(`game/${gid}/reveal`).set(false);
+  }
+  revealPlayers(gid: string) {
+    return this.db.ref(`game/${gid}/reveal`).set(true);
+  }
   clearMission(gameId: string) {
     return this.updateMission(gameId, {
       showResults: false,
@@ -90,7 +96,7 @@ class FirebaseSingleton {
   updateNominationsTally(gameId: string, pid: string, data: Nomination) {
     return this.db.ref(`game/${gameId}/nominations/tally/${pid}`).set(data);
   }
-  updatePlayers(gameId: string, data: PlayerData) {
+  updatePlayers(gameId: string, data: PlayersById) {
     return this.db.ref(`game/${gameId}/players`).set(data);
   }
   updateRoles(gameId: string, data: Role[]) {

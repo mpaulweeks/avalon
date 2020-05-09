@@ -5,7 +5,7 @@ import { ViewMission } from "./ViewMission";
 import { ViewLobby } from "./ViewLobby";
 import { ViewReset } from "./ViewReset";
 import { FIREBASE } from "../core/firebase";
-import { GameData, PlayerData, UserState, ViewTabType, ViewTab } from "../core/types";
+import { GameData, PlayersById, UserState, ViewTabType, ViewTab } from "../core/types";
 import { isDebug, getBoardFor, randomId, APP_VERSION } from "../core/utils";
 import { STORAGE } from "../core/storage";
 import { ViewGame } from "./ViewGame";
@@ -105,6 +105,7 @@ export class ViewHub extends React.Component<Props, State> {
         showResults: false,
         tally: {},
       },
+      reveal: false,
     };
   }
 
@@ -125,7 +126,7 @@ export class ViewHub extends React.Component<Props, State> {
       const myId = storage.pid;
       const localMe = localData.players[myId];
       const remoteMe = hostData.players[myId] || {};
-      const players: PlayerData = {
+      const players: PlayersById = {
         ...hostData.players,
         [myId]: {
           ...localMe,

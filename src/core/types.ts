@@ -63,11 +63,13 @@ export interface BoardData {
 }
 
 export interface PlayerData {
-  [key: string]: {
-    pid: string;
-    name: string;
-    role?: Role | null;
-  }
+  pid: string;
+  name: string;
+  role?: Role | null;
+}
+
+export interface PlayersById {
+  [key: string]: PlayerData;
 };
 
 export interface TurnData {
@@ -97,10 +99,11 @@ export interface GameData {
   board: BoardData;
   mission: MissionData;
   nominations: NominationData;
-  players: PlayerData;
+  players: PlayersById;
   roles: Role[];
   turn: TurnData | null;
   vetoes: number;
+  reveal: boolean;
 }
 
 export interface UserState {

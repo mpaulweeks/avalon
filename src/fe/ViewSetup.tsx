@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { AllRoles } from '../core/role';
-import { GameData, Role, Roles, UserState } from '../core/types';
+import { GameData, Role, Roles, UserState, PlayerData } from '../core/types';
 import { getBoardFor, shuffle, sortObjVals } from "../core/utils";
 import { FIREBASE } from '../core/firebase';
-import { HostBox } from './shared';
+import { HostBox, Blue, Red } from './shared';
 
 const DeleteLink = styled.span`
   cursor: pointer;
@@ -71,8 +71,25 @@ export class ViewSetup extends React.Component<Props, State> {
     });
     FIREBASE.updatePlayers(gid, players);
     FIREBASE.updateTurn(gid, null);
+    FIREBASE.hidePlayers(gid);
   }
 
+  renderReveal(players: PlayerData[]) {
+    return (
+      <ul>
+        {players.map((p, i) => {
+          const role = p.role && AllRoles[p.role];
+          const roleName = role ? role.name : '???';
+          const isRed = role && role.isRed;
+          return (
+            <li key={i}>
+              {p.name}: {isRed ? <Red>{roleName}</Red> : <Blue>{roleName}</Blue>}
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
   renderRoles(roles: Role[], canEdit: boolean) {
     return (
       <ul>
@@ -122,9 +139,13 @@ export class ViewSetup extends React.Component<Props, State> {
         {isHost && (
           <HostBox>
             {isAssigned ? (
-              <div>
-                <button onClick={() => this.clear()}>CLEAR ROLES (reset game)</button>
-              </div>
+              data.reveal ? (
+                <button onClick={() => this.clear()}>Clear roles and reset game</button>
+              ) : (
+                <button onClick={() => FIREBASE.revealPlayers(data.gid)}>
+                  End game and reveal all roles
+                </button>
+              )
             ) : (
                 <div>
                   {this.renderAdd(Roles.filter(r => AllRoles[r].isRed))}
@@ -138,6 +159,13 @@ export class ViewSetup extends React.Component<Props, State> {
                 </div>
               )}
           </HostBox>
+        )}
+
+        {data.reveal && (
+          <div>
+            <h3>GAME OVER! This was everyone's identity:</h3>
+            {this.renderReveal(sortedPlayers)}
+          </div>
         )}
 
         <h3>Red Roles ({redRoles.length})</h3>
