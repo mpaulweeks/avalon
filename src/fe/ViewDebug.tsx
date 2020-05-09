@@ -1,4 +1,5 @@
 import React from 'react';
+import makeTrashable, { TrashablePromise } from 'trashable';
 import { GameData } from '../core/types';
 import { FIREBASE } from '../core/firebase';
 
@@ -11,9 +12,16 @@ export class ViewDebug extends React.Component<Props, State> {
   state: State = {
     games: [],
   };
+  promise?: TrashablePromise<GameData[]>;
 
   componentDidMount() {
-    FIREBASE.getAllGames().then(games => this.setState({ games: games, }));
+    this.promise = makeTrashable(FIREBASE.getAllGames());
+    this.promise.then(games => this.setState({ games, }));
+  }
+  componentWillUnmount() {
+    if (this.promise) {
+      this.promise.trash();
+    }
   }
   render() {
     const { games } = this.state;
