@@ -1,6 +1,6 @@
 import { MissionResultType, GameData } from "./types";
 
-export const APP_VERSION = '1.2.6';
+export const APP_VERSION = '1.3.0';
 
 export const isDev = window.location.href.includes('localhost');
 export const isDebug = window.location.href.includes('?d');
