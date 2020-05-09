@@ -80,10 +80,10 @@ export class ViewSetup extends React.Component<Props, State> {
         {players.map((p, i) => {
           const role = p.role && AllRoles[p.role];
           const roleName = role ? role.name : '???';
-          const isRed = role && role.isRed;
+          const Color = (role && role.isRed) ? Red : Blue;
           return (
             <li key={i}>
-              {p.name}: {isRed ? <Red>{roleName}</Red> : <Blue>{roleName}</Blue>}
+              {p.name}: <Color>{roleName}</Color>
             </li>
           );
         })}

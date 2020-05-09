@@ -21,7 +21,7 @@ export const AllRoles: { [key in typeof Roles[number]]: RoleData } = {
   Merlin: {
     isRed: false,
     name: 'Merlin',
-    description: 'You see the Red players. Help your team without revealing yourself.',
+    description: 'You see the Red players. Help the Blue team without revealing yourself.',
     sees: redsMinusMordred,
   },
   Percival: {
