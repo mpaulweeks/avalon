@@ -62,6 +62,20 @@ class FirebaseSingleton {
   revealPlayers(gid: string) {
     return this.db.ref(`game/${gid}/reveal`).set(true);
   }
+
+  giveLadyTo(gid: string, pid: string) {
+    return this.db.ref(`game/${gid}/players/${pid}/hasLady`).set(true);
+  }
+  takeLadyFrom(gid: string, pid: string) {
+    return this.db.ref(`game/${gid}/players/${pid}/hasLady`).set(false);
+  }
+  ladySaw(gid: string, pid: string, sawId: string) {
+    return this.db.ref(`game/${gid}/players/${pid}/sawLady`).set(sawId);
+  }
+  setIncludeLady(gid: string, includeLady: boolean) {
+    return this.db.ref(`game/${gid}/includeLady`).set(includeLady);
+  }
+
   clearMission(gameId: string) {
     return this.updateMission(gameId, {
       showResults: false,

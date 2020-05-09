@@ -1,12 +1,13 @@
 // enums
 
-export type ViewTab = 'loading' | 'lobby' | 'game' | 'nominate' | 'mission' | 'setup' | 'reset' | 'debug';
+export type ViewTab = 'loading' | 'lobby' | 'game' | 'nominate' | 'mission' | 'lady' | 'setup' | 'reset' | 'debug';
 export const ViewTabType = {
   Loading: 'loading' as ViewTab,
   Lobby: 'lobby' as ViewTab,
   Game: 'game' as ViewTab,
   Nominate: 'nominate' as ViewTab,
   Mission: 'mission' as ViewTab,
+  Lady: 'lady' as ViewTab,
   Setup: 'setup' as ViewTab,
   Reset: 'reset' as ViewTab,
   Debug: 'debug' as ViewTab,
@@ -66,6 +67,8 @@ export interface PlayerData {
   pid: string;
   name: string;
   role?: Role | null;
+  hasLady: boolean;
+  sawLady: string | null;
 }
 
 export interface PlayersById {
@@ -103,6 +106,7 @@ export interface GameData {
   roles: Role[];
   turn: TurnData | null;
   vetoes: number;
+  includeLady: boolean;
   reveal: boolean;
 }
 

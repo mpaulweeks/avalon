@@ -12,6 +12,7 @@ import { ViewGame } from "./ViewGame";
 import { ViewSetup } from "./ViewSetup";
 import { ViewBar } from "./ViewBar";
 import { ViewNominate } from "./ViewNominate";
+import { ViewLady } from "./ViewLady";
 import { StyledBox } from "./shared";
 
 const HeaderLink = styled(StyledBox) <{ current: boolean, hasLink: boolean }>`
@@ -97,6 +98,8 @@ export class ViewHub extends React.Component<Props, State> {
         [pid]: {
           pid: pid,
           name: name || '???',
+          hasLady: false,
+          sawLady: null,
         },
       },
       turn: null,
@@ -105,6 +108,7 @@ export class ViewHub extends React.Component<Props, State> {
         showResults: false,
         tally: {},
       },
+      includeLady: false,
       reveal: false,
     };
   }
@@ -198,6 +202,9 @@ export class ViewHub extends React.Component<Props, State> {
     if (view === ViewTabType.Mission && data) {
       return <ViewMission isHost={isHost} data={data} storage={storage} />
     }
+    if (view === ViewTabType.Lady && data) {
+      return <ViewLady isHost={isHost} data={data} storage={storage} />
+    }
 
     if (view === ViewTabType.Lobby && !data) {
       return <ViewLobby
@@ -258,6 +265,7 @@ export class ViewHub extends React.Component<Props, State> {
             {data && <this.Link type={ViewTabType.Game}>Game #{data.gid}</this.Link>}
             {data && <this.Link type={ViewTabType.Nominate}>Nominate</this.Link>}
             {data && <this.Link type={ViewTabType.Mission}>Mission</this.Link>}
+            {data && <this.Link type={ViewTabType.Lady}>Lady of the Lake</this.Link>}
             {data && <this.Link type={ViewTabType.Setup}>Setup</this.Link>}
             {!data && <this.Link type={ViewTabType.Lobby}>Lobby</this.Link>}
             <this.Link type={ViewTabType.Reset}>Reset</this.Link>

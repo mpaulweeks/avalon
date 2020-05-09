@@ -42,8 +42,8 @@ export class ViewSetup extends React.Component<Props, State> {
       FIREBASE.updateRoles(this.props.data.gid, newRoles);
     }
   }
-  assign() {
-    const { gid, players, roles } = this.props.data;
+  async assign() {
+    const { gid, players, roles, includeLady } = this.props.data;
     if (Object.keys(players).length !== roles.length) {
       return this.setState({
         errorMessage: 'you need the same number of roles as players',
@@ -54,15 +54,20 @@ export class ViewSetup extends React.Component<Props, State> {
     const shuffledRoles = shuffle(roles);
     shuffledPlayers.forEach((pid, index) => {
       players[pid].role = shuffledRoles[index];
+      players[pid].hasLady = false;
+      players[pid].sawLady = null;
     });
-    FIREBASE.updateBoard(gid, getBoardFor(roles.length));
-    FIREBASE.updatePlayers(gid, players);
-    FIREBASE.updateTurn(gid, {
+    await FIREBASE.updateBoard(gid, getBoardFor(roles.length));
+    await FIREBASE.updatePlayers(gid, players);
+    await FIREBASE.updateTurn(gid, {
       current: shuffledPlayers[0],
       order: shuffledPlayers,
     });
-    FIREBASE.clearNominations(gid);
-    FIREBASE.clearMission(gid);
+    await FIREBASE.clearNominations(gid);
+    await FIREBASE.clearMission(gid);
+    if (includeLady) {
+      await FIREBASE.giveLadyTo(gid, shuffledPlayers.slice(-1)[0]);
+    }
   }
   clear() {
     const { gid, players } = this.props.data;
@@ -157,10 +162,18 @@ export class ViewSetup extends React.Component<Props, State> {
                   <br />
                   {this.renderAdd(Roles.filter(r => !AllRoles[r].isRed))}
                   <br />
-                  <button onClick={() => this.assign()}>ASSIGN ROLES</button>
-                  {errorMessage && (
-                    <ErrorMessage>{errorMessage}</ErrorMessage>
-                  )}
+                  <div>
+                    <button onClick={() => FIREBASE.setIncludeLady(data.gid, !data.includeLady)}>
+                      {data.includeLady ? 'Lady of the Lake is ON' : 'Lady of the Lake is OFF'}
+                    </button>
+                  </div>
+                  <br />
+                  <div>
+                    <button onClick={() => this.assign()}>ASSIGN ROLES</button>
+                    {errorMessage && (
+                      <ErrorMessage>{errorMessage}</ErrorMessage>
+                    )}
+                    </div>
                 </div>
               )}
           </HostBox>
