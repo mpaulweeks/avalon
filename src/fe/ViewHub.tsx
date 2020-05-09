@@ -5,13 +5,14 @@ import { ViewMission } from "./ViewMission";
 import { ViewLobby } from "./ViewLobby";
 import { ViewReset } from "./ViewReset";
 import { FIREBASE } from "../core/firebase";
-import { GameData, PlayerData, UserState, ViewTabType, ViewTab } from "../core/types";
+import { GameData, PlayersById, UserState, ViewTabType, ViewTab } from "../core/types";
 import { isDebug, getBoardFor, randomId, APP_VERSION } from "../core/utils";
 import { STORAGE } from "../core/storage";
 import { ViewGame } from "./ViewGame";
 import { ViewSetup } from "./ViewSetup";
 import { ViewBar } from "./ViewBar";
 import { ViewNominate } from "./ViewNominate";
+import { ViewLady } from "./ViewLady";
 import { StyledBox } from "./shared";
 
 const HeaderLink = styled(StyledBox) <{ current: boolean, hasLink: boolean }>`
@@ -59,7 +60,12 @@ export class ViewHub extends React.Component<Props, State> {
     });
     const { storage } = this.state;
     if (storage.name && storage.gid) {
-      this.join(this.genGuestGameData());
+      try {
+        this.join(this.genGuestGameData());
+      } catch (e) {
+        // bubble up to ErrorBoundary
+        this.setState(() => { throw e; });
+      }
     } else {
       STORAGE.setView(ViewTabType.Lobby);
     }
@@ -92,6 +98,8 @@ export class ViewHub extends React.Component<Props, State> {
         [pid]: {
           pid: pid,
           name: name || '???',
+          hasLady: false,
+          sawLady: null,
         },
       },
       turn: null,
@@ -100,13 +108,15 @@ export class ViewHub extends React.Component<Props, State> {
         showResults: false,
         tally: {},
       },
+      includeLady: false,
+      reveal: false,
     };
   }
 
   private async join(localData: GameData) {
     const { storage } = this.state;
     if (localData.host) {
-      FIREBASE.updateGame(localData);
+      await FIREBASE.updateGame(localData);
     } else {
       // if joining a game, ensure self and broadcast
       const hostData = await FIREBASE.getGameData(localData.gid);
@@ -120,7 +130,7 @@ export class ViewHub extends React.Component<Props, State> {
       const myId = storage.pid;
       const localMe = localData.players[myId];
       const remoteMe = hostData.players[myId] || {};
-      const players: PlayerData = {
+      const players: PlayersById = {
         ...hostData.players,
         [myId]: {
           ...localMe,
@@ -128,12 +138,12 @@ export class ViewHub extends React.Component<Props, State> {
           name: localMe.name,
         },
       };
-      FIREBASE.updatePlayers(localData.gid, players);
+      await FIREBASE.updatePlayers(localData.gid, players);
     }
     if (storage.view === ViewTabType.Lobby) {
       STORAGE.setView(ViewTabType.Game);
     }
-    FIREBASE.joinGame(localData.gid, data => this.onReceive(data));
+    await FIREBASE.joinGame(localData.gid, data => this.onReceive(data));
   }
   private onReceive(data: GameData) {
     console.log('received:', data);
@@ -157,19 +167,19 @@ export class ViewHub extends React.Component<Props, State> {
 
   async createGame() {
     await STORAGE.setGame(randomId(3));
-    this.join(this.genHostGameData());
+    await this.join(this.genHostGameData());
   }
   async joinGame(gameId: string) {
     await STORAGE.setGame(gameId);
-    this.join(this.genGuestGameData());
+    await this.join(this.genGuestGameData());
   }
-  reset() {
+  async reset() {
     const { data, storage } = this.state;
     if (storage.gid) {
-      FIREBASE.leaveGame(storage.gid);
+      await FIREBASE.leaveGame(storage.gid);
     }
     if (data) {
-      FIREBASE.kickPlayer(data, storage.pid);
+      await FIREBASE.kickPlayer(data, storage.pid);
     }
     this.setState({
       data: undefined,
@@ -191,6 +201,9 @@ export class ViewHub extends React.Component<Props, State> {
     }
     if (view === ViewTabType.Mission && data) {
       return <ViewMission isHost={isHost} data={data} storage={storage} />
+    }
+    if (view === ViewTabType.Lady && data) {
+      return <ViewLady isHost={isHost} data={data} storage={storage} />
     }
 
     if (view === ViewTabType.Lobby && !data) {
@@ -252,6 +265,7 @@ export class ViewHub extends React.Component<Props, State> {
             {data && <this.Link type={ViewTabType.Game}>Game #{data.gid}</this.Link>}
             {data && <this.Link type={ViewTabType.Nominate}>Nominate</this.Link>}
             {data && <this.Link type={ViewTabType.Mission}>Mission</this.Link>}
+            {data && <this.Link type={ViewTabType.Lady}>Lady of the Lake</this.Link>}
             {data && <this.Link type={ViewTabType.Setup}>Setup</this.Link>}
             {!data && <this.Link type={ViewTabType.Lobby}>Lobby</this.Link>}
             <this.Link type={ViewTabType.Reset}>Reset</this.Link>

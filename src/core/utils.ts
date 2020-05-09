@@ -1,9 +1,9 @@
-import { MissionResultType } from "./types";
+import { MissionResultType, GameData } from "./types";
 
-export const APP_VERSION = '1.2.6';
+export const APP_VERSION = '1.3.0';
 
 export const isDev = window.location.href.includes('localhost');
-export const isDebug = window.location.href.includes('#d');
+export const isDebug = window.location.href.includes('?d');
 if (!isDebug) {
   const orig = console.log;
   console.log = (...args: any[]) => { };
@@ -52,6 +52,10 @@ export function shuffle<T>(orig: T[]): T[] {
   }
   return array;
 };
+
+export function getCurrentPlayers(game: GameData) {
+  return (game.turn ? game.turn.order : []).map(pid => game.players[pid]);
+}
 
 export function getBoardFor(count: number) {
   let missions = [ // === 5

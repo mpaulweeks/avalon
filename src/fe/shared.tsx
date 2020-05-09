@@ -5,6 +5,10 @@ export const Green = styled.span`
   color: green;
   font-weight: bold;
 `;
+export const Blue = styled.span`
+  color: blue;
+  font-weight: bold;
+`;
 export const Red = styled.span`
   color: red;
   font-weight: bold;

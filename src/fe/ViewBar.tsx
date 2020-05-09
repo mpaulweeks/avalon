@@ -3,11 +3,13 @@ import styled from 'styled-components';
 import { AllRoles } from '../core/role';
 import { GameData, RoleType, UserState } from '../core/types';
 import { StyledBox } from './shared';
+import { getCurrentPlayers } from '../core/utils';
 
 export const SecretBox = styled(StyledBox)`
   background-color: black;
   color: white;
   border-color: red;
+  cursor: pointer;
 `;
 
 export const RoleBox = styled(StyledBox)`
@@ -17,10 +19,6 @@ export const RoleBox = styled(StyledBox)`
   & span {
     margin: 0 0.1em;
   }
-`;
-
-const ToggleSecrets = styled.div`
-  cursor: pointer;
 `;
 
 interface Props {
@@ -43,21 +41,21 @@ export class ViewBar extends React.Component<Props, State> {
       name: storage.name,
     };
     const myData = AllRoles[me.role || RoleType.BasicBlue];
-    const others = Object.keys(data.players).filter(id => id !== storage.pid).map(key => data.players[key]);
+    const others = (data.turn ? data.turn.order : []).filter(id => id !== storage.pid).map(key => data.players[key]);
     const youSee = others.filter(o => o.role && myData.sees.includes(o.role)).map(o => o.name);
 
     const nominations = data.nominations.roster.length > 0 ? data.nominations.roster.map(pid => data.players[pid].name).join(', ') : '(nobody)';
-    const playerIds = data.turn ? data.turn.order : Object.keys(data.players).sort();
+    const playerIds = data.turn ? data.turn.order : getCurrentPlayers(data).map(p => p.pid);
 
     return (
       <div>
-        <SecretBox>
+        <SecretBox onClick={() => this.setState({ collapseSecrets: !collapseSecrets, })}>
           {collapseSecrets ? (
-            <ToggleSecrets onClick={() => this.setState({ collapseSecrets: false, })}>
+            <div>
               (click to show secret info)
-            </ToggleSecrets>
+            </div>
           ) : (
-              <ToggleSecrets onClick={() => this.setState({ collapseSecrets: true, })}>
+              <div>
                 <div>
                   <u>
                     SECRET INFO! do not discuss what's in this box! click to hide from nearby players!
@@ -74,7 +72,7 @@ export class ViewBar extends React.Component<Props, State> {
                       roles haven't been assigned yet
                     </div>
                   )}
-              </ToggleSecrets>
+              </div>
             )}
         </SecretBox>
         <RoleBox>

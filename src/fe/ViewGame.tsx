@@ -11,20 +11,20 @@ interface Props {
 interface State { }
 
 export class ViewGame extends React.Component<Props, State> {
-  nextTurn() {
+  async nextTurn() {
     const { gid, turn } = this.props.data;
     if (!turn) { return; }
     const currentIndex = turn.order.indexOf(turn.current);
     const nextIndex = (currentIndex + 1) % turn.order.length;
     const newCurrent = turn.order[nextIndex];
-    FIREBASE.updateTurn(gid, {
+    await FIREBASE.updateTurn(gid, {
       ...turn,
       current: newCurrent,
     });
-    FIREBASE.clearNominations(gid);
-    FIREBASE.clearMission(gid);
+    await FIREBASE.clearNominations(gid);
+    await FIREBASE.clearMission(gid);
   }
-  missionChange(mIndex: number) {
+  async missionChange(mIndex: number) {
     const { isHost, data } = this.props;
     if (!isHost) { return; }
     const { gid, board } = data;
@@ -33,30 +33,30 @@ export class ViewGame extends React.Component<Props, State> {
     const nextIndex = (currIndex + 1) % MissionResults.length;
     const nextState = MissionResults[nextIndex];
     mission.result = nextState;
-    FIREBASE.updateBoard(gid, board);
+    await FIREBASE.updateBoard(gid, board);
   }
 
-  setMissionNoms(mIndex: number) {
+  async setMissionNoms(mIndex: number) {
     const { isHost, data } = this.props;
     if (!isHost) { return; }
     const { gid, board } = data;
     const mission = board.missions[mIndex];
     mission.roster = data.nominations.roster;
-    FIREBASE.updateBoard(gid, board);
+    await FIREBASE.updateBoard(gid, board);
   }
-  clearMissionNoms(mIndex: number) {
+  async clearMissionNoms(mIndex: number) {
     const { isHost, data } = this.props;
     if (!isHost) { return; }
     const { gid, board } = data;
     const mission = board.missions[mIndex];
     mission.roster = null;
-    FIREBASE.updateBoard(gid, board);
+    await FIREBASE.updateBoard(gid, board);
   }
-  addVeto(delta: number) {
+  async addVeto(delta: number) {
     const { isHost, data } = this.props;
     if (!isHost) { return; }
     const { gid, vetoes } = data;
-    FIREBASE.updateVetoes(gid, vetoes + delta);
+    await FIREBASE.updateVetoes(gid, vetoes + delta);
   }
 
   render() {

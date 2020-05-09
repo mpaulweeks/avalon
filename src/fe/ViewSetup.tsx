@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { AllRoles } from '../core/role';
-import { GameData, Role, Roles, UserState } from '../core/types';
-import { getBoardFor, shuffle, sortObjVals } from "../core/utils";
+import { GameData, Role, Roles, UserState, PlayerData } from '../core/types';
+import { getBoardFor, shuffle, sortObjVals, getCurrentPlayers } from "../core/utils";
 import { FIREBASE } from '../core/firebase';
-import { HostBox } from './shared';
+import { HostBox, Blue, Red } from './shared';
 
 const DeleteLink = styled.span`
   cursor: pointer;
@@ -28,22 +28,22 @@ interface State {
 export class ViewSetup extends React.Component<Props, State> {
   state: State = {}
 
-  addRole(role: Role) {
+  async addRole(role: Role) {
     const newRoles = [...this.props.data.roles];
     newRoles.push(role);
     newRoles.sort();
-    FIREBASE.updateRoles(this.props.data.gid, newRoles);
+    await FIREBASE.updateRoles(this.props.data.gid, newRoles);
   }
-  removeRole(role: Role) {
+  async removeRole(role: Role) {
     const newRoles = [...this.props.data.roles];
     const index = newRoles.findIndex(r => r === role);
     if (index >= 0) {
       newRoles.splice(index, 1);
-      FIREBASE.updateRoles(this.props.data.gid, newRoles);
+      await FIREBASE.updateRoles(this.props.data.gid, newRoles);
     }
   }
-  assign() {
-    const { gid, players, roles } = this.props.data;
+  async assign() {
+    const { gid, players, roles, includeLady } = this.props.data;
     if (Object.keys(players).length !== roles.length) {
       return this.setState({
         errorMessage: 'you need the same number of roles as players',
@@ -54,34 +54,61 @@ export class ViewSetup extends React.Component<Props, State> {
     const shuffledRoles = shuffle(roles);
     shuffledPlayers.forEach((pid, index) => {
       players[pid].role = shuffledRoles[index];
+      players[pid].hasLady = false;
+      players[pid].sawLady = null;
     });
-    FIREBASE.updateBoard(gid, getBoardFor(roles.length));
-    FIREBASE.updatePlayers(gid, players);
-    FIREBASE.updateTurn(gid, {
+    await FIREBASE.updateBoard(gid, getBoardFor(roles.length));
+    await FIREBASE.updatePlayers(gid, players);
+    await FIREBASE.updateTurn(gid, {
       current: shuffledPlayers[0],
       order: shuffledPlayers,
     });
-    FIREBASE.clearNominations(gid);
-    FIREBASE.clearMission(gid);
+    await FIREBASE.clearNominations(gid);
+    await FIREBASE.clearMission(gid);
+    if (includeLady) {
+      await FIREBASE.giveLadyTo(gid, shuffledPlayers.slice(-1)[0]);
+    }
   }
-  clear() {
+  async clear() {
     const { gid, players } = this.props.data;
     Object.keys(players).forEach((id, index) => {
       players[id].role = null; // null for Firebase
     });
-    FIREBASE.updatePlayers(gid, players);
-    FIREBASE.updateTurn(gid, null);
+    await FIREBASE.updatePlayers(gid, players);
+    await FIREBASE.updateTurn(gid, null);
+    await FIREBASE.hidePlayers(gid);
   }
 
+  renderReveal(players: PlayerData[]) {
+    return (
+      <ul>
+        {players.map((p, i) => {
+          const role = p.role && AllRoles[p.role];
+          const roleName = role ? role.name : '???';
+          const Color = (role && role.isRed) ? Red : Blue;
+          return (
+            <li key={i}>
+              {p.name}: <Color>{roleName}</Color>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
   renderRoles(roles: Role[], canEdit: boolean) {
     return (
       <ul>
-        {roles.map((role, i) => (
-          <li key={i}>
-            {canEdit && <DeleteLink onClick={() => this.removeRole(role)}>X</DeleteLink>}
-            {AllRoles[role].name}
-          </li>
-        ))}
+        {roles.map((role, i) => {
+          const data = AllRoles[role];
+          const Color = data.isRed ? Red : Blue;
+          return (
+            <li key={i}>
+              {canEdit && <DeleteLink onClick={() => this.removeRole(role)}>X</DeleteLink>}
+              &nbsp;<Color>{data.name}</Color>
+              &nbsp;<i>({data.description})</i>
+            </li>
+          );
+        })}
       </ul>
     );
   }
@@ -100,44 +127,63 @@ export class ViewSetup extends React.Component<Props, State> {
     const { isHost, data } = this.props;
     const { errorMessage } = this.state;
 
-    const isAssigned = Object.values(data.players).some(p => p.role);
+    const allPlayers = sortObjVals(data.players, p => p.name);
+    const isAssigned = allPlayers.some(p => p.role);
     const canEdit = isHost && !isAssigned;
+    const currentPlayers = isAssigned ? getCurrentPlayers(data) : allPlayers;
 
     const redRoles = Object.values(data.roles).filter(r => AllRoles[r].isRed);
     const blueRoles = Object.values(data.roles).filter(r => !AllRoles[r].isRed);
-
-    const sortedPlayers = sortObjVals(data.players, p => p.name);
 
     return (
       <div>
         <h1>Setup</h1>
 
         <h3>
-          Players: {sortedPlayers.length}
+          Players: {currentPlayers.length}
         </h3>
         <div>
-          {sortedPlayers.map(o => o.name).join(', ')}
+          {currentPlayers.map(o => o.name).join(', ')}
         </div>
 
         {isHost && (
           <HostBox>
             {isAssigned ? (
-              <div>
-                <button onClick={() => this.clear()}>CLEAR ROLES (reset game)</button>
-              </div>
+              data.reveal ? (
+                <button onClick={() => this.clear()}>Clear roles and reset game</button>
+              ) : (
+                <button onClick={() => FIREBASE.revealPlayers(data.gid)}>
+                  End game and reveal all roles
+                </button>
+              )
             ) : (
                 <div>
                   {this.renderAdd(Roles.filter(r => AllRoles[r].isRed))}
                   <br />
                   {this.renderAdd(Roles.filter(r => !AllRoles[r].isRed))}
                   <br />
-                  <button onClick={() => this.assign()}>ASSIGN ROLES</button>
-                  {errorMessage && (
-                    <ErrorMessage>{errorMessage}</ErrorMessage>
-                  )}
+                  <div>
+                    <button onClick={() => FIREBASE.setIncludeLady(data.gid, !data.includeLady)}>
+                      {data.includeLady ? 'Lady of the Lake is ON' : 'Lady of the Lake is OFF'}
+                    </button>
+                  </div>
+                  <br />
+                  <div>
+                    <button onClick={() => this.assign()}>ASSIGN ROLES</button>
+                    {errorMessage && (
+                      <ErrorMessage>{errorMessage}</ErrorMessage>
+                    )}
+                    </div>
                 </div>
               )}
           </HostBox>
+        )}
+
+        {data.reveal && (
+          <div>
+            <h3>GAME OVER! This was everyone's identity:</h3>
+            {this.renderReveal(currentPlayers)}
+          </div>
         )}
 
         <h3>Red Roles ({redRoles.length})</h3>
@@ -155,7 +201,7 @@ export class ViewSetup extends React.Component<Props, State> {
               If the player refreshes without resetting their info, they will rejoin.
             </p>
 
-            {sortedPlayers.map(p => (
+            {allPlayers.map(p => (
               <button key={p.pid} onClick={() => FIREBASE.kickPlayer(data, p.pid)}>
                 {p.name}
               </button>

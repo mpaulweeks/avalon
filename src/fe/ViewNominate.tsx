@@ -2,7 +2,7 @@ import React from 'react';
 import { GameData, NominationType, MissionResultType, UserState } from '../core/types';
 import { FIREBASE } from '../core/firebase';
 import { HostBox, Green, Red } from './shared';
-import { sortObjVals } from '../core/utils';
+import { getCurrentPlayers } from '../core/utils';
 
 interface Props {
   isHost: boolean;
@@ -15,57 +15,57 @@ export class ViewNominate extends React.Component<Props, State> {
   pid = this.props.storage.pid;
   state: State = {};
 
-  voteSuccess() {
-    FIREBASE.updateNominationsTally(this.props.data.gid, this.pid, NominationType.Approve);
+  async voteSuccess() {
+    await FIREBASE.updateNominationsTally(this.props.data.gid, this.pid, NominationType.Approve);
   }
-  voteFail() {
-    FIREBASE.updateNominationsTally(this.props.data.gid, this.pid, NominationType.Reject);
+  async voteFail() {
+    await FIREBASE.updateNominationsTally(this.props.data.gid, this.pid, NominationType.Reject);
   }
-  voteClear() {
+  async voteClear() {
     const newVotes = { ...this.props.data.nominations, };
     newVotes.tally = {};
     newVotes.showResults = false;
     newVotes.dealerLocked = false;
-    FIREBASE.updateNominations(this.props.data.gid, newVotes);
+    await FIREBASE.updateNominations(this.props.data.gid, newVotes);
   }
-  toggleReveal() {
+  async toggleReveal() {
     const newVotes = { ...this.props.data.nominations, };
     newVotes.showResults = !newVotes.showResults;
-    FIREBASE.updateNominations(this.props.data.gid, newVotes);
+    await FIREBASE.updateNominations(this.props.data.gid, newVotes);
   }
-  lockTheNoms() {
+  async lockTheNoms() {
     const isDealer = this.getIsDealer();
     if (!isDealer) {
       return alert('only the dealer should be able to lock the nom! error!');
     }
     const newVotes = { ...this.props.data.nominations, };
     newVotes.dealerLocked = true;
-    FIREBASE.updateNominations(this.props.data.gid, newVotes);
+    await FIREBASE.updateNominations(this.props.data.gid, newVotes);
   }
 
-  getIsDealer() {
+  async getIsDealer() {
     const { data } = this.props;
     const { nominations } = data;
     return data.turn && (data.turn.current === this.pid) && !nominations.showResults;
   }
 
-  addToRoster(pid: string) {
+  async addToRoster(pid: string) {
     const { nominations } = this.props.data;
     const newRoster = [...nominations.roster];
     newRoster.push(pid);
     newRoster.sort();
-    FIREBASE.updateNominations(this.props.data.gid, {
+    await FIREBASE.updateNominations(this.props.data.gid, {
       ...nominations,
       roster: newRoster,
     });
   }
-  removeFromRoster(pid: string) {
+  async removeFromRoster(pid: string) {
     const { nominations } = this.props.data;
     const newRoster = [...nominations.roster];
     const index = newRoster.findIndex(p => p === pid);
     if (index >= 0) {
       newRoster.splice(index, 1);
-      FIREBASE.updateNominations(this.props.data.gid, {
+      await FIREBASE.updateNominations(this.props.data.gid, {
         ...nominations,
         roster: newRoster,
       });
@@ -76,7 +76,7 @@ export class ViewNominate extends React.Component<Props, State> {
     const { isHost, data } = this.props;
     const { nominations, players } = data;
     const isDealer = this.getIsDealer();
-    const sortedPlayers = sortObjVals(players, p => p.pid);
+    const sortedPlayers = getCurrentPlayers(data);
     const outOfRoster = sortedPlayers.filter(p => !nominations.roster.includes(p.pid));
     const sortedTally = Object.keys(nominations.tally).sort();
     const pendingTally = sortedPlayers.filter(p => !nominations.tally[p.pid]);
@@ -179,7 +179,7 @@ export class ViewNominate extends React.Component<Props, State> {
                 </div>
               ) : (
                   <div>
-                    {Object.keys(nominations.tally).length}/{Object.keys(players).length} votes counted
+                    {Object.keys(nominations.tally).length}/{sortedPlayers.length} votes counted
                     {pendingTally.length ? (
                       <div>
                         <br />

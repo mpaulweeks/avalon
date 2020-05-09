@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import firebase from 'firebase/app';
 import 'firebase/database';
-import { BoardData, GameData, MissionData, MissionVote, Nomination, NominationData, PlayerData, Role, TurnData } from './types';
+import { BoardData, GameData, MissionData, MissionVote, Nomination, NominationData, PlayersById, Role, TurnData } from './types';
 
 dotenv.config();
 const config = {
@@ -53,7 +53,27 @@ class FirebaseSingleton {
     await this.updateMission(gid, mission);
   }
   deleteAllGames() {
-    this.db.ref(`game`).set({});
+    return this.db.ref(`game`).set({});
+  }
+
+  hidePlayers(gid: string) {
+    return this.db.ref(`game/${gid}/reveal`).set(false);
+  }
+  revealPlayers(gid: string) {
+    return this.db.ref(`game/${gid}/reveal`).set(true);
+  }
+
+  giveLadyTo(gid: string, pid: string) {
+    return this.db.ref(`game/${gid}/players/${pid}/hasLady`).set(true);
+  }
+  takeLadyFrom(gid: string, pid: string) {
+    return this.db.ref(`game/${gid}/players/${pid}/hasLady`).set(false);
+  }
+  ladySaw(gid: string, pid: string, sawId: string) {
+    return this.db.ref(`game/${gid}/players/${pid}/sawLady`).set(sawId);
+  }
+  setIncludeLady(gid: string, includeLady: boolean) {
+    return this.db.ref(`game/${gid}/includeLady`).set(includeLady);
   }
 
   clearMission(gameId: string) {
@@ -90,7 +110,7 @@ class FirebaseSingleton {
   updateNominationsTally(gameId: string, pid: string, data: Nomination) {
     return this.db.ref(`game/${gameId}/nominations/tally/${pid}`).set(data);
   }
-  updatePlayers(gameId: string, data: PlayerData) {
+  updatePlayers(gameId: string, data: PlayersById) {
     return this.db.ref(`game/${gameId}/players`).set(data);
   }
   updateRoles(gameId: string, data: Role[]) {
@@ -114,15 +134,15 @@ class FirebaseSingleton {
     });
   }
 
-  joinGame(gameId: string, callback: (val: any) => void): void {
+  joinGame(gameId: string, callback: (val: any) => void) {
     console.log('enabling hook:', gameId);
-    this.db.ref(`game/${gameId}`).on('value', data => {
+    return this.db.ref(`game/${gameId}`).on('value', data => {
       callback(data.val());
     });
   }
-  leaveGame(gameId: string): void {
+  leaveGame(gameId: string) {
     console.log('disabling hook:', gameId);
-    this.db.ref(`game/${gameId}`).off('value');
+    return this.db.ref(`game/${gameId}`).off('value');
   }
 }
 

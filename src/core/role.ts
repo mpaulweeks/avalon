@@ -21,7 +21,7 @@ export const AllRoles: { [key in typeof Roles[number]]: RoleData } = {
   Merlin: {
     isRed: false,
     name: 'Merlin',
-    description: 'Those are the red players.',
+    description: 'You see the Red players. Help the Blue team without revealing yourself.',
     sees: redsMinusMordred,
   },
   Percival: {
@@ -33,31 +33,31 @@ export const AllRoles: { [key in typeof Roles[number]]: RoleData } = {
   BasicRed: {
     isRed: true,
     name: 'Basic Red',
-    description: 'They are your fellow Red players.',
+    description: 'You see your fellow Red players.',
     sees: redsMinusOberon,
   },
   Assassin: {
     isRed: true,
     name: 'Assassin',
-    description: 'They are your fellow Red players. You get to guess Merlin at the end of the game.',
+    description: 'You see your fellow Red players. If you can guess Merlin at the end of the game, you win.',
     sees: redsMinusOberon,
   },
   Mordred: {
     isRed: true,
     name: 'Mordred',
-    description: 'They are your fellow Red players. Merlin cannot see you',
+    description: 'You see your fellow Red players. Merlin cannot see you',
     sees: redsMinusOberon,
   },
   Morgana: {
     isRed: true,
     name: 'Morgana',
-    description: 'They are your fellow Red players. Percival sees you and Merlin. Try to confuse them.',
+    description: 'You see your fellow Red players. Percival sees you and Merlin. Try to confuse them.',
     sees: redsMinusOberon,
   },
   Oberon: {
     isRed: true,
     name: 'Oberon',
-    description: 'You cannot see your Red allies.',
+    description: 'You cannot see your fellow Red players and they cannot see you.',
     sees: [],
   },
 };

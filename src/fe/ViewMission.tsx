@@ -3,7 +3,7 @@ import { MissionVoteType, GameData, UserState, RoleType } from '../core/types';
 import { FIREBASE } from '../core/firebase';
 import { AllRoles } from '../core/role';
 import { HostBox, Green, Red } from './shared';
-import { sortObjVals } from '../core/utils';
+import { getCurrentPlayers } from '../core/utils';
 
 interface Props {
   isHost: boolean;
@@ -24,30 +24,30 @@ export class ViewMission extends React.Component<Props, State> {
     return AllRoles[me.role || RoleType.BasicBlue];
   }
 
-  voteSuccess() {
-    FIREBASE.updateMissionTally(this.props.data.gid, this.pid, MissionVoteType.Success);
+  async voteSuccess() {
+    await FIREBASE.updateMissionTally(this.props.data.gid, this.pid, MissionVoteType.Success);
   }
-  voteFail() {
-    FIREBASE.updateMissionTally(this.props.data.gid, this.pid, MissionVoteType.Fail);
+  async voteFail() {
+    await FIREBASE.updateMissionTally(this.props.data.gid, this.pid, MissionVoteType.Fail);
   }
-  voteClear() {
+  async voteClear() {
     const newVotes = { ...this.props.data.mission, };
     newVotes.tally = {};
     newVotes.showResults = false;
-    FIREBASE.updateMission(this.props.data.gid, newVotes);
+    await FIREBASE.updateMission(this.props.data.gid, newVotes);
   }
-  toggleReveal() {
+  async toggleReveal() {
     const newVotes = { ...this.props.data.mission, };
     newVotes.showResults = !newVotes.showResults;
-    FIREBASE.updateMission(this.props.data.gid, newVotes);
+    await FIREBASE.updateMission(this.props.data.gid, newVotes);
   }
 
   render() {
     const { isHost, data } = this.props;
-    const { nominations, players, mission } = data;
+    const { nominations, mission } = data;
     const isNom = nominations.roster.includes(this.pid);
 
-    const sortedPlayers = sortObjVals(players, p => p.pid);
+    const sortedPlayers = getCurrentPlayers(data);
     const pendingTally = sortedPlayers.filter(p => nominations.roster.includes(p.pid) && !mission.tally[p.pid]);
 
     return (
