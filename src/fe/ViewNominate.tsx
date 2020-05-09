@@ -46,7 +46,7 @@ export class ViewNominate extends React.Component<Props, State> {
   getIsDealer() {
     const { data } = this.props;
     const { nominations } = data;
-    return data.turn && data.turn.current === this.pid && !nominations.showResults;
+    return data.turn && (data.turn.current === this.pid) && !nominations.showResults;
   }
 
   addToRoster(pid: string) {
