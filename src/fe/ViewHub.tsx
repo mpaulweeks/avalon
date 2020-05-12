@@ -8,7 +8,7 @@ import { FIREBASE } from "../core/firebase";
 import { GameData, PlayersById, UserState, ViewTabType, ViewTab } from "../core/types";
 import { isDebug, getBoardFor, randomId, APP_VERSION } from "../core/utils";
 import { STORAGE } from "../core/storage";
-import { ViewGame } from "./ViewGame";
+import { ViewBoard } from "./ViewBoard";
 import { ViewSetup } from "./ViewSetup";
 import { ViewBar } from "./ViewBar";
 import { ViewNominate } from "./ViewNominate";
@@ -141,7 +141,7 @@ export class ViewHub extends React.Component<Props, State> {
       await FIREBASE.updatePlayers(localData.gid, players);
     }
     if (storage.view === ViewTabType.Lobby) {
-      STORAGE.setView(ViewTabType.Game);
+      STORAGE.setView(ViewTabType.Board);
     }
     await FIREBASE.joinGame(localData.gid, data => this.onReceive(data));
   }
@@ -190,8 +190,8 @@ export class ViewHub extends React.Component<Props, State> {
     const { storage, data } = this.state;
     const { pid, view } = storage;
     const isHost = !!data && pid === data.host;
-    if (view === ViewTabType.Game && data) {
-      return <ViewGame isHost={isHost} data={data} storage={storage} />
+    if (view === ViewTabType.Board && data) {
+      return <ViewBoard isHost={isHost} data={data} storage={storage} />
     }
     if (view === ViewTabType.Setup && data) {
       return <ViewSetup isHost={isHost} data={data} storage={storage} />
@@ -262,7 +262,7 @@ export class ViewHub extends React.Component<Props, State> {
       <div>
         <nav>
           <ul>
-            {data && <this.Link type={ViewTabType.Game}>Game #{data.gid}</this.Link>}
+            {data && <this.Link type={ViewTabType.Board}>Game #{data.gid}</this.Link>}
             {data && <this.Link type={ViewTabType.Nominate}>Nominate</this.Link>}
             {data && <this.Link type={ViewTabType.Mission}>Mission</this.Link>}
             {data && <this.Link type={ViewTabType.Lady}>Lady of the Lake</this.Link>}

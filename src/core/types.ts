@@ -1,10 +1,10 @@
 // enums
 
-export type ViewTab = 'loading' | 'lobby' | 'game' | 'nominate' | 'mission' | 'lady' | 'setup' | 'reset' | 'debug';
+export type ViewTab = 'loading' | 'lobby' | 'board' | 'nominate' | 'mission' | 'lady' | 'setup' | 'reset' | 'debug';
 export const ViewTabType = {
   Loading: 'loading' as ViewTab,
   Lobby: 'lobby' as ViewTab,
-  Game: 'game' as ViewTab,
+  Board: 'board' as ViewTab,
   Nominate: 'nominate' as ViewTab,
   Mission: 'mission' as ViewTab,
   Lady: 'lady' as ViewTab,

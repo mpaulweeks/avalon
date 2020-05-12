@@ -10,7 +10,7 @@ interface Props {
 }
 interface State { }
 
-export class ViewGame extends React.Component<Props, State> {
+export class ViewBoard extends React.Component<Props, State> {
   async nextTurn() {
     const { gid, turn } = this.props.data;
     if (!turn) { return; }
