@@ -142,7 +142,7 @@ export class ViewHub extends React.Component<Props, State> {
       await FIREBASE.updatePlayers(localData.gid, players);
     }
     if (storage.view === ViewTab.Lobby) {
-      STORAGE.setView(ViewTab.Board);
+      STORAGE.setView(ViewTab.All);
     }
     await FIREBASE.joinGame(localData.gid, data => this.onReceive(data));
   }
