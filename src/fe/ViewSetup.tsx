@@ -69,6 +69,13 @@ export class ViewSetup extends React.Component<Props, State> {
       await FIREBASE.giveLadyTo(gid, shuffledPlayers.slice(-1)[0]);
     }
   }
+  async tryReveal() {
+    const { gid } = this.props.data;
+    const confirmed = window.confirm("Are you sure you want to reveal roles?\nThis cannot be undone and effectively ends the game.");
+    if (confirmed) {
+      await FIREBASE.revealPlayers(gid);
+    }
+  }
   async clear() {
     const { gid, players } = this.props.data;
     Object.keys(players).forEach((id, index) => {
@@ -152,8 +159,8 @@ export class ViewSetup extends React.Component<Props, State> {
               data.reveal ? (
                 <button onClick={() => this.clear()}>Clear roles and reset game</button>
               ) : (
-                <button onClick={() => FIREBASE.revealPlayers(data.gid)}>
-                  End game and reveal all roles
+                <button onClick={() => this.tryReveal()}>
+                  Reveal all roles
                 </button>
               )
             ) : (
