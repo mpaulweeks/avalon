@@ -66,7 +66,7 @@ export class ViewBoard extends React.Component<Props, State> {
 
     return (
       <div>
-        <h1>Game #{data.gid}</h1>
+        <h1>Game Board</h1>
         {turn && (
           <div>
             {isHost && (

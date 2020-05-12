@@ -5,7 +5,7 @@ import { ViewMission } from "./ViewMission";
 import { ViewLobby } from "./ViewLobby";
 import { ViewReset } from "./ViewReset";
 import { FIREBASE } from "../core/firebase";
-import { GameData, PlayersById, UserState, ViewTabType, ViewTab } from "../core/types";
+import { GameData, PlayersById, UserState, ViewTab } from "../core/types";
 import { isDebug, getBoardFor, randomId, APP_VERSION } from "../core/utils";
 import { STORAGE } from "../core/storage";
 import { ViewBoard } from "./ViewBoard";
@@ -14,6 +14,7 @@ import { ViewBar } from "./ViewBar";
 import { ViewNominate } from "./ViewNominate";
 import { ViewLady } from "./ViewLady";
 import { StyledBox } from "./shared";
+import { ViewAll } from "./ViewAll";
 
 const HeaderLink = styled(StyledBox) <{ current: boolean, hasLink: boolean }>`
   margin: 0 0.5em;
@@ -67,7 +68,7 @@ export class ViewHub extends React.Component<Props, State> {
         this.setState(() => { throw e; });
       }
     } else {
-      STORAGE.setView(ViewTabType.Lobby);
+      STORAGE.setView(ViewTab.Lobby);
     }
   }
 
@@ -140,8 +141,8 @@ export class ViewHub extends React.Component<Props, State> {
       };
       await FIREBASE.updatePlayers(localData.gid, players);
     }
-    if (storage.view === ViewTabType.Lobby) {
-      STORAGE.setView(ViewTabType.Board);
+    if (storage.view === ViewTab.Lobby) {
+      STORAGE.setView(ViewTab.Board);
     }
     await FIREBASE.joinGame(localData.gid, data => this.onReceive(data));
   }
@@ -190,23 +191,26 @@ export class ViewHub extends React.Component<Props, State> {
     const { storage, data } = this.state;
     const { pid, view } = storage;
     const isHost = !!data && pid === data.host;
-    if (view === ViewTabType.Board && data) {
+    if (view === ViewTab.All && data) {
+      return <ViewAll isHost={isHost} data={data} storage={storage} />
+    }
+    if (view === ViewTab.Board && data) {
       return <ViewBoard isHost={isHost} data={data} storage={storage} />
     }
-    if (view === ViewTabType.Setup && data) {
+    if (view === ViewTab.Setup && data) {
       return <ViewSetup isHost={isHost} data={data} storage={storage} />
     }
-    if (view === ViewTabType.Nominate && data) {
+    if (view === ViewTab.Nominate && data) {
       return <ViewNominate isHost={isHost} data={data} storage={storage} />
     }
-    if (view === ViewTabType.Mission && data) {
+    if (view === ViewTab.Mission && data) {
       return <ViewMission isHost={isHost} data={data} storage={storage} />
     }
-    if (view === ViewTabType.Lady && data) {
+    if (view === ViewTab.Lady && data) {
       return <ViewLady isHost={isHost} data={data} storage={storage} />
     }
 
-    if (view === ViewTabType.Lobby && !data) {
+    if (view === ViewTab.Lobby && !data) {
       return <ViewLobby
         storage={storage}
         createGame={() => this.createGame()}
@@ -214,17 +218,17 @@ export class ViewHub extends React.Component<Props, State> {
       />
     }
 
-    if (view === ViewTabType.Reset) {
+    if (view === ViewTab.Reset) {
       return <ViewReset
         storage={storage}
         reset={() => this.reset()}
       />
     }
-    if (view === ViewTabType.Debug) {
+    if (view === ViewTab.Debug) {
       return <ViewDebug />
     }
 
-    if (view === ViewTabType.Loading) {
+    if (view === ViewTab.Loading) {
       return (
         <h3>
           connecting to server, please wait...
@@ -262,14 +266,15 @@ export class ViewHub extends React.Component<Props, State> {
       <div>
         <nav>
           <ul>
-            {data && <this.Link type={ViewTabType.Board}>Game #{data.gid}</this.Link>}
-            {data && <this.Link type={ViewTabType.Nominate}>Nominate</this.Link>}
-            {data && <this.Link type={ViewTabType.Mission}>Mission</this.Link>}
-            {data && <this.Link type={ViewTabType.Lady}>Lady of the Lake</this.Link>}
-            {data && <this.Link type={ViewTabType.Setup}>Setup</this.Link>}
-            {!data && <this.Link type={ViewTabType.Lobby}>Lobby</this.Link>}
-            <this.Link type={ViewTabType.Reset}>Reset</this.Link>
-            {isDebug && <this.Link type={ViewTabType.Debug}>Debug</this.Link>}
+            {data && <this.Link type={ViewTab.All}>Game #{data.gid}</this.Link>}
+            {data && <this.Link type={ViewTab.Board}>Board</this.Link>}
+            {data && <this.Link type={ViewTab.Nominate}>Nominate</this.Link>}
+            {data && <this.Link type={ViewTab.Mission}>Mission</this.Link>}
+            {data && <this.Link type={ViewTab.Lady}>Lady of the Lake</this.Link>}
+            {data && <this.Link type={ViewTab.Setup}>Setup</this.Link>}
+            {!data && <this.Link type={ViewTab.Lobby}>Lobby</this.Link>}
+            <this.Link type={ViewTab.Reset}>Reset</this.Link>
+            {isDebug && <this.Link type={ViewTab.Debug}>Debug</this.Link>}
             <this.Link>
               <a target="_blank" href="rules.pdf">Rules</a>
             </this.Link>

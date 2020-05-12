@@ -1,16 +1,16 @@
 // enums
 
-export type ViewTab = 'loading' | 'lobby' | 'board' | 'nominate' | 'mission' | 'lady' | 'setup' | 'reset' | 'debug';
-export const ViewTabType = {
-  Loading: 'loading' as ViewTab,
-  Lobby: 'lobby' as ViewTab,
-  Board: 'board' as ViewTab,
-  Nominate: 'nominate' as ViewTab,
-  Mission: 'mission' as ViewTab,
-  Lady: 'lady' as ViewTab,
-  Setup: 'setup' as ViewTab,
-  Reset: 'reset' as ViewTab,
-  Debug: 'debug' as ViewTab,
+export enum ViewTab {
+  Loading = 'loading',
+  Lobby = 'lobby',
+  All = 'all',
+  Board = 'board',
+  Nominate = 'nominate',
+  Mission = 'mission',
+  Lady = 'lady',
+  Setup = 'setup',
+  Reset = 'reset',
+  Debug = 'debug',
 };
 
 export type MissionVote = 'success' | 'fail';

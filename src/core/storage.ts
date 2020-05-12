@@ -1,5 +1,5 @@
 import { hri } from "human-readable-ids";
-import { UserState, ViewTab, ViewTabType } from "./types";
+import { UserState, ViewTab } from "./types";
 import { APP_VERSION } from "./utils";
 
 export interface StorageLayer {
@@ -21,7 +21,7 @@ class StorageSingleton {
       pid: hri.random(),
       name: undefined,
       gid: undefined,
-      view: ViewTabType.Reset,
+      view: ViewTab.Reset,
     });
   }
   private set(data: UserState): Promise<void> {
