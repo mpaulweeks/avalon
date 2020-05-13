@@ -15,6 +15,7 @@ import { ViewNominate } from "./ViewNominate";
 import { ViewLady } from "./ViewLady";
 import { StyledBox } from "./shared";
 import { ViewAll } from "./ViewAll";
+import { ViewRules } from "./ViewRules";
 
 const HeaderLink = styled(StyledBox) <{ current: boolean, hasLink: boolean }>`
   margin: 0 0.5em;
@@ -227,6 +228,9 @@ export class ViewHub extends React.Component<Props, State> {
     if (view === ViewTab.Debug) {
       return <ViewDebug />
     }
+    if (view === ViewTab.Rules) {
+      return <ViewRules />
+    }
 
     if (view === ViewTab.Loading) {
       return (
@@ -275,9 +279,7 @@ export class ViewHub extends React.Component<Props, State> {
             {!data && <this.Link type={ViewTab.Lobby}>Lobby</this.Link>}
             <this.Link type={ViewTab.Reset}>Reset</this.Link>
             {isDebug && <this.Link type={ViewTab.Debug}>Debug</this.Link>}
-            <this.Link>
-              <a target="_blank" href="rules.pdf">Rules</a>
-            </this.Link>
+            <this.Link type={ViewTab.Rules}>Rules</this.Link>
             <this.Link>v.{APP_VERSION}</this.Link>
           </ul>
         </nav>

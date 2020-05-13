@@ -11,6 +11,7 @@ export enum ViewTab {
   Setup = 'setup',
   Reset = 'reset',
   Debug = 'debug',
+  Rules = 'rules',
 };
 
 export type MissionVote = 'success' | 'fail';
