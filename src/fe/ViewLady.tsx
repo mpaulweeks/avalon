@@ -47,7 +47,7 @@ export class ViewLady extends React.Component<Props, State> {
           At the beginning of the game, the Lady of the Lake (aka Lady) is given to the last player in the turn order.
         </p>
         <p>
-          After the 2nd, 3rd, and 4th mission in finished, the player with the Lady will choose one player to examine.
+          After the 2nd, 3rd, and 4th mission is finished, the player with the Lady may choose one player to examine.
         </p>
         <p>
           They will learn the team color (Red/Blue) of the chosen player. They will NOT learn their identity (eg: Merlin).
