@@ -1,5 +1,5 @@
 import React from 'react';
-import { MissionVoteType, GameData, UserState, RoleType } from '../core/types';
+import { MissionVoteType, GameData, UserState, RoleType, NominationType } from '../core/types';
 import { FIREBASE } from '../core/firebase';
 import { AllRoles } from '../core/role';
 import { HostBox, Green, Red } from './shared';
@@ -45,6 +45,23 @@ export class ViewMission extends React.Component<Props, State> {
   render() {
     const { isHost, data } = this.props;
     const { nominations, mission } = data;
+
+    const nomRevealed = !!nominations.showResults;
+    const nomResults = Object.values(nominations.tally);
+    const nomApproved = nomResults.filter(n => n === NominationType.Approve).length > nomResults.length / 2;
+
+    if (!(nomRevealed && nomApproved)) {
+      return (
+        <div>
+          <h1>Mission Vote</h1>
+
+          <div>
+            Waiting for a nomination to be approved.
+          </div>
+        </div>
+      );
+    }
+
     const isNom = nominations.roster.includes(this.pid);
 
     const sortedPlayers = getCurrentPlayers(data);
